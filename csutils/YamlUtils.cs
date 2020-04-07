@@ -37,8 +37,10 @@ namespace SoD_DiffExplorer.csutils
 				return false;
 			} else {
 				string[] lineSplit = lines[fieldIndex].Split(": ", 2);
-				lineSplit[1] = targetValue;
-				lines[fieldIndex] = string.Join(": ", lineSplit);
+				if(lineSplit.Length == 1) {
+					lineSplit[0] = lineSplit[0].Replace(":", "");
+				}
+				lines[fieldIndex] = lineSplit[0] + ": " + targetValue;
 				return true;
 			}
 		}

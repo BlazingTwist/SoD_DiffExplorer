@@ -1,3 +1,17 @@
+#General guide:
+#
+# Directories:
+#   Can be specified as relative or absolute path
+#   example for absolute path: 'D:\BTFileDownloader\download'
+#   example for relative path: 'someDirectory\download'
+#
+# boolean values:
+#   can be either "True" or "False", although "true" and "false" also work (will be automatically replaced when you save the config)
+#
+# date format:
+#   date format will always be yyyy.MM.dd as the alphabetical order will then be the same as the chronological order
+
+
 fileDownloaderConfig:
   #you shouldn't have to change this, but just in case you do, you can
   onlineAddressDict:
@@ -8,7 +22,6 @@ fileDownloaderConfig:
     RS_MOVIES: movies
 
 
-  #either "true" or "false"
   #if set to true it will wait for user input when a file throws an exception during downloading
   #if set to false it will ignore all failed downloads apart from logging them
   pauseDownloadOnError: True
@@ -19,8 +32,7 @@ fileDownloaderConfig:
 
 
   downloadURL:
-    #don't forget the '/' at the end here
-    baseURL: http://media.schoolofdragons.com/DWADragonsUnity/
+    baseURL: http://media.schoolofdragons.com/DWADragonsUnity
     platform: Steam
     version: 3.6.0
     baseSuffix: High
@@ -28,9 +40,6 @@ fileDownloaderConfig:
 
 
   outputDirectory:
-    #the absolute or relative path to the output Directory (where the files will be downloaded to)
-    # example for absolute path: 'D:\BTFileDownloader\download'
-    # example for relative path: 'someDirectory\download'
     baseDirectory: fileDownloads
 
     #if set to false it will download directly to the baseDirectory
@@ -41,7 +50,6 @@ fileDownloaderConfig:
     #  fileDownloads\Steam\2020.04.07
     appendPlatform: False
     appendVersion: False
-    #date format will always be yyyy.MM.dd as the alphabetical order will then be the same as the chronological order
     appendDate: False
 
 
@@ -72,3 +80,64 @@ fileDownloaderConfig:
   localeFilters:
   - en-us
   - de-de
+
+
+addressableCompareConfig:
+  #can be "online", "local" or "lastcreated"
+  sourceTypeFrom: lastcreated
+  sourceTypeTo: online
+
+
+  #defines the config values depending on sourceType
+  sourceFrom:
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      #won't do anything if makeFile is set to false (because then there won't be any file in the first place)
+      #if makeFile and this are set to true it will register the created file as 'lastcreated' for faster comparisons in the future
+      makeLastCreated: false
+    local:
+      #if you created the files using automatic platform/version/date appending you can specify them here
+      #these won't be used if they're set to false in 'sourcesConfig'
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+    # you can edit this manually, but I'd recommend utilising makeLastCreated for automatic generation
+    lastcreated: addressablesHistory\sources\assetInfo_2020.04.07.txt
+
+  sourceTo:
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+    lastcreated: addressablesHistory\sources\assetInfo_2020.04.07.txt
+
+
+  #used when your 'sourceType' is 'online'
+  onlineSourcesConfig:
+    baseURL: http://media.schoolofdragons.com/DWADragonsUnity
+    baseSuffix: High
+    assetInfo: data/AssetVersionsDO.xml
+
+  #used when you set 'makeFile' to true or your 'sourceType' is 'local'
+  localSourcesConfig:
+    #basedirectory for local files created by setting 'makeFile' to true in online sources
+    baseDirectory: addressablesHistory\sources
+    assetInfoFileName: assetInfo
+    assetInfoFileExtension: txt
+    #same behaviour as fileDownloaderConfig.downloadURL
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+  resultConfig:
+    #can be set to false to exclusively output results in the terminal
+    makeFile: true
+    baseDirectory: addressablesHistory\results
+    appendDate: true

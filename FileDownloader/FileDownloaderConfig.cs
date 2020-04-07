@@ -77,7 +77,7 @@ namespace SoD_DiffExplorer.filedownloader
 			};
 
 			if(YamlUtils.ChangeSimpleValues(ref lines, changeDict) && YamlUtils.ChangeSimpleListContents(ref lines, listChangeDict)) {
-				Console.WriteLine("config saving successfull");
+				Console.WriteLine("config saving successful");
 				using(StreamWriter writer = new StreamWriter("config.yaml", false)) {
 					lines.ForEach(line => writer.WriteLine(line));
 				}

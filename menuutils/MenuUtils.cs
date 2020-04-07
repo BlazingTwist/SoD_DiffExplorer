@@ -22,37 +22,39 @@ namespace SoD_DiffExplorer.menuutils
 			{ConsoleKey.Escape, MenuControl.Back}
 		};
 
-		public static ConsoleKeyInfo OpenSelectionMenu(Tuple<string, ConsoleKey>[] mapping, int tabDepth = 0) {
-			string tabbing = new String('\t', tabDepth);
-			foreach(Tuple<string, ConsoleKey> map in mapping) {
-				Console.WriteLine(tabbing + map.Item2.ToString() + ": " + map.Item1);
+		public static string OpenEnumConfigEditor(string valueName, string previousValue, string[] values, int spacing) {
+			StringBuilder header = new StringBuilder();
+			header.Append("EnumSelection Controls:\n");
+			header.Append("\tEscape to cancel\n");
+			header.Append("\tEnter to select\n\n");
+			header.Append("Currently modifying " + valueName + " (" + previousValue + ")");
+
+			int selection = MenuUtils.OpenSelectionMenu(values, null, header.ToString(), 0, spacing);
+
+			if(selection >= values.Length) {
+				return previousValue;
 			}
-			List<ConsoleKey> keys = mapping.Select(item => item.Item2).ToList();
-			ConsoleKeyInfo keyInfo;
-			while(!keys.Contains((keyInfo = Console.ReadKey(true)).Key))
-				;
-			return keyInfo;
+			return values[selection];
 		}
 
-		public static string OpenSimpleConfigEditor(string valueName, string currentValue) {
+		public static string OpenSimpleConfigEditor(string valueName, string previousValue) {
 			Console.Clear();
 			Console.WriteLine("TextEditor Controls:");
 			Console.WriteLine("\tEscape to cancel");
 			Console.WriteLine("\tctrl + x to clear");
 			Console.WriteLine();
-			Console.WriteLine("Currently modifying " + valueName);
-			Console.WriteLine("\tcurrent value = " + currentValue);
-			Console.Write("\tnew value = " + currentValue);
+			Console.WriteLine("Currently modifying " + valueName + " (" + previousValue + ")");
+			Console.Write("\tnew value = " + previousValue);
 
-			string input = currentValue;
-			int currentWriteIndex = currentValue.Length;
+			string input = previousValue;
+			int currentWriteIndex = previousValue.Length;
 			while(true) {
 				ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
 				if(keyInfo.Key == ConsoleKey.Enter) {
 					return input;
 				} else if(keyInfo.Key == ConsoleKey.Escape) {
-					return currentValue;
+					return previousValue;
 				} else if(keyInfo.Key == ConsoleKey.Backspace) {
 					if(input.Length > 0) {
 						if(currentWriteIndex < input.Length) {
@@ -88,7 +90,7 @@ namespace SoD_DiffExplorer.menuutils
 						Console.Write(input[currentWriteIndex]);
 						currentWriteIndex++;
 					}
-				} else if(!Char.IsControl(keyInfo.KeyChar)){
+				} else if(!Char.IsControl(keyInfo.KeyChar)) {
 					if(currentWriteIndex < input.Length) {
 						string remains = input.Substring(currentWriteIndex);
 						input = input.Remove(currentWriteIndex) + keyInfo.KeyChar + remains;
@@ -117,30 +119,30 @@ namespace SoD_DiffExplorer.menuutils
 				Console.WriteLine("\t(escape) or (backspace) to leave (keeps changes)");
 				Console.WriteLine();
 				Console.WriteLine("Currently modifying " + listName);
-				PrintOptions(listValues.Select(item => item.ToString()).ToArray(), lastOption, spacing, selection, false);
+				PrintOptions(listValues.Select(item => item.ToString()).ToArray(), lastOption, spacing, selection);
 				ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 				MenuControl control = menuControlMapping[keyInfo.Key];
 				if(control == MenuControl.Undefined) {
 					if(keyInfo.Key == ConsoleKey.R && keyInfo.Modifiers == ConsoleModifiers.Control) {
 						listValues = backup;
 						return;
-					}else if((keyInfo.Key == ConsoleKey.X && keyInfo.Modifiers == ConsoleModifiers.Control) || keyInfo.Key == ConsoleKey.Delete) {
-						if(selection < listValues.Count){
+					} else if((keyInfo.Key == ConsoleKey.X && keyInfo.Modifiers == ConsoleModifiers.Control) || keyInfo.Key == ConsoleKey.Delete) {
+						if(selection < listValues.Count) {
 							listValues.RemoveAt(selection);
 						}
 					}
-				} else if (control == MenuControl.Up){
+				} else if(control == MenuControl.Up) {
 					if(selection > 0) {
 						selection--;
 					}
-				} else if (control == MenuControl.Down){
+				} else if(control == MenuControl.Down) {
 					if(selection < listValues.Count) {
 						selection++;
 					}
-				} else if (control == MenuControl.Left || control == MenuControl.Back){
+				} else if(control == MenuControl.Left || control == MenuControl.Back) {
 					return;
-				} else if (control == MenuControl.Right || control == MenuControl.Enter){
-					if(selection < listValues.Count){
+				} else if(control == MenuControl.Right || control == MenuControl.Enter) {
+					if(selection < listValues.Count) {
 						listValues[selection] = OpenSimpleConfigEditor(listName + " #" + selection, listValues[selection]);
 					} else {
 						string newListEntry = OpenSimpleConfigEditor(listName + " #" + selection, "");
@@ -153,10 +155,15 @@ namespace SoD_DiffExplorer.menuutils
 			}
 		}
 
-		public static int OpenSelectionMenu(string[] options, string goBackText, int selection, int spaceDepth) {
+		public static int OpenSelectionMenu(string[] options, string goBackText, string header, int selection, int spaceDepth) {
 			string spacing = new String(' ', spaceDepth);
 
+			int maxSelection = goBackText == null ? (options.Length - 1) : options.Length;
 			while(true) {
+				Console.Clear();
+				if(header != null) {
+					Console.WriteLine(header);
+				}
 				PrintOptions(options, goBackText, spacing, selection);
 				MenuControl control = menuControlMapping[Console.ReadKey(true).Key];
 				if(control == MenuControl.Up) {
@@ -164,7 +171,7 @@ namespace SoD_DiffExplorer.menuutils
 						selection--;
 					}
 				} else if(control == MenuControl.Down) {
-					if(selection < options.Length) {
+					if(selection < maxSelection) {
 						selection++;
 					}
 				} else if(control == MenuControl.Left || control == MenuControl.Back) {
@@ -175,10 +182,11 @@ namespace SoD_DiffExplorer.menuutils
 			}
 		}
 
-		private static void PrintOptions(string[] options, string goBackText, string spacing, int highlightLine, bool clearScreen = true) {
-			if(clearScreen) {
-				Console.Clear();
-			}
+		public static int OpenSelectionMenu(string[] options, string goBackText, int selection, int spaceDepth) {
+			return OpenSelectionMenu(options, goBackText, null, selection, spaceDepth);
+		}
+
+		private static void PrintOptions(string[] options, string goBackText, string spacing, int highlightLine) {
 			for(int i = 0; i < options.Length; i++) {
 				if(highlightLine == i) {
 					PrintHighlightetText(options[i], spacing);
@@ -187,10 +195,12 @@ namespace SoD_DiffExplorer.menuutils
 				}
 			}
 
-			if(highlightLine == options.Length) {
-				PrintHighlightetText(goBackText, spacing);
-			} else {
-				Console.WriteLine(spacing + goBackText);
+			if(goBackText != null) {
+				if(highlightLine == options.Length) {
+					PrintHighlightetText(goBackText, spacing);
+				} else {
+					Console.WriteLine(spacing + goBackText);
+				}
 			}
 		}
 

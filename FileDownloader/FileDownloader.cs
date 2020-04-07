@@ -1,11 +1,9 @@
 ﻿using System;
 using SoD_DiffExplorer.menuutils;
 using System.IO;
-using YamlDotNet.Core;
 using System.Net;
 using System.Collections.Generic;
 using HtmlAgilityPack;
-using YamlDotNet.Serialization;
 
 namespace SoD_DiffExplorer.filedownloader
 {
@@ -117,10 +115,6 @@ namespace SoD_DiffExplorer.filedownloader
 		}
 
 		public void OpenFileDownloaderMenu() {
-			//menuoptions?
-			//quickupdate dodownload, platform, version, appendPlatform, appendVersion, appendDate
-			//quickupdate regexFilters and localeFilters ? dedicated explorer ?
-
 			string[] options = new string[] { "Adjust Configuration", "Run Download" };
 			string backText = "Back to Main Menu";
 			int spacing = 1;
@@ -155,8 +149,8 @@ namespace SoD_DiffExplorer.filedownloader
 					"toggle appendVersion (" + config.outputDirectory.appendVersion + ")",
 					"toggle appendDate (" + config.outputDirectory.appendDate + ")",
 					"adjust regexFilters (" + config.regexFilters.Count + " active filters)",
-					"adjust localeFilters (" + config.localeFilters.Count + " active filters)",
-					"save config"
+					"adjust localeFilters (" + config.localeFilters.Count + " active filters)\n",
+					"save config\n"
 				};
 
 				selection = MenuUtils.OpenSelectionMenu(options, backText, selection, spacing);
