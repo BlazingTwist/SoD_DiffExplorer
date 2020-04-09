@@ -10,9 +10,11 @@ namespace SoD_DiffExplorer.filedownloader
 	class FileDownloader
 	{
 		private FDConfig config;
+		private MenuUtils menuUtils;
 
-		public FileDownloader(FDConfig config) {
+		public FileDownloader(FDConfig config, MenuUtils menuUtils) {
 			this.config = config;
+			this.menuUtils = menuUtils;
 		}
 
 		private void RunFileDownload() {
@@ -121,7 +123,7 @@ namespace SoD_DiffExplorer.filedownloader
 
 			int selection = 0;
 			while(true) {
-				selection = MenuUtils.OpenSelectionMenu(options, backText, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, selection, spacing);
 
 				if(selection == 0) {
 					OpenConfigMenu();
@@ -153,7 +155,7 @@ namespace SoD_DiffExplorer.filedownloader
 					"save config\n"
 				};
 
-				selection = MenuUtils.OpenSelectionMenu(options, backText, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, selection, spacing);
 
 				switch(selection) {
 					case 0:
@@ -163,10 +165,10 @@ namespace SoD_DiffExplorer.filedownloader
 						config.doDownload = !config.doDownload;
 						break;
 					case 2:
-						config.downloadURL.platform = MenuUtils.OpenSimpleConfigEditor("fileDownloaderConfig.downloadURL.platform", config.downloadURL.platform);
+						config.downloadURL.platform = menuUtils.OpenSimpleConfigEditor("fileDownloaderConfig.downloadURL.platform", config.downloadURL.platform);
 						break;
 					case 3:
-						config.downloadURL.version = MenuUtils.OpenSimpleConfigEditor("fileDownloaderConfig.downloadURL.version", config.downloadURL.version);
+						config.downloadURL.version = menuUtils.OpenSimpleConfigEditor("fileDownloaderConfig.downloadURL.version", config.downloadURL.version);
 						break;
 					case 4:
 						config.outputDirectory.appendPlatform = !config.outputDirectory.appendPlatform;
@@ -178,10 +180,10 @@ namespace SoD_DiffExplorer.filedownloader
 						config.outputDirectory.appendDate = !config.outputDirectory.appendDate;
 						break;
 					case 7:
-						MenuUtils.OpenStringListEditor("fileDownloaderConfig.regexFilters", ref config.regexFilters);
+						menuUtils.OpenStringListEditor("fileDownloaderConfig.regexFilters", ref config.regexFilters);
 						break;
 					case 8:
-						MenuUtils.OpenStringListEditor("fileDownloaderConfig.localeFilters", ref config.localeFilters);
+						menuUtils.OpenStringListEditor("fileDownloaderConfig.localeFilters", ref config.localeFilters);
 						break;
 					case 9:
 						Console.Clear();

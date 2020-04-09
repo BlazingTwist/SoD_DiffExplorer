@@ -9,49 +9,45 @@ namespace SoD_DiffExplorer.menuutils
 {
 	class MenuUtils
 	{
-		public static BetterDict<ConsoleKey, MenuControl> menuControlMapping = new BetterDict<ConsoleKey, MenuControl> {
-			{ConsoleKey.W, MenuControl.Up},
-			{ConsoleKey.UpArrow, MenuControl.Up},
-			{ConsoleKey.S, MenuControl.Down},
-			{ConsoleKey.DownArrow, MenuControl.Down},
-			{ConsoleKey.A, MenuControl.Left},
-			{ConsoleKey.LeftArrow, MenuControl.Left},
-			{ConsoleKey.D, MenuControl.Right},
-			{ConsoleKey.RightArrow, MenuControl.Right},
-			{ConsoleKey.Enter, MenuControl.Enter},
-			{ConsoleKey.Backspace, MenuControl.Back},
-			{ConsoleKey.Escape, MenuControl.Back}
-		};
+		private BetterDict<ConsoleKey, MenuControl> menuControlMapping;
 
-		public static string OpenFileSelectionMenu(string baseDirectory, string previousValue, int spacing) {
+		public MenuUtils(BetterDict<ConsoleKey, MenuControl> menuControlMapping) {
+			this.menuControlMapping = menuControlMapping;
+		}
+
+		public string OpenFileSelectionMenu(string baseDirectory, string previousValue, int spacing) {
 			string[] options;
 			string header;
 			string backText;
 			if(Directory.Exists(baseDirectory)){
 				options = Directory.GetFiles(baseDirectory);
+				options[options.Length - 1] += "\n";
 				header = "Found " + options.Length + " available files:";
-				backText = "\ncancel (" + previousValue + ")";
+				backText = "cancel (" + previousValue + ")";
 			} else {
 				options = new string[0];
 				header = "BaseDirectory (" + baseDirectory + ") does not exist!";
 				backText = "go back";
 			}
-			int selection = MenuUtils.OpenSelectionMenu(options, backText, header, FindCurrentEnumSelection(previousValue, options), spacing);
+			int selection = OpenSelectionMenu(options, backText, header, FindCurrentEnumSelection(previousValue, options), spacing);
 
 			if(selection >= options.Length) {
 				return previousValue;
 			}
+			if(selection == (options.Length - 1)) {
+				return options[selection].Substring(0, options[selection].Length - 1);
+			}
 			return options[selection];
 		}
 
-		public static string OpenEnumConfigEditor(string valueName, string previousValue, string[] values, int spacing) {
+		public string OpenEnumConfigEditor(string valueName, string previousValue, string[] values, int spacing) {
 			StringBuilder header = new StringBuilder();
 			header.Append("EnumSelection Controls:\n");
 			header.Append("\tEscape to cancel\n");
 			header.Append("\tEnter to select\n\n");
 			header.Append("Currently modifying " + valueName + " (" + previousValue + ")");
 
-			int selection = MenuUtils.OpenSelectionMenu(values, null, header.ToString(), FindCurrentEnumSelection(previousValue, values), spacing);
+			int selection = OpenSelectionMenu(values, null, header.ToString(), FindCurrentEnumSelection(previousValue, values), spacing);
 
 			if(selection >= values.Length) {
 				return previousValue;
@@ -59,7 +55,7 @@ namespace SoD_DiffExplorer.menuutils
 			return values[selection];
 		}
 
-		private static int FindCurrentEnumSelection(string selected, string[] available) {
+		private int FindCurrentEnumSelection(string selected, string[] available) {
 			for(int i = 0; i < available.Length; i++) {
 				if(available[i] == selected) {
 					return i;
@@ -68,7 +64,7 @@ namespace SoD_DiffExplorer.menuutils
 			return 0;
 		}
 
-		public static string OpenSimpleConfigEditor(string valueName, string previousValue) {
+		public string OpenSimpleConfigEditor(string valueName, string previousValue) {
 			Console.Clear();
 			Console.WriteLine("TextEditor Controls:");
 			Console.WriteLine("\tEscape to cancel");
@@ -135,7 +131,7 @@ namespace SoD_DiffExplorer.menuutils
 			}
 		}
 
-		public static void OpenStringListEditor(string listName, ref List<string> listValues) {
+		public void OpenStringListEditor(string listName, ref List<string> listValues) {
 			List<string> backup = ListUtils.CloneList(listValues);
 
 			int selection = 0;
@@ -186,7 +182,7 @@ namespace SoD_DiffExplorer.menuutils
 			}
 		}
 
-		public static int OpenSelectionMenu(string[] options, string goBackText, string header, int selection, int spaceDepth) {
+		public int OpenSelectionMenu(string[] options, string goBackText, string header, int selection, int spaceDepth) {
 			string spacing = new String(' ', spaceDepth);
 
 			int maxSelection = goBackText == null ? (options.Length - 1) : options.Length;
@@ -213,11 +209,11 @@ namespace SoD_DiffExplorer.menuutils
 			}
 		}
 
-		public static int OpenSelectionMenu(string[] options, string goBackText, int selection, int spaceDepth) {
+		public int OpenSelectionMenu(string[] options, string goBackText, int selection, int spaceDepth) {
 			return OpenSelectionMenu(options, goBackText, null, selection, spaceDepth);
 		}
 
-		private static void PrintOptions(string[] options, string goBackText, string spacing, int highlightLine) {
+		private void PrintOptions(string[] options, string goBackText, string spacing, int highlightLine) {
 			for(int i = 0; i < options.Length; i++) {
 				if(highlightLine == i) {
 					PrintHighlightetText(options[i], spacing);
@@ -235,14 +231,14 @@ namespace SoD_DiffExplorer.menuutils
 			}
 		}
 
-		private static void PrintHighlightetText(string text, string spacing) {
+		private void PrintHighlightetText(string text, string spacing) {
 			Console.Write(spacing);
 			Console.BackgroundColor = ConsoleColor.DarkGray;
 			Console.WriteLine(text);
 			Console.ResetColor();
 		}
 
-		private static string RepeatString(string repeat, int count) {
+		private string RepeatString(string repeat, int count) {
 			StringBuilder builder = new StringBuilder();
 			for(int i = 0; i < count; i++) {
 				builder.Append(repeat);

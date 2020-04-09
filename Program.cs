@@ -11,6 +11,7 @@ namespace SoD_DiffExplorer
 	class Program
 	{
 		public static ConfigHolder config;
+		public static MenuUtils menuUtils;
 		public static FileDownloader fileDownloader;
 		public static AddressableComparer addressableComparer;
 		public static FireballComparer fireballComparer;
@@ -28,9 +29,10 @@ namespace SoD_DiffExplorer
 				return;
 			}
 
-			fileDownloader = new FileDownloader(config.fileDownloaderConfig);
-			addressableComparer = new AddressableComparer(config.addressableCompareConfig);
-			fireballComparer = new FireballComparer(config.fireballCompareConfig);
+			menuUtils = new MenuUtils(config.menuControlMapping);
+			fileDownloader = new FileDownloader(config.fileDownloaderConfig, menuUtils);
+			addressableComparer = new AddressableComparer(config.addressableCompareConfig, menuUtils);
+			fireballComparer = new FireballComparer(config.fireballCompareConfig, menuUtils);
 
 			try{
 				OpenMainMenu();
@@ -56,7 +58,7 @@ namespace SoD_DiffExplorer
 
 			int selection = 0;
 			while(true) {
-				selection = MenuUtils.OpenSelectionMenu(options, backText, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, selection, spacing);
 
 				switch(selection) {
 					case 0:

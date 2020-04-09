@@ -8,9 +8,11 @@ namespace SoD_DiffExplorer.addressablecompare
 	class AddressableComparer
 	{
 		private ACConfig config;
+		private MenuUtils menuUtils;
 
-		public AddressableComparer(ACConfig config) {
+		public AddressableComparer(ACConfig config, MenuUtils menuUtils) {
 			this.config = config;
+			this.menuUtils = menuUtils;
 		}
 
 		private void RunAddressableComparison() {
@@ -63,7 +65,7 @@ namespace SoD_DiffExplorer.addressablecompare
 
 			int selection = 0;
 			while(true) {
-				selection = MenuUtils.OpenSelectionMenu(options, backtext, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backtext, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
@@ -87,7 +89,7 @@ namespace SoD_DiffExplorer.addressablecompare
 			int selection = 0;
 			while(true) {
 				string[] options = GetConfigOptions();
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
@@ -167,17 +169,17 @@ namespace SoD_DiffExplorer.addressablecompare
 			int selection = 0;
 			while(true) {
 				string[] options = GetSourceConfigImplOptions(sourceConfigImpl);
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
-						sourceConfigImpl.sourceType = Enum.Parse<ACSourceType>(MenuUtils.OpenEnumConfigEditor("sourceType", sourceConfigImpl.sourceType.ToString(), Enum.GetNames(typeof(ACSourceType)), spacing));
+						sourceConfigImpl.sourceType = Enum.Parse<ACSourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfigImpl.sourceType.ToString(), Enum.GetNames(typeof(ACSourceType)), spacing));
 						break;
 					case 1:
-						sourceConfigImpl.online.platform = MenuUtils.OpenSimpleConfigEditor("online.platform", sourceConfigImpl.online.platform);
+						sourceConfigImpl.online.platform = menuUtils.OpenSimpleConfigEditor("online.platform", sourceConfigImpl.online.platform);
 						break;
 					case 2:
-						sourceConfigImpl.online.version = MenuUtils.OpenSimpleConfigEditor("online.version", sourceConfigImpl.online.version);
+						sourceConfigImpl.online.version = menuUtils.OpenSimpleConfigEditor("online.version", sourceConfigImpl.online.version);
 						break;
 					case 3:
 						sourceConfigImpl.online.makeFile = !sourceConfigImpl.online.makeFile;
@@ -186,13 +188,13 @@ namespace SoD_DiffExplorer.addressablecompare
 						sourceConfigImpl.online.makeLastCreated = !sourceConfigImpl.online.makeLastCreated;
 						break;
 					case 5:
-						sourceConfigImpl.local.platform = MenuUtils.OpenSimpleConfigEditor("local.platform", sourceConfigImpl.local.platform);
+						sourceConfigImpl.local.platform = menuUtils.OpenSimpleConfigEditor("local.platform", sourceConfigImpl.local.platform);
 						break;
 					case 6:
-						sourceConfigImpl.local.version = MenuUtils.OpenSimpleConfigEditor("local.version", sourceConfigImpl.local.version);
+						sourceConfigImpl.local.version = menuUtils.OpenSimpleConfigEditor("local.version", sourceConfigImpl.local.version);
 						break;
 					case 7:
-						sourceConfigImpl.local.date = MenuUtils.OpenSimpleConfigEditor("local.date", sourceConfigImpl.local.date);
+						sourceConfigImpl.local.date = menuUtils.OpenSimpleConfigEditor("local.date", sourceConfigImpl.local.date);
 						break;
 					case 8:
 						return;
@@ -227,11 +229,11 @@ namespace SoD_DiffExplorer.addressablecompare
 					"toggle appendDate (" + config.localSourcesConfig.appendDate + ")\n"
 				};
 
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
-						config.localSourcesConfig.lastcreated = MenuUtils.OpenFileSelectionMenu(config.localSourcesConfig.baseDirectory, config.localSourcesConfig.lastcreated, 3);
+						config.localSourcesConfig.lastcreated = menuUtils.OpenFileSelectionMenu(config.localSourcesConfig.baseDirectory, config.localSourcesConfig.lastcreated, 3);
 						break;
 					case 1:
 						config.localSourcesConfig.appendPlatform = !config.localSourcesConfig.appendPlatform;
@@ -260,7 +262,7 @@ namespace SoD_DiffExplorer.addressablecompare
 					"toggle appendDate (" + config.resultConfig.appendDate + ")\n"
 				};
 
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				switch(selection) {
 					case 0:

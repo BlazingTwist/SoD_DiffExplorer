@@ -11,9 +11,11 @@ namespace SoD_DiffExplorer.fireballcompare
 	class FireballComparer
 	{
 		private FCConfig config;
+		private MenuUtils menuUtils;
 
-		public FireballComparer(FCConfig config) {
+		public FireballComparer(FCConfig config, MenuUtils menuUtils) {
 			this.config = config;
+			this.menuUtils = menuUtils;
 		}
 
 		private void RunFireballComparison() {
@@ -57,7 +59,7 @@ namespace SoD_DiffExplorer.fireballcompare
 
 			int selection = 0;
 			while(true) {
-				selection = MenuUtils.OpenSelectionMenu(options, backtext, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backtext, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
@@ -81,7 +83,7 @@ namespace SoD_DiffExplorer.fireballcompare
 			int selection = 0;
 			while(true) {
 				string[] options = GetConfigOptions();
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
@@ -169,17 +171,17 @@ namespace SoD_DiffExplorer.fireballcompare
 			int selection = 0;
 			while(true) {
 				string[] options = GetSourceConfigOptions(sourceConfig);
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
-						sourceConfig.sourceType = Enum.Parse<FCSourceType>(MenuUtils.OpenEnumConfigEditor("sourceType", sourceConfig.sourceType.ToString(), Enum.GetNames(typeof(FCSourceType)), spacing));
+						sourceConfig.sourceType = Enum.Parse<FCSourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfig.sourceType.ToString(), Enum.GetNames(typeof(FCSourceType)), spacing));
 						break;
 					case 1:
-						sourceConfig.online.platform = MenuUtils.OpenSimpleConfigEditor("online.platform", sourceConfig.online.platform);
+						sourceConfig.online.platform = menuUtils.OpenSimpleConfigEditor("online.platform", sourceConfig.online.platform);
 						break;
 					case 2:
-						sourceConfig.online.version = MenuUtils.OpenSimpleConfigEditor("online.version", sourceConfig.online.version);
+						sourceConfig.online.version = menuUtils.OpenSimpleConfigEditor("online.version", sourceConfig.online.version);
 						break;
 					case 3:
 						sourceConfig.online.makeFile = !sourceConfig.online.makeFile;
@@ -188,13 +190,13 @@ namespace SoD_DiffExplorer.fireballcompare
 						sourceConfig.online.makeLastCreated = !sourceConfig.online.makeLastCreated;
 						break;
 					case 5:
-						sourceConfig.local.platform = MenuUtils.OpenSimpleConfigEditor("local.platform", sourceConfig.local.platform);
+						sourceConfig.local.platform = menuUtils.OpenSimpleConfigEditor("local.platform", sourceConfig.local.platform);
 						break;
 					case 6:
-						sourceConfig.local.version = MenuUtils.OpenSimpleConfigEditor("local.version", sourceConfig.local.version);
+						sourceConfig.local.version = menuUtils.OpenSimpleConfigEditor("local.version", sourceConfig.local.version);
 						break;
 					case 7:
-						sourceConfig.local.date = MenuUtils.OpenSimpleConfigEditor("local.date", sourceConfig.local.date);
+						sourceConfig.local.date = menuUtils.OpenSimpleConfigEditor("local.date", sourceConfig.local.date);
 						break;
 					case 8:
 						return;
@@ -229,11 +231,11 @@ namespace SoD_DiffExplorer.fireballcompare
 					"toggle appendDate (" + config.localSourcesConfig.appendDate + ")\n"
 				};
 
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
-						config.localSourcesConfig.lastcreated = MenuUtils.OpenFileSelectionMenu(config.localSourcesConfig.baseDirectory, config.localSourcesConfig.lastcreated, 3);
+						config.localSourcesConfig.lastcreated = menuUtils.OpenFileSelectionMenu(config.localSourcesConfig.baseDirectory, config.localSourcesConfig.lastcreated, 3);
 						break;
 					case 1:
 						config.localSourcesConfig.appendPlatform = !config.localSourcesConfig.appendPlatform;
@@ -262,7 +264,7 @@ namespace SoD_DiffExplorer.fireballcompare
 					"toggle appendDate (" + config.resultConfig.appendDate + ")\n"
 				};
 
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
@@ -288,7 +290,7 @@ namespace SoD_DiffExplorer.fireballcompare
 				string[] options = orderedStatList.Select(kvp => "toggle " + kvp.Key + " (" + kvp.Value + ")").ToArray();
 				options[options.Length - 1] += "\n";
 
-				selection = MenuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
 
 				if(selection >= options.Length) {
 					break;
