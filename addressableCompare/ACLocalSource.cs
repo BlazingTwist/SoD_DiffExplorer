@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoD_DiffExplorer.addressableCompare
+namespace SoD_DiffExplorer.addressablecompare
 {
 	class ACLocalSource
 	{

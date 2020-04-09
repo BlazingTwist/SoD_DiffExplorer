@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SoD_DiffExplorer.filedownloader;
-using SoD_DiffExplorer.addressableCompare;
+﻿using SoD_DiffExplorer.filedownloader;
+using SoD_DiffExplorer.addressablecompare;
+using SoD_DiffExplorer.fireballcompare;
 
 namespace SoD_DiffExplorer
 {
 	class ConfigHolder
 	{
-		public FileDownloaderConfig fileDownloaderConfig = null;
+		public FDConfig fileDownloaderConfig = null;
 		public ACConfig addressableCompareConfig = null;
+		public FCConfig fireballCompareConfig = null;
 	}
 }

@@ -1,11 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace SoD_DiffExplorer.csutils
 {
 	class YamlUtils
 	{
+		public static List<string> GetAllConfigLines() {
+			List<string> lines = new List<string>();
+			using(StreamReader reader = new StreamReader("config.yaml")) {
+				string line;
+				while((line = reader.ReadLine()) != null) {
+					lines.Add(line);
+				}
+			}
+			return lines;
+		}
+
 		public static bool ChangeSimpleValues(ref List<string> lines, BetterDict<string, string> changeDict) {
 			foreach(KeyValuePair<string, string> pair in changeDict) {
 				if(!ChangeSimpleValue(ref lines, pair.Key, pair.Value)) {

@@ -5,51 +5,46 @@ using HtmlAgilityPack;
 using SoD_DiffExplorer.csutils;
 using System.Net;
 
-namespace SoD_DiffExplorer.addressableCompare
+namespace SoD_DiffExplorer.addressablecompare
 {
 	class ACConfig
 	{
-		public ACSourceType sourceTypeFrom;
-		public ACSourceType sourceTypeTo;
-		public ACSourceConfigImpl sourceFrom = null;
-		public ACSourceConfigImpl sourceTo = null;
+		public ACSourceConfig sourceFrom = null;
+		public ACSourceConfig sourceTo = null;
 		public ACOnlineSourceConfig onlineSourcesConfig = null;
 		public ACLocalSourceConfig localSourcesConfig = null;
 		public ACResultConfig resultConfig = null;
 
 		public void SaveConfig() {
-			List<string> lines = new List<string>();
-			using(StreamReader reader = new StreamReader("config.yaml")) {
-				string line;
-				while((line = reader.ReadLine()) != null) {
-					lines.Add(line);
-				}
-			}
-
 			BetterDict<string, string> simpleChangeDict = new BetterDict<string, string> {
-				{"addressableCompareConfig.sourceTypeFrom", sourceTypeFrom.ToString()},
-				{"addressableCompareConfig.sourceTypeTo", sourceTypeTo.ToString()},
+				{"addressableCompareConfig.sourceFrom.sourceType", sourceFrom.sourceType.ToString()},
 				{"addressableCompareConfig.sourceFrom.online.platform", sourceFrom.online.platform},
 				{"addressableCompareConfig.sourceFrom.online.version", sourceFrom.online.version},
 				{"addressableCompareConfig.sourceFrom.online.makeFile", sourceFrom.online.makeFile.ToString()},
 				{"addressableCompareConfig.sourceFrom.online.makeLastCreated", sourceFrom.online.makeLastCreated.ToString()},
+				{"addressableCompareConfig.sourceFrom.local.platform", sourceFrom.local.platform},
+				{"addressableCompareConfig.sourceFrom.local.version", sourceFrom.local.version},
+				{"addressableCompareConfig.sourceFrom.local.date", sourceFrom.local.date},
+
+				{"addressableCompareConfig.sourceTo.sourceType", sourceTo.sourceType.ToString()},
 				{"addressableCompareConfig.sourceTo.online.platform", sourceTo.online.platform},
 				{"addressableCompareConfig.sourceTo.online.version", sourceTo.online.version},
 				{"addressableCompareConfig.sourceTo.online.makeFile", sourceTo.online.makeFile.ToString()},
 				{"addressableCompareConfig.sourceTo.online.makeLastCreated", sourceTo.online.makeLastCreated.ToString()},
-				{"addressableCompareConfig.sourceFrom.local.platform", sourceFrom.local.platform},
-				{"addressableCompareConfig.sourceFrom.local.version", sourceFrom.local.version},
-				{"addressableCompareConfig.sourceFrom.local.date", sourceFrom.local.date},
 				{"addressableCompareConfig.sourceTo.local.platform", sourceTo.local.platform},
 				{"addressableCompareConfig.sourceTo.local.version", sourceTo.local.version},
 				{"addressableCompareConfig.sourceTo.local.date", sourceTo.local.date},
+
+				{"addressableCompareConfig.localSourcesConfig.lastcreated", localSourcesConfig.lastcreated},
 				{"addressableCompareConfig.localSourcesConfig.appendPlatform", localSourcesConfig.appendPlatform.ToString()},
 				{"addressableCompareConfig.localSourcesConfig.appendVersion", localSourcesConfig.appendVersion.ToString()},
 				{"addressableCompareConfig.localSourcesConfig.appendDate", localSourcesConfig.appendDate.ToString()},
+
 				{"addressableCompareConfig.resultConfig.makeFile", resultConfig.makeFile.ToString()},
 				{"addressableCompareConfig.resultConfig.appendDate", resultConfig.appendDate.ToString()}
 			};
 
+			List<string> lines = YamlUtils.GetAllConfigLines();
 			if(YamlUtils.ChangeSimpleValues(ref lines, simpleChangeDict)) {
 				Console.WriteLine("config saving was successful");
 				using(StreamWriter writer = new StreamWriter("config.yaml", false)) {
@@ -64,99 +59,52 @@ namespace SoD_DiffExplorer.addressableCompare
 		}
 
 		public void SaveLastCreatedSource(string value) {
-			List<string> lines = new List<string>();
-			using(StreamReader reader = new StreamReader("config.yaml")) {
-				string line;
-				while((line = reader.ReadLine()) != null) {
-					lines.Add(line);
-				}
-			}
+			localSourcesConfig.lastcreated = value;
+			string yamlPath = "addressableCompareConfig.localSourcesConfig.lastcreated";
 
-			BetterDict<string, string> simpleChangeDict = new BetterDict<string, string> {
-				{"addressableCompareConfig.sourceFrom.lastcreated", value},
-				{"addressableCompareConfig.sourceTo.lastcreated", value}
-			};
-
-			if(YamlUtils.ChangeSimpleValues(ref lines, simpleChangeDict)) {
-				Console.WriteLine("config saving was successful");
+			List<string> lines = YamlUtils.GetAllConfigLines();
+			if(YamlUtils.ChangeSimpleValue(ref lines, yamlPath, value)) {
+				Console.WriteLine("lastCreated saving was successful");
 				using(StreamWriter writer = new StreamWriter("config.yaml", false)) {
 					lines.ForEach(line => writer.WriteLine(line));
 				}
 			} else {
-				Console.WriteLine("config saving failed!");
+				Console.WriteLine("lastCreated saving failed!");
 			}
 		}
 
-		public List<string> GetSourceEntryList(ACSourceType sourceType, ACSourceConfigImpl sourceConfig) {
-			if(sourceType == ACSourceType.online) {
-				return GetSourceEntryListFromOnline(GetAssetInfoURL(sourceConfig));
-			}else if(sourceType == ACSourceType.local) {
-				return GetSourceEntryListFromFile(GetAssetInfoPath(sourceConfig));
-			}else if(sourceType == ACSourceType.lastcreated) {
-				return GetSourceEntryListFromFile(sourceConfig.lastcreated);
-			}
-			return null;
-		}
+		public void ManageMakeFile(List<string> lines, ACSourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == ACSourceType.online && sourceConfig.online.makeFile) {
+				Console.WriteLine("parsing assetInfo to file from onlineSource, because makeFile is true");
+				string targetMakeFile = GetLocalSourceFile(sourceConfig);
+				string targetMakeFileDirectory = Path.GetDirectoryName(targetMakeFile);
 
-		public string GetLocalSourceDirectoryForMakeFile(ACSourceConfigImpl sourceConfig) {
-			List<string> splittedPath = new List<string>();
-			splittedPath.Add(localSourcesConfig.baseDirectory);
-
-			if(localSourcesConfig.appendPlatform) {
-				splittedPath.Add(sourceConfig.online.platform);
-			}
-
-			if(localSourcesConfig.appendVersion) {
-				splittedPath.Add(sourceConfig.online.version);
-			}
-
-			return Path.Combine(splittedPath.ToArray());
-		}
-
-		public string GetResultDirectory() {
-			return resultConfig.baseDirectory;
-		}
-
-		public string GetResultFile() {
-			string fileName = localSourcesConfig.assetInfoFileName;
-			if(resultConfig.appendDate) {
-				fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
-			}
-			fileName += ("." + localSourcesConfig.assetInfoFileExtension);
-			return Path.Combine(GetResultDirectory(), fileName);
-		}
-
-		public void ManageMakeFile(List<string> lines, ACSourceType sourceType, ACSourceConfigImpl sourceConfig) {
-			if(sourceType == ACSourceType.online && sourceConfig.online.makeFile) {
-				Console.WriteLine("parsing assetInfo to file from addressablesFromList, because makeFile is true");
-				string targetLocation = GetLocalSourceDirectoryForMakeFile(sourceConfig);
-				if(!Directory.Exists(targetLocation)) {
-					Console.WriteLine("had to create directory: " + targetLocation);
-					Directory.CreateDirectory(targetLocation);
+				if(!Directory.Exists(targetMakeFileDirectory)) {
+					Console.WriteLine("had to create directory: " + targetMakeFileDirectory);
+					Directory.CreateDirectory(targetMakeFileDirectory);
 				}
 
-				string targetFile = Path.Combine(targetLocation, GetLocalSourceFileName(DateTime.Now.ToString("yyyy.MM.dd")));
-				using(StreamWriter writer = new StreamWriter(targetFile, false)) {
-					Console.WriteLine("Writing content to file: " + targetFile);
+				using(StreamWriter writer = new StreamWriter(targetMakeFile, false)) {
+					Console.WriteLine("Writing content to file: " + targetMakeFile);
 					lines.ForEach(line => writer.WriteLine(line));
 				}
 
 				if(sourceConfig.online.makeLastCreated) {
-					Console.WriteLine("setting lastCreated to: " + targetFile);
-					sourceFrom.lastcreated = targetFile;
-					sourceTo.lastcreated = targetFile;
-					SaveLastCreatedSource(targetFile);
+					Console.WriteLine("setting lastCreated to: " + targetMakeFile);
+					SaveLastCreatedSource(targetMakeFile);
 				}
 			}
 		}
 
-		private string GetLocalSourceFileName(string date) {
-			string result = localSourcesConfig.assetInfoFileName;
-			if(localSourcesConfig.appendDate) {
-				result += ("_" + date);
+		public List<string> GetSourceEntryList(ACSourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == ACSourceType.online) {
+				return GetSourceEntryListFromOnline(GetAssetInfoURL(sourceConfig));
+			} else if(sourceConfig.sourceType == ACSourceType.local) {
+				return GetSourceEntryListFromFile(GetLocalSourceFile(sourceConfig));
+			} else if(sourceConfig.sourceType == ACSourceType.lastcreated) {
+				return GetSourceEntryListFromFile(localSourcesConfig.lastcreated);
 			}
-			result += ("." + localSourcesConfig.assetInfoFileExtension);
-			return result;
+			return null;
 		}
 
 		private List<string> GetSourceEntryListFromOnline(string assetInfoUrl) {
@@ -188,21 +136,48 @@ namespace SoD_DiffExplorer.addressableCompare
 			return result;
 		}
 
-		private string GetAssetInfoURL(ACSourceConfigImpl sourceConfig) {
+		private string GetAssetInfoURL(ACSourceConfig sourceConfig) {
 			return onlineSourcesConfig.baseURL + "/" + sourceConfig.online.platform + "/" + sourceConfig.online.version + "/" + onlineSourcesConfig.baseSuffix + "/" + onlineSourcesConfig.assetInfo;
 		}
 
-		private string GetAssetInfoPath(ACSourceConfigImpl sourceConfig) {
-			List<string> pathList = new List<string>();
-			pathList.Add(localSourcesConfig.baseDirectory);
-			if(localSourcesConfig.appendPlatform) {
-				pathList.Add(sourceConfig.local.platform);
+		private string GetLocalSourceFile(ACSourceConfig sourceConfig) {
+			string fileName = localSourcesConfig.assetInfoFileName;
+			if(sourceConfig.sourceType == ACSourceType.online) {
+				if(localSourcesConfig.appendPlatform) {
+					fileName += ("_" + sourceConfig.online.platform);
+				}
+				if(localSourcesConfig.appendVersion) {
+					fileName += ("_" + sourceConfig.online.version);
+				}
+				if(localSourcesConfig.appendDate) {
+					fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
+				}
+			} else if(sourceConfig.sourceType == ACSourceType.local) {
+				if(localSourcesConfig.appendPlatform) {
+					fileName += ("_" + sourceConfig.local.platform);
+				}
+				if(localSourcesConfig.appendPlatform) {
+					fileName += ("_" + sourceConfig.local.platform);
+				}
+				if(localSourcesConfig.appendDate) {
+					fileName += ("_" + sourceConfig.local.date);
+				}
+			} else {
+				//undefined behaviour
+				return null;
 			}
-			if(localSourcesConfig.appendVersion) {
-				pathList.Add(sourceConfig.local.version);
+			fileName += ("." + localSourcesConfig.assetInfoFileExtension);
+
+			return Path.Combine(localSourcesConfig.baseDirectory, fileName);
+		}
+
+		public string GetResultFile() {
+			string fileName = localSourcesConfig.assetInfoFileName;
+			if(resultConfig.appendDate) {
+				fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
 			}
-			pathList.Add(GetLocalSourceFileName(sourceConfig.local.date));
-			return Path.Combine(pathList.ToArray());
+			fileName += ("." + localSourcesConfig.assetInfoFileExtension);
+			return Path.Combine(resultConfig.baseDirectory, fileName);
 		}
 	}
 }

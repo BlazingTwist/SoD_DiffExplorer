@@ -9,9 +9,9 @@ namespace SoD_DiffExplorer.filedownloader
 {
 	class FileDownloader
 	{
-		private FileDownloaderConfig config;
+		private FDConfig config;
 
-		public FileDownloader(FileDownloaderConfig config) {
+		public FileDownloader(FDConfig config) {
 			this.config = config;
 		}
 
@@ -104,7 +104,7 @@ namespace SoD_DiffExplorer.filedownloader
 					Console.WriteLine("starting to download file: " + fileName + " from address: " + fileAddress);
 					string[] fileNameSplit = fileName.Split("/");
 					client.DownloadFile(fileAddress, Path.Combine(targetDirectory, fileNameSplit[fileNameSplit.Length - 1]));
-				} catch(WebException e) {
+				} catch(WebException) {
 					Console.WriteLine("failed to download: " + fileAddress);
 					if(config.pauseDownloadOnError) {
 						Console.WriteLine("waiting for user acknowledgement. Press any key to continue...");

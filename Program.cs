@@ -2,7 +2,8 @@
 using YamlDotNet.Serialization;
 using System.IO;
 using SoD_DiffExplorer.filedownloader;
-using SoD_DiffExplorer.addressableCompare;
+using SoD_DiffExplorer.addressablecompare;
+using SoD_DiffExplorer.fireballcompare;
 using SoD_DiffExplorer.menuutils;
 
 namespace SoD_DiffExplorer
@@ -12,6 +13,7 @@ namespace SoD_DiffExplorer
 		public static ConfigHolder config;
 		public static FileDownloader fileDownloader;
 		public static AddressableComparer addressableComparer;
+		public static FireballComparer fireballComparer;
 
 		static void Main(string[] args) {
 			try {
@@ -28,6 +30,7 @@ namespace SoD_DiffExplorer
 
 			fileDownloader = new FileDownloader(config.fileDownloaderConfig);
 			addressableComparer = new AddressableComparer(config.addressableCompareConfig);
+			fireballComparer = new FireballComparer(config.fireballCompareConfig);
 
 			try{
 				OpenMainMenu();
@@ -44,7 +47,7 @@ namespace SoD_DiffExplorer
 			string[] options = new string[]{
 				"Open FileDownloader",
 				"Open AddressableComparer",
-				"Open FireballStatComparer (not yet implemented)",
+				"Open FireballStatComparer",
 				"Open SquadTacticsStatComparer (not yet implemented)",
 				"Open FlightStatComparer (not yet implemented)"
 			};
@@ -63,7 +66,7 @@ namespace SoD_DiffExplorer
 						addressableComparer.OpenAddressableComparerMenu();
 						break;
 					case 2:
-						//TODO
+						fireballComparer.OpenFireballComparerMenu();
 						break;
 					case 3:
 						//TODO

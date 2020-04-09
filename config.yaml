@@ -83,13 +83,10 @@ fileDownloaderConfig:
 
 
 addressableCompareConfig:
-  #can be "online", "local" or "lastcreated"
-  sourceTypeFrom: lastcreated
-  sourceTypeTo: online
-
-
   #defines the config values depending on sourceType
   sourceFrom:
+    #can be "online", "local" or "lastcreated"
+    sourceType: lastcreated
     online:
       platform: Steam
       version: 3.8.0
@@ -103,10 +100,9 @@ addressableCompareConfig:
       platform: Steam
       version: 3.8.0
       date: 2020.04.07
-    # you can edit this manually, but I'd recommend utilising makeLastCreated for automatic generation
-    lastcreated: addressablesHistory\sources\assetInfo_2020.04.07.txt
 
   sourceTo:
+    sourceType: online
     online:
       platform: Steam
       version: 3.8.0
@@ -116,7 +112,6 @@ addressableCompareConfig:
       platform: Steam
       version: 3.8.0
       date: 2020.04.07
-    lastcreated: addressablesHistory\sources\assetInfo_2020.04.07.txt
 
 
   #used when your 'sourceType' is 'online'
@@ -131,7 +126,10 @@ addressableCompareConfig:
     baseDirectory: addressablesHistory\sources
     assetInfoFileName: assetInfo
     assetInfoFileExtension: txt
-    #same behaviour as fileDownloaderConfig.downloadURL
+    # you can edit this manually, but I'd recommend utilising makeLastCreated for automatic generation or selecting a file in the editor
+    lastcreated: addressablesHistory\sources\assetInfo_2020.04.07.txt
+    #as opposed to fileDownloaderConfig.downloadURL this doesn't create subfolders, but appends it to the filename
+    #for example: assetInfo_Steam_3.6.0_2020.04.07.txt
     appendPlatform: false
     appendVersion: false
     appendDate: true
@@ -141,3 +139,78 @@ addressableCompareConfig:
     makeFile: true
     baseDirectory: addressablesHistory\results
     appendDate: true
+
+
+fireballCompareConfig:
+  sourceFrom:
+    sourceType: lastcreated
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+  
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseURL: http://media.schoolofdragons.com/DWADragonsUnity
+    baseSuffix: High
+    dataContainer: data/dragonsres
+
+  localSourcesConfig:
+    baseDirectory: fireballHistory\sources
+    targetFileName: fireball
+    targetFileExtension: txt
+    lastcreated: fireballHistory\sources\fireball_2020.04.09.txt
+    #same behaviour as addressableComparer
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+  resultConfig:
+    makeFile: true
+    baseDirectory: fireballHistory\results
+    appendDate: true
+
+  #I strongly dissuade you from touching this - in theory you could modify this to find different types of data, but that requires exact knowledge of the monobehaviour-structure
+  targetStatPath:
+  - _Weapons:Weapon
+  - Array:Array
+
+  #Basically just an internal value, this defines that the value of '_Name' can be used as a unique key (and makes '_Name' the first result-Column)
+  mapStatsBy: _Name
+
+  #set a value to false to ignore it
+  statList:
+    _Name: true
+    _MinSpeed: true
+    _MaxTimeToTarget: true
+    _Damage: true
+    _CriticalDamageMultiplier: true
+    _CriticalDamageChance: true
+    _Energy: true
+    _TouchRadius: true
+    _Lifetime: true
+    _TotalShots: true
+    _Cooldown: true
+    _Range: true
+    _Homing: true
+    _SlowEffect: true
+    _AmmoType: true
+    _RechargeRange:Min: true
+    _RechargeRange:Max: true
+    _AvailableShots: true

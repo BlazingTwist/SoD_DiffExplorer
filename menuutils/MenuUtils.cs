@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Linq;
 using SoD_DiffExplorer.csutils;
 
@@ -22,6 +23,27 @@ namespace SoD_DiffExplorer.menuutils
 			{ConsoleKey.Escape, MenuControl.Back}
 		};
 
+		public static string OpenFileSelectionMenu(string baseDirectory, string previousValue, int spacing) {
+			string[] options;
+			string header;
+			string backText;
+			if(Directory.Exists(baseDirectory)){
+				options = Directory.GetFiles(baseDirectory);
+				header = "Found " + options.Length + " available files:";
+				backText = "\ncancel (" + previousValue + ")";
+			} else {
+				options = new string[0];
+				header = "BaseDirectory (" + baseDirectory + ") does not exist!";
+				backText = "go back";
+			}
+			int selection = MenuUtils.OpenSelectionMenu(options, backText, header, FindCurrentEnumSelection(previousValue, options), spacing);
+
+			if(selection >= options.Length) {
+				return previousValue;
+			}
+			return options[selection];
+		}
+
 		public static string OpenEnumConfigEditor(string valueName, string previousValue, string[] values, int spacing) {
 			StringBuilder header = new StringBuilder();
 			header.Append("EnumSelection Controls:\n");
@@ -29,12 +51,21 @@ namespace SoD_DiffExplorer.menuutils
 			header.Append("\tEnter to select\n\n");
 			header.Append("Currently modifying " + valueName + " (" + previousValue + ")");
 
-			int selection = MenuUtils.OpenSelectionMenu(values, null, header.ToString(), 0, spacing);
+			int selection = MenuUtils.OpenSelectionMenu(values, null, header.ToString(), FindCurrentEnumSelection(previousValue, values), spacing);
 
 			if(selection >= values.Length) {
 				return previousValue;
 			}
 			return values[selection];
+		}
+
+		private static int FindCurrentEnumSelection(string selected, string[] available) {
+			for(int i = 0; i < available.Length; i++) {
+				if(available[i] == selected) {
+					return i;
+				}
+			}
+			return 0;
 		}
 
 		public static string OpenSimpleConfigEditor(string valueName, string previousValue) {
