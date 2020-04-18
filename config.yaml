@@ -138,8 +138,8 @@ addressableCompareConfig:
   localSourcesConfig:
     #basedirectory for local files created by setting 'makeFile' to true in online sources
     baseDirectory: addressablesHistory\sources
-    assetInfoFileName: assetInfo
-    assetInfoFileExtension: txt
+    targetFileName: assetInfo
+    targetFileExtension: txt
     # you can edit this manually, but I'd recommend utilising makeLastCreated for automatic generation or selecting a file in the editor
     lastcreated: addressablesHistory\sources\assetInfo_2020.04.07.txt
     #as opposed to fileDownloaderConfig.downloadURL this doesn't create subfolders, but appends it to the filename
@@ -439,3 +439,7 @@ flightStatsCompareConfig:
     _GlidingMaxDownPitch: true
     _MaxRoll: true
     _FlyingPositionBoostFactor: true
+
+
+#======================================================================================
+timedMissionCompareConfig:

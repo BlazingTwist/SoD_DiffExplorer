@@ -1,4 +1,5 @@
-﻿using SoD_DiffExplorer.menuutils;
+﻿using SoD_DiffExplorer.commonconfig;
+using SoD_DiffExplorer.menuutils;
 using SoD_DiffExplorer.csutils;
 using System;
 using System.Text;
@@ -123,18 +124,18 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			};
 		}
 
-		private string GetSourceInfoString(STCSourceConfig sourceConfig) {
+		private string GetSourceInfoString(SourceConfig sourceConfig) {
 			List<string> values = new List<string>();
-			if(sourceConfig.sourceType == STCSourceType.online) {
-				STCOnlineSource onlineSource = sourceConfig.online;
+			if(sourceConfig.sourceType == SourceType.online) {
+				OnlineSource onlineSource = sourceConfig.online;
 				values.Add("platform = " + onlineSource.platform);
 				values.Add("version = " + onlineSource.version);
 				values.Add("makeFile = " + onlineSource.makeFile);
 				if(onlineSource.makeFile) {
 					values.Add("makeLastCreated = " + onlineSource.makeLastCreated);
 				}
-			} else if(sourceConfig.sourceType == STCSourceType.local) {
-				STCLocalSource localSource = sourceConfig.local;
+			} else if(sourceConfig.sourceType == SourceType.local) {
+				LocalSource localSource = sourceConfig.local;
 				if(config.localSourcesConfig.appendPlatform) {
 					values.Add("platform = " + localSource.platform);
 				}
@@ -144,19 +145,19 @@ namespace SoD_DiffExplorer.squadtacticscompare
 				if(config.localSourcesConfig.appendDate) {
 					values.Add("date = " + localSource.date);
 				}
-			} else if(sourceConfig.sourceType == STCSourceType.lastcreated) {
+			} else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				values.Add(config.localSourcesConfig.lastcreated);
 			}
 			return string.Join(" | ", values);
 		}
 
 		private string GetLocalSourcesConfigInfoString() {
-			STCLocalSourceConfig lsConfig = config.localSourcesConfig;
+			LocalSourcesConfig lsConfig = config.localSourcesConfig;
 			return "appendPlatform = " + lsConfig.appendPlatform + " | appendVersion = " + lsConfig.appendVersion + " | appendDate = " + lsConfig.appendDate;
 		}
 
 		private string GetResultConfigInfoString() {
-			STCResultConfig rConfig = config.resultConfig;
+			ResultConfig rConfig = config.resultConfig;
 			return "makeFile = " + rConfig.makeFile + " | appendDate = " + rConfig.appendDate;
 		}
 
@@ -164,7 +165,7 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			return config.statList.Where(kvp => kvp.Value).ToArray().Length + " selected";
 		}
 
-		private void OpenSourceConfigMenu(STCSourceConfig sourceConfig, string sourceName) {
+		private void OpenSourceConfigMenu(SourceConfig sourceConfig, string sourceName) {
 			string header = "Currently editing " + sourceName;
 			string backtext = "Back to SquadTactics Config Menu";
 			int spacing = 3;
@@ -176,7 +177,7 @@ namespace SoD_DiffExplorer.squadtacticscompare
 
 				switch(selection) {
 					case 0:
-						sourceConfig.sourceType = Enum.Parse<STCSourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfig.sourceType.ToString(), Enum.GetNames(typeof(STCSourceType)), spacing));
+						sourceConfig.sourceType = Enum.Parse<SourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfig.sourceType.ToString(), Enum.GetNames(typeof(SourceType)), spacing));
 						break;
 					case 1:
 						sourceConfig.online.platform = menuUtils.OpenSimpleConfigEditor("online.platform", sourceConfig.online.platform);
@@ -205,7 +206,7 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			}
 		}
 
-		private string[] GetSourceConfigOptions(STCSourceConfig sourceConfig) {
+		private string[] GetSourceConfigOptions(SourceConfig sourceConfig) {
 			return new string[] {
 				"change sourceType \t\t\t(" + sourceConfig.sourceType + ")\n",
 				"change online.platform \t\t(" + sourceConfig.online.platform + ")",

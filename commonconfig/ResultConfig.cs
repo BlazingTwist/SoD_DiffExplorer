@@ -1,6 +1,6 @@
-﻿namespace SoD_DiffExplorer.flightstatcompare
+﻿namespace SoD_DiffExplorer.commonconfig
 {
-	class FSCResultConfig
+	class ResultConfig
 	{
 		public bool makeFile = false;
 		public string baseDirectory = null;

@@ -1,6 +1,6 @@
-﻿namespace SoD_DiffExplorer.flightstatcompare
+﻿namespace SoD_DiffExplorer.commonconfig
 {
-	class FSCLocalSourceConfig
+	class LocalSourcesConfig
 	{
 		public string baseDirectory = null;
 		public string targetFileName = null;

@@ -1,4 +1,5 @@
-﻿using SoD_DiffExplorer.csutils;
+﻿using SoD_DiffExplorer.commonconfig;
+using SoD_DiffExplorer.csutils;
 using AssetsTools.NET;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ namespace SoD_DiffExplorer.squadtacticscompare
 {
 	class STCConfig
 	{
-		public STCSourceConfig sourceFrom = null;
-		public STCSourceConfig sourceTo = null;
+		public SourceConfig sourceFrom = null;
+		public SourceConfig sourceTo = null;
 		public STCOnlineSourceConfig onlineSourcesConfig = null;
-		public STCLocalSourceConfig localSourcesConfig = null;
-		public STCResultConfig resultConfig = null;
+		public LocalSourcesConfig localSourcesConfig = null;
+		public ResultConfig resultConfig = null;
 		public List<string> targetStatPath = null;
 		public string mapStatsBy = null;
 		public BetterDict<string, bool> statList = null;
@@ -85,8 +86,8 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			}
 		}
 
-		public void ManageMakeFile(Dictionary<string, Dictionary<string, string>> stats, STCSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == STCSourceType.online && sourceConfig.online.makeFile) {
+		public void ManageMakeFile(Dictionary<string, Dictionary<string, string>> stats, SourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == SourceType.online && sourceConfig.online.makeFile) {
 				Console.WriteLine("parsing squadTacticsStatSource to file from onlineSource, because makeFile is true");
 				string targetMakeFile = GetLocalSourceFile(sourceConfig);
 				string targetMakeFileDirectory = Path.GetDirectoryName(targetMakeFile);
@@ -110,16 +111,16 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			}
 		}
 
-		public Dictionary<string, Dictionary<string, string>> GetSquadTacticsStatsFromSource(STCSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == STCSourceType.online) {
+		public Dictionary<string, Dictionary<string, string>> GetSquadTacticsStatsFromSource(SourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == SourceType.online) {
 				using(WebClient client = new WebClient()) {
 					using(MemoryStream memoryStream = new MemoryStream(client.DownloadData(GetSquadTacticsFileURL(sourceConfig)))) {
 						return GetSquadTacticsStatsFromStream(memoryStream);
 					}
 				}
-			} else if(sourceConfig.sourceType == STCSourceType.local) {
+			} else if(sourceConfig.sourceType == SourceType.local) {
 				return GetSquadTacticsStatsFromFile(GetLocalSourceFile(sourceConfig));
-			} else if(sourceConfig.sourceType == STCSourceType.lastcreated) {
+			} else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				return GetSquadTacticsStatsFromFile(localSourcesConfig.lastcreated);
 			}
 			return null;
@@ -210,13 +211,13 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			return result;
 		}
 
-		private string GetSquadTacticsFileURL(STCSourceConfig sourceConfig) {
+		private string GetSquadTacticsFileURL(SourceConfig sourceConfig) {
 			return string.Join('/', onlineSourcesConfig.baseURL, sourceConfig.online.platform, sourceConfig.online.version, onlineSourcesConfig.baseSuffix, onlineSourcesConfig.dataContainer);
 		}
 
-		private string GetLocalSourceFile(STCSourceConfig sourceConfig) {
+		private string GetLocalSourceFile(SourceConfig sourceConfig) {
 			string fileName = localSourcesConfig.targetFileName;
-			if(sourceConfig.sourceType == STCSourceType.online) {
+			if(sourceConfig.sourceType == SourceType.online) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.online.platform);
 				}
@@ -226,7 +227,7 @@ namespace SoD_DiffExplorer.squadtacticscompare
 				if(localSourcesConfig.appendDate) {
 					fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
 				}
-			} else if(sourceConfig.sourceType == STCSourceType.local) {
+			} else if(sourceConfig.sourceType == SourceType.local) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.local.platform);
 				}

@@ -1,4 +1,5 @@
-﻿using SoD_DiffExplorer.csutils;
+﻿using SoD_DiffExplorer.commonconfig;
+using SoD_DiffExplorer.csutils;
 using SoD_DiffExplorer.menuutils;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
@@ -18,11 +19,11 @@ namespace SoD_DiffExplorer.flightstatcompare
 		[YamlIgnore]
 		public ConfigHolder configHolder;
 
-		public FSCSourceConfig sourceFrom = null;
-		public FSCSourceConfig sourceTo = null;
+		public SourceConfig sourceFrom = null;
+		public SourceConfig sourceTo = null;
 		public FSCOnlineSourceConfig onlineSourcesConfig = null;
-		public FSCLocalSourceConfig localSourcesConfig = null;
-		public FSCResultConfig resultConfig = null;
+		public LocalSourcesConfig localSourcesConfig = null;
+		public ResultConfig resultConfig = null;
 		public BetterDict<int, string> flightTypesDict = null;
 		public BetterDict<string, bool> statList = null;
 
@@ -93,8 +94,8 @@ namespace SoD_DiffExplorer.flightstatcompare
 			}
 		}
 
-		public void ManageMakeFile(Dictionary<string, List<Dictionary<string, string>>> stats, FSCSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == FSCSourceType.online && sourceConfig.online.makeFile) {
+		public void ManageMakeFile(Dictionary<string, List<Dictionary<string, string>>> stats, SourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == SourceType.online && sourceConfig.online.makeFile) {
 				Console.WriteLine("parsing flightStatsSource to file from onlineSource, because makeFile is true");
 				string targetMakeFile = GetLocalSourceFile(sourceConfig);
 				string targetMakeFileDirectory = Path.GetDirectoryName(targetMakeFile);
@@ -118,18 +119,18 @@ namespace SoD_DiffExplorer.flightstatcompare
 			}
 		}
 
-		public Dictionary<string, List<Dictionary<string, string>>> GetFlightStatsFromSource(FSCSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == FSCSourceType.online) {
+		public Dictionary<string, List<Dictionary<string, string>>> GetFlightStatsFromSource(SourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == SourceType.online) {
 				return GetFlightStatsFromOnlineAddresses(GatherOnlineSourceAddresses(sourceConfig), sourceConfig);
-			} else if(sourceConfig.sourceType == FSCSourceType.local) {
+			} else if(sourceConfig.sourceType == SourceType.local) {
 				return GetFlightStatsFromFile(GetLocalSourceFile(sourceConfig));
-			} else if(sourceConfig.sourceType == FSCSourceType.lastcreated) {
+			} else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				return GetFlightStatsFromFile(localSourcesConfig.lastcreated);
 			}
 			return null;
 		}
 
-		private Queue<string> GatherOnlineSourceAddresses(FSCSourceConfig sourceConfig) {
+		private Queue<string> GatherOnlineSourceAddresses(SourceConfig sourceConfig) {
 			Console.WriteLine("gathering all dragonfiles from online source...");
 			HtmlDocument document = new HtmlDocument();
 			using(WebClient client = new WebClient()) {
@@ -181,15 +182,15 @@ namespace SoD_DiffExplorer.flightstatcompare
 			}
 		}
 
-		private string GetAssetInfoFileURL(FSCSourceConfig sourceConfig) {
+		private string GetAssetInfoFileURL(SourceConfig sourceConfig) {
 			return string.Join('/', onlineSourcesConfig.baseURL, sourceConfig.online.platform, sourceConfig.online.version, onlineSourcesConfig.baseSuffix, onlineSourcesConfig.assetInfo);
 		}
 
-		private string GetOnlineSourceBaseURL(FSCSourceConfig sourceConfig) {
+		private string GetOnlineSourceBaseURL(SourceConfig sourceConfig) {
 			return string.Join('/', onlineSourcesConfig.baseURL, sourceConfig.online.platform, sourceConfig.online.version, onlineSourcesConfig.baseSuffix) + "/";
 		}
 
-		private Dictionary<string, List<Dictionary<string, string>>> GetFlightStatsFromOnlineAddresses(Queue<string> fileNames, FSCSourceConfig sourceConfig) {
+		private Dictionary<string, List<Dictionary<string, string>>> GetFlightStatsFromOnlineAddresses(Queue<string> fileNames, SourceConfig sourceConfig) {
 			Dictionary<string, List<Dictionary<string, string>>> result = new Dictionary<string, List<Dictionary<string, string>>>();
 
 			List<KeyValuePair<string, string>> flightStatsArrayPath = new List<KeyValuePair<string, string>> {
@@ -308,7 +309,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 			return result;
 		}
 
-		private string GetFileAddress(string fileName, FSCSourceConfig sourceConfig) {
+		private string GetFileAddress(string fileName, SourceConfig sourceConfig) {
 			foreach(KeyValuePair<string, string> pair in configHolder.onlineAddressDict) {
 				if(fileName.StartsWith(pair.Key)) {
 					fileName = pair.Value + fileName.Remove(0, pair.Key.Length);
@@ -326,9 +327,9 @@ namespace SoD_DiffExplorer.flightstatcompare
 			}
 		}
 
-		private string GetLocalSourceFile(FSCSourceConfig sourceConfig) {
+		private string GetLocalSourceFile(SourceConfig sourceConfig) {
 			string fileName = localSourcesConfig.targetFileName;
-			if(sourceConfig.sourceType == FSCSourceType.online) {
+			if(sourceConfig.sourceType == SourceType.online) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.online.platform);
 				}
@@ -338,7 +339,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 				if(localSourcesConfig.appendDate) {
 					fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
 				}
-			} else if(sourceConfig.sourceType == FSCSourceType.local) {
+			} else if(sourceConfig.sourceType == SourceType.local) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.local.platform);
 				}

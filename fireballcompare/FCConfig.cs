@@ -1,4 +1,5 @@
-﻿using SoD_DiffExplorer.csutils;
+﻿using SoD_DiffExplorer.commonconfig;
+using SoD_DiffExplorer.csutils;
 using AssetsTools.NET;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ namespace SoD_DiffExplorer.fireballcompare
 {
 	class FCConfig
 	{
-		public FCSourceConfig sourceFrom = null;
-		public FCSourceConfig sourceTo = null;
+		public SourceConfig sourceFrom = null;
+		public SourceConfig sourceTo = null;
 		public FCOnlineSourceConfig onlineSourcesConfig = null;
-		public FCLocalSourceConfig localSourcesConfig = null;
-		public FCResultConfig resultConfig = null;
+		public LocalSourcesConfig localSourcesConfig = null;
+		public ResultConfig resultConfig = null;
 		public List<string> targetStatPath = null;
 		public string mapStatsBy = null;
 		public BetterDict<string, bool> statList = null;
@@ -85,8 +86,8 @@ namespace SoD_DiffExplorer.fireballcompare
 			}
 		}
 
-		public void ManageMakeFile(Dictionary<string, Dictionary<string, string>> stats, FCSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == FCSourceType.online && sourceConfig.online.makeFile) {
+		public void ManageMakeFile(Dictionary<string, Dictionary<string, string>> stats, SourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == SourceType.online && sourceConfig.online.makeFile) {
 				Console.WriteLine("parsing fireballStatSource to file from onlineSource, because makeFile is true");
 				string targetMakeFile = GetLocalSourceFile(sourceConfig);
 				string targetMakeFileDirectory = Path.GetDirectoryName(targetMakeFile);
@@ -110,21 +111,21 @@ namespace SoD_DiffExplorer.fireballcompare
 			}
 		}
 
-		public Dictionary<string, Dictionary<string, string>> GetFireballStatsFromSource(FCSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == FCSourceType.online) {
+		public Dictionary<string, Dictionary<string, string>> GetFireballStatsFromSource(SourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == SourceType.online) {
 				using(WebClient client = new WebClient()) {
 					using(MemoryStream memoryStream = new MemoryStream(client.DownloadData(GetFireballFileURL(sourceConfig)))) {
 						return GetFireballStatsFromStream(memoryStream);
 					}
 				}
-			}else if(sourceConfig.sourceType == FCSourceType.local) {
+			}else if(sourceConfig.sourceType == SourceType.local) {
 				string sourceFile = GetLocalSourceFile(sourceConfig);
 				using(StreamReader reader = new StreamReader(sourceFile)) {
 					IDeserializer deserializer = new DeserializerBuilder().Build();
 					Console.WriteLine("parsing stats from local source: " + sourceFile);
 					return deserializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(reader);
 				}
-			}else if(sourceConfig.sourceType == FCSourceType.lastcreated) {
+			}else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				using(StreamReader reader = new StreamReader(localSourcesConfig.lastcreated)) {
 					IDeserializer deserializer = new DeserializerBuilder().Build();
 					Console.WriteLine("parsing stats from lastcreated source: " + localSourcesConfig.lastcreated);
@@ -221,13 +222,13 @@ namespace SoD_DiffExplorer.fireballcompare
 			return result;
 		}
 
-		private string GetFireballFileURL(FCSourceConfig sourceConfig) {
+		private string GetFireballFileURL(SourceConfig sourceConfig) {
 			return string.Join('/', onlineSourcesConfig.baseURL, sourceConfig.online.platform, sourceConfig.online.version, onlineSourcesConfig.baseSuffix, onlineSourcesConfig.dataContainer);
 		}
 
-		private string GetLocalSourceFile(FCSourceConfig sourceConfig) {
+		private string GetLocalSourceFile(SourceConfig sourceConfig) {
 			string fileName = localSourcesConfig.targetFileName;
-			if(sourceConfig.sourceType == FCSourceType.online) {
+			if(sourceConfig.sourceType == SourceType.online) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.online.platform);
 				}
@@ -237,7 +238,7 @@ namespace SoD_DiffExplorer.fireballcompare
 				if(localSourcesConfig.appendDate) {
 					fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
 				}
-			} else if(sourceConfig.sourceType == FCSourceType.local) {
+			} else if(sourceConfig.sourceType == SourceType.local) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.local.platform);
 				}

@@ -1,4 +1,5 @@
-﻿using SoD_DiffExplorer.menuutils;
+﻿using SoD_DiffExplorer.commonconfig;
+using SoD_DiffExplorer.menuutils;
 using SoD_DiffExplorer.csutils;
 using System;
 using System.Text;
@@ -123,18 +124,18 @@ namespace SoD_DiffExplorer.flightstatcompare
 			};
 		}
 
-		private string GetSourceInfoString(FSCSourceConfig sourceConfig) {
+		private string GetSourceInfoString(SourceConfig sourceConfig) {
 			List<string> values = new List<string>();
-			if(sourceConfig.sourceType == FSCSourceType.online) {
-				FSCOnlineSource fscosConfig = sourceConfig.online;
+			if(sourceConfig.sourceType == SourceType.online) {
+				OnlineSource fscosConfig = sourceConfig.online;
 				values.Add("platform = " + fscosConfig.platform);
 				values.Add("version = " + fscosConfig.version);
 				values.Add("makeFile = " + fscosConfig.makeFile);
 				if(fscosConfig.makeFile) {
 					values.Add("makeLastCreated = " + fscosConfig.makeLastCreated);
 				}
-			} else if(sourceConfig.sourceType == FSCSourceType.local) {
-				FSCLocalSource fsclsConfig = sourceConfig.local;
+			} else if(sourceConfig.sourceType == SourceType.local) {
+				LocalSource fsclsConfig = sourceConfig.local;
 				if(config.localSourcesConfig.appendPlatform) {
 					values.Add("platform = " + fsclsConfig.platform);
 				}
@@ -144,19 +145,19 @@ namespace SoD_DiffExplorer.flightstatcompare
 				if(config.localSourcesConfig.appendDate) {
 					values.Add("date = " + fsclsConfig.date);
 				}
-			} else if(sourceConfig.sourceType == FSCSourceType.lastcreated) {
+			} else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				values.Add(config.localSourcesConfig.lastcreated);
 			}
 			return string.Join(" | ", values);
 		}
 
 		private string GetLocalSourcesConfigInfoString() {
-			FSCLocalSourceConfig fsclsConfig = config.localSourcesConfig;
+			LocalSourcesConfig fsclsConfig = config.localSourcesConfig;
 			return "appendPlatform = " + fsclsConfig.appendPlatform + " | appendVersion = " + fsclsConfig.appendVersion + " | appendDate = " + fsclsConfig.appendDate;
 		}
 
 		private string GetResultConfigInfoString() {
-			FSCResultConfig fscrConfig = config.resultConfig;
+			ResultConfig fscrConfig = config.resultConfig;
 			return "makeFile = " + fscrConfig.makeFile + " | appendDate = " + fscrConfig.appendDate;
 		}
 
@@ -164,7 +165,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 			return config.statList.Where(kvp => kvp.Value).ToArray().Length + " selected";
 		}
 
-		private void OpenSourceConfigMenu(FSCSourceConfig sourceConfig, string sourceName) {
+		private void OpenSourceConfigMenu(SourceConfig sourceConfig, string sourceName) {
 			string header = "Currently editing " + sourceName;
 			string backText = "Back to FlightStats Config Menu";
 			int spacing = 3;
@@ -176,7 +177,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 
 				switch(selection) {
 					case 0:
-						sourceConfig.sourceType = Enum.Parse<FSCSourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfig.sourceType.ToString(), Enum.GetNames(typeof(FSCSourceType)), spacing));
+						sourceConfig.sourceType = Enum.Parse<SourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfig.sourceType.ToString(), Enum.GetNames(typeof(SourceType)), spacing));
 						break;
 					case 1:
 						sourceConfig.online.platform = menuUtils.OpenSimpleConfigEditor("online.platform", sourceConfig.online.platform);
@@ -205,7 +206,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 			}
 		}
 
-		private string[] GetSourceConfigOptions(FSCSourceConfig sourceConfig) {
+		private string[] GetSourceConfigOptions(SourceConfig sourceConfig) {
 			return new string[] {
 				"change sourceType \t\t\t(" + sourceConfig.sourceType + ")\n",
 				"change online.platform \t\t(" + sourceConfig.online.platform + ")",

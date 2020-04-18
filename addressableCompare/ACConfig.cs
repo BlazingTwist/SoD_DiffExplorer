@@ -2,6 +2,7 @@
 using System.IO;
 using System;
 using HtmlAgilityPack;
+using SoD_DiffExplorer.commonconfig;
 using SoD_DiffExplorer.csutils;
 using System.Net;
 
@@ -9,11 +10,11 @@ namespace SoD_DiffExplorer.addressablecompare
 {
 	class ACConfig
 	{
-		public ACSourceConfig sourceFrom = null;
-		public ACSourceConfig sourceTo = null;
+		public SourceConfig sourceFrom = null;
+		public SourceConfig sourceTo = null;
 		public ACOnlineSourceConfig onlineSourcesConfig = null;
-		public ACLocalSourceConfig localSourcesConfig = null;
-		public ACResultConfig resultConfig = null;
+		public LocalSourcesConfig localSourcesConfig = null;
+		public ResultConfig resultConfig = null;
 
 		public void SaveConfig() {
 			BetterDict<string, string> simpleChangeDict = new BetterDict<string, string> {
@@ -73,8 +74,8 @@ namespace SoD_DiffExplorer.addressablecompare
 			}
 		}
 
-		public void ManageMakeFile(List<string> lines, ACSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == ACSourceType.online && sourceConfig.online.makeFile) {
+		public void ManageMakeFile(List<string> lines, SourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == SourceType.online && sourceConfig.online.makeFile) {
 				Console.WriteLine("parsing assetInfo to file from onlineSource, because makeFile is true");
 				string targetMakeFile = GetLocalSourceFile(sourceConfig);
 				string targetMakeFileDirectory = Path.GetDirectoryName(targetMakeFile);
@@ -96,12 +97,12 @@ namespace SoD_DiffExplorer.addressablecompare
 			}
 		}
 
-		public List<string> GetSourceEntryList(ACSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == ACSourceType.online) {
+		public List<string> GetSourceEntryList(SourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == SourceType.online) {
 				return GetSourceEntryListFromOnline(GetAssetInfoURL(sourceConfig));
-			} else if(sourceConfig.sourceType == ACSourceType.local) {
+			} else if(sourceConfig.sourceType == SourceType.local) {
 				return GetSourceEntryListFromFile(GetLocalSourceFile(sourceConfig));
-			} else if(sourceConfig.sourceType == ACSourceType.lastcreated) {
+			} else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				return GetSourceEntryListFromFile(localSourcesConfig.lastcreated);
 			}
 			return null;
@@ -136,13 +137,13 @@ namespace SoD_DiffExplorer.addressablecompare
 			return result;
 		}
 
-		private string GetAssetInfoURL(ACSourceConfig sourceConfig) {
+		private string GetAssetInfoURL(SourceConfig sourceConfig) {
 			return onlineSourcesConfig.baseURL + "/" + sourceConfig.online.platform + "/" + sourceConfig.online.version + "/" + onlineSourcesConfig.baseSuffix + "/" + onlineSourcesConfig.assetInfo;
 		}
 
-		private string GetLocalSourceFile(ACSourceConfig sourceConfig) {
-			string fileName = localSourcesConfig.assetInfoFileName;
-			if(sourceConfig.sourceType == ACSourceType.online) {
+		private string GetLocalSourceFile(SourceConfig sourceConfig) {
+			string fileName = localSourcesConfig.targetFileName;
+			if(sourceConfig.sourceType == SourceType.online) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.online.platform);
 				}
@@ -152,7 +153,7 @@ namespace SoD_DiffExplorer.addressablecompare
 				if(localSourcesConfig.appendDate) {
 					fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
 				}
-			} else if(sourceConfig.sourceType == ACSourceType.local) {
+			} else if(sourceConfig.sourceType == SourceType.local) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.local.platform);
 				}
@@ -166,17 +167,17 @@ namespace SoD_DiffExplorer.addressablecompare
 				//undefined behaviour
 				return null;
 			}
-			fileName += ("." + localSourcesConfig.assetInfoFileExtension);
+			fileName += ("." + localSourcesConfig.targetFileExtension);
 
 			return Path.Combine(localSourcesConfig.baseDirectory, fileName);
 		}
 
 		public string GetResultFile() {
-			string fileName = localSourcesConfig.assetInfoFileName;
+			string fileName = localSourcesConfig.targetFileName;
 			if(resultConfig.appendDate) {
 				fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
 			}
-			fileName += ("." + localSourcesConfig.assetInfoFileExtension);
+			fileName += ("." + localSourcesConfig.targetFileExtension);
 			return Path.Combine(resultConfig.baseDirectory, fileName);
 		}
 	}

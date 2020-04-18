@@ -1,4 +1,5 @@
 ﻿using System;
+using SoD_DiffExplorer.commonconfig;
 using SoD_DiffExplorer.menuutils;
 using System.Collections.Generic;
 using System.IO;
@@ -124,18 +125,18 @@ namespace SoD_DiffExplorer.addressablecompare
 			};
 		}
 
-		private string GetSourceInfoString(ACSourceConfig sourceConfig) {
+		private string GetSourceInfoString(SourceConfig sourceConfig) {
 			List<string> values = new List<string>();
-			if(sourceConfig.sourceType == ACSourceType.online) {
-				ACOnlineSource acosConfig = sourceConfig.online;
+			if(sourceConfig.sourceType == SourceType.online) {
+				OnlineSource acosConfig = sourceConfig.online;
 				values.Add("platform = " + acosConfig.platform);
 				values.Add("version = " + acosConfig.version);
 				values.Add("makeFile = " + acosConfig.makeFile);
 				if(acosConfig.makeFile) {
 					values.Add("makeLastCreated = " + acosConfig.makeLastCreated);
 				}
-			} else if(sourceConfig.sourceType == ACSourceType.local) {
-				ACLocalSource aclsConfig = sourceConfig.local;
+			} else if(sourceConfig.sourceType == SourceType.local) {
+				LocalSource aclsConfig = sourceConfig.local;
 				if(config.localSourcesConfig.appendPlatform) {
 					values.Add("platform = " + aclsConfig.platform);
 				}
@@ -145,23 +146,23 @@ namespace SoD_DiffExplorer.addressablecompare
 				if(config.localSourcesConfig.appendDate) {
 					values.Add("date = " + aclsConfig.date);
 				}
-			} else if(sourceConfig.sourceType == ACSourceType.lastcreated) {
+			} else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				values.Add(config.localSourcesConfig.lastcreated);
 			}
 			return string.Join(" | ", values);
 		}
 
 		private string GetLocalSourcesConfigInfoString() {
-			ACLocalSourceConfig aclsConfig = config.localSourcesConfig;
+			LocalSourcesConfig aclsConfig = config.localSourcesConfig;
 			return "appendPlatform = " + aclsConfig.appendPlatform + " | appendVersion = " + aclsConfig.appendVersion + " | appendDate = " + aclsConfig.appendDate;
 		}
 
 		private string GetResultConfigInfoString() {
-			ACResultConfig acrConfig = config.resultConfig;
+			ResultConfig acrConfig = config.resultConfig;
 			return "makeFile = " + acrConfig.makeFile + " | appendDate = " + acrConfig.appendDate;
 		}
 
-		private void OpenSourceConfigMenu(ACSourceConfig sourceConfigImpl, string sourceName) {
+		private void OpenSourceConfigMenu(SourceConfig sourceConfigImpl, string sourceName) {
 			string backText = "Back to Addressable Config Menu";
 			string header = "Currently editing " + sourceName;
 			int spacing = 3;
@@ -173,7 +174,7 @@ namespace SoD_DiffExplorer.addressablecompare
 
 				switch(selection) {
 					case 0:
-						sourceConfigImpl.sourceType = Enum.Parse<ACSourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfigImpl.sourceType.ToString(), Enum.GetNames(typeof(ACSourceType)), spacing));
+						sourceConfigImpl.sourceType = Enum.Parse<SourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfigImpl.sourceType.ToString(), Enum.GetNames(typeof(SourceType)), spacing));
 						break;
 					case 1:
 						sourceConfigImpl.online.platform = menuUtils.OpenSimpleConfigEditor("online.platform", sourceConfigImpl.online.platform);
@@ -202,7 +203,7 @@ namespace SoD_DiffExplorer.addressablecompare
 			}
 		}
 
-		private string[] GetSourceConfigImplOptions(ACSourceConfig sourceConfigImpl) {
+		private string[] GetSourceConfigImplOptions(SourceConfig sourceConfigImpl) {
 			return new string[] {
 				"change sourceType (" + sourceConfigImpl.sourceType + ")\n",
 				"change online.platform (" + sourceConfigImpl.online.platform + ")",

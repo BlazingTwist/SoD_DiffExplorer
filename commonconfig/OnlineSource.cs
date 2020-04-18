@@ -1,6 +1,6 @@
-﻿namespace SoD_DiffExplorer.flightstatcompare
+﻿namespace SoD_DiffExplorer.commonconfig
 {
-	class FSCOnlineSource
+	class OnlineSource
 	{
 		public string platform = null;
 		public string version = null;
