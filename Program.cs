@@ -5,6 +5,7 @@ using SoD_DiffExplorer.filedownloader;
 using SoD_DiffExplorer.addressablecompare;
 using SoD_DiffExplorer.fireballcompare;
 using SoD_DiffExplorer.squadtacticscompare;
+using SoD_DiffExplorer.flightstatcompare;
 using SoD_DiffExplorer.menuutils;
 
 namespace SoD_DiffExplorer
@@ -17,6 +18,7 @@ namespace SoD_DiffExplorer
 		public static AddressableComparer addressableComparer;
 		public static FireballComparer fireballComparer;
 		public static SquadTacticsComparer squadTacticsComparer;
+		public static FlightStatsComparer flightStatsComparer;
 
 		static void Main(string[] args) {
 			try {
@@ -37,6 +39,7 @@ namespace SoD_DiffExplorer
 			addressableComparer = new AddressableComparer(config.addressableCompareConfig, menuUtils);
 			fireballComparer = new FireballComparer(config.fireballCompareConfig, menuUtils);
 			squadTacticsComparer = new SquadTacticsComparer(config.squadTacticsCompareConfig, menuUtils);
+			flightStatsComparer = new FlightStatsComparer(config.flightStatsCompareConfig, menuUtils);
 
 			try{
 				OpenMainMenu();
@@ -55,7 +58,7 @@ namespace SoD_DiffExplorer
 				"Open AddressableComparer",
 				"Open FireballStatComparer",
 				"Open SquadTacticsStatComparer",
-				"Open FlightStatComparer (not yet implemented)"
+				"Open FlightStatComparer"
 			};
 			string backText = "quit";
 			int spacing = 0;
@@ -78,7 +81,7 @@ namespace SoD_DiffExplorer
 						squadTacticsComparer.OpenSquadTacticsComparerMenu();
 						break;
 					case 4:
-						//TODO
+						flightStatsComparer.OpenFlightStatsComparerMenu();
 						break;
 					case 5:
 						return;

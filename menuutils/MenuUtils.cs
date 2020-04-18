@@ -15,6 +15,14 @@ namespace SoD_DiffExplorer.menuutils
 			this.menuControlMapping = menuControlMapping;
 		}
 
+		public static string AddTabsUntilTargetWidth(string baseString, int targetTabWidth) {
+			int targetWidth = targetTabWidth * 8;
+			if(baseString.Length >= targetWidth) {
+				return baseString;
+			}
+			return baseString + new String('\t', ((targetWidth - baseString.Length + 7) / 8));
+		}
+
 		public string OpenFileSelectionMenu(string baseDirectory, string previousValue, int spacing) {
 			string[] options;
 			string header;

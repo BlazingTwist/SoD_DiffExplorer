@@ -266,7 +266,7 @@ squadTacticsCompareConfig:
     baseDirectory: squadTacticsHistory\sources
     targetFileName: squadTactics
     targetFileExtension: txt
-    lastcreated: squadTacticsHistory\sources\squadTactics_2020.04.09.txt
+    lastcreated: squadTacticsHistory\sources\squadTactics_2020.04.18.txt
     #same behaviour as addressableComparer
     appendPlatform: false
     appendVersion: false
@@ -380,6 +380,7 @@ flightStatsCompareConfig:
   onlineSourcesConfig:
     baseURL: http://media.schoolofdragons.com/DWADragonsUnity
     baseSuffix: High
+    assetInfo: data/AssetVersionsDO.xml
     dataContainerRegexFilters:
     - "^RS_SHARED/dw(.*?)do$"
     - "!^RS_SHARED/dwdragonsskins(.*?)do$"
@@ -398,15 +399,19 @@ flightStatsCompareConfig:
 
   resultConfig:
     makeFile: true
-    baseDirectory: flightStats\results
+    baseDirectory: flightStatsHistory\results
     appendDate: true
 
   #note: searchpattern can not be modified here,
   #  because the search requires multiple interdependent files and spending hours on a generic config system would not be worth it
 
+  flightTypesDict:
+    0: Flying
+    1: Gliding
+    2: Racing
+
   #set a value to false to ignore it (comparison output only, sources will always save all data)
   statList:
-    _FlightType: true
     _RollTurnRate: true
     _RollDampRate: true
     _YawTurnRate: true

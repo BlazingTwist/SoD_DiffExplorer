@@ -18,6 +18,15 @@ namespace SoD_DiffExplorer.csutils
 			return lines;
 		}
 
+		public static bool ChangeSimpleValues(ref List<string> lines, List<BetterDict<string, string>> changeDicts) {
+			foreach(BetterDict<string, string> changeDict in changeDicts) {
+				if(!ChangeSimpleValues(ref lines, changeDict)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 		public static bool ChangeSimpleValues(ref List<string> lines, BetterDict<string, string> changeDict) {
 			foreach(KeyValuePair<string, string> pair in changeDict) {
 				if(!ChangeSimpleValue(ref lines, pair.Key, pair.Value)) {

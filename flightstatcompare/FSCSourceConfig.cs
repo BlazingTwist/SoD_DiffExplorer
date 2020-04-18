@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SoD_DiffExplorer.flightstatcompare
+﻿namespace SoD_DiffExplorer.flightstatcompare
 {
 	class FSCSourceConfig
 	{
+		public FSCSourceType sourceType;
+		public FSCOnlineSource online = null;
+		public FSCLocalSource local = null;
 	}
 }

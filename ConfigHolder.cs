@@ -21,6 +21,7 @@ namespace SoD_DiffExplorer
 
 		public void Initialize() {
 			fileDownloaderConfig.configHolder = this;
+			flightStatsCompareConfig.configHolder = this;
 		}
 	}
 }
