@@ -29,25 +29,23 @@ menuControlMapping:
   Backspace: Back
   Escape: Back
 
+#you shouldn't have to change this, but just in case you do, you can
+onlineAddressDict:
+  RS_DATA: data
+  RS_SCENE: scene
+  RS_SHARED: shareddata
+  RS_SOUND: sound
+  RS_MOVIES: movies
 
+
+#======================================================================================
 fileDownloaderConfig:
-  #you shouldn't have to change this, but just in case you do, you can
-  onlineAddressDict:
-    RS_DATA: data
-    RS_SCENE: scene
-    RS_SHARED: shareddata
-    RS_SOUND: sound
-    RS_MOVIES: movies
-
-
   #if set to true it will wait for user input when a file throws an exception during downloading
   #if set to false it will ignore all failed downloads apart from logging them
   pauseDownloadOnError: True
 
-
   #if set to false it won't download the files and instead only log which files it would download
   doDownload: False
-
 
   downloadURL:
     baseURL: http://media.schoolofdragons.com/DWADragonsUnity
@@ -55,7 +53,6 @@ fileDownloaderConfig:
     version: 3.6.0
     baseSuffix: High
     assetInfo: data/AssetVersionsDO.xml
-
 
   outputDirectory:
     baseDirectory: fileDownloads
@@ -69,7 +66,6 @@ fileDownloaderConfig:
     appendPlatform: False
     appendVersion: False
     appendDate: False
-
 
   #use this to filter filenames
   #filterexamples:
@@ -87,7 +83,6 @@ fileDownloaderConfig:
   regexFilters:
   - (RS_SOUND/sndwingflapmed7)|(RS_MOVIES/BoD_Intro.mp4)
 
-
   #use this to only download some localizations
   #otherwise downloads ALL localizations available
   #filterexamples:
@@ -100,6 +95,7 @@ fileDownloaderConfig:
   - de-de
 
 
+#======================================================================================
 addressableCompareConfig:
   #defines the config values depending on sourceType
   sourceFrom:
@@ -159,6 +155,7 @@ addressableCompareConfig:
     appendDate: true
 
 
+#======================================================================================
 fireballCompareConfig:
   sourceFrom:
     sourceType: lastcreated
@@ -232,3 +229,208 @@ fireballCompareConfig:
     _RechargeRange:Min: true
     _RechargeRange:Max: true
     _AvailableShots: true
+
+
+#======================================================================================
+squadTacticsCompareConfig:
+  sourceFrom:
+    sourceType: lastcreated
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+  
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseURL: http://media.schoolofdragons.com/DWADragonsUnity
+    baseSuffix: High
+    dataContainer: data/dragonsres
+
+  localSourcesConfig:
+    baseDirectory: squadTacticsHistory\sources
+    targetFileName: squadTactics
+    targetFileExtension: txt
+    lastcreated: squadTacticsHistory\sources\squadTactics_2020.04.09.txt
+    #same behaviour as addressableComparer
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+  resultConfig:
+    makeFile: true
+    baseDirectory: squadTacticsHistory\results
+    appendDate: true
+
+  #I strongly dissuade you from touching this - in theory you could modify this to find different types of data, but that requires exact knowledge of the monobehaviour-structure
+  targetStatPath:
+  - _Characters:CharacterData
+  - Array:Array
+
+  #Basically just an internal value, this defines that the value of '_Name' can be used as a unique key (and makes '_Name' the first result-Column)
+  mapStatsBy: _NameID
+
+  #set a value to false to ignore it (comparison output only, sources will always save all data)
+  statList:
+    _NameID: true
+    _Available: true
+    _DisplayNameText:_Text: true
+    _DisplayNameText:_ID: true
+    _SpeciesText:_Text: true
+    _SpeciesText:_ID: true
+
+    _Stats:_CriticalChance:_BaseValue: true
+    _Stats:_CriticalChance:_LevelMultiplier: true
+    _Stats:_CriticalChance:_LimitMultiplier: true
+    _Stats:_CriticalChance:_Limits:Min: true
+    _Stats:_CriticalChance:_Limits:Max: true
+    _Stats:_CriticalChance:_UseRoundedValues: true
+
+    _Stats:_CriticalDamageMultiplier:_BaseValue: true
+    _Stats:_CriticalDamageMultiplier:_LevelMultiplier: true
+    _Stats:_CriticalDamageMultiplier:_LimitMultiplier: true
+    _Stats:_CriticalDamageMultiplier:_Limits:Min: true
+    _Stats:_CriticalDamageMultiplier:_Limits:Max: true
+    _Stats:_CriticalDamageMultiplier:_UseRoundedValues: true
+
+    _Stats:_DodgeChance:_BaseValue: true
+    _Stats:_DodgeChance:_LevelMultiplier: true
+    _Stats:_DodgeChance:_LimitMultiplier: true
+    _Stats:_DodgeChance:_Limits:Min: true
+    _Stats:_DodgeChance:_Limits:Max: true
+    _Stats:_DodgeChance:_UseRoundedValues: true
+
+    _Stats:_FirePower:_BaseValue: true
+    _Stats:_FirePower:_LevelMultiplier: true
+    _Stats:_FirePower:_LimitMultiplier: true
+    _Stats:_FirePower:_Limits:Min: true
+    _Stats:_FirePower:_Limits:Max: true
+    _Stats:_FirePower:_UseRoundedValues: true
+
+    _Stats:_HealingPower:_BaseValue: true
+    _Stats:_HealingPower:_LevelMultiplier: true
+    _Stats:_HealingPower:_LimitMultiplier: true
+    _Stats:_HealingPower:_Limits:Min: true
+    _Stats:_HealingPower:_Limits:Max: true
+    _Stats:_HealingPower:_UseRoundedValues: true
+
+    _Stats:_Health:_BaseValue: true
+    _Stats:_Health:_LevelMultiplier: true
+    _Stats:_Health:_LimitMultiplier: true
+    _Stats:_Health:_Limits:Min: true
+    _Stats:_Health:_Limits:Max: true
+    _Stats:_Health:_UseRoundedValues: true
+
+    _Stats:_Movement:_BaseValue: true
+    _Stats:_Movement:_LevelMultiplier: true
+    _Stats:_Movement:_LimitMultiplier: true
+    _Stats:_Movement:_Limits:Min: true
+    _Stats:_Movement:_Limits:Max: true
+    _Stats:_Movement:_UseRoundedValues: true
+
+    _Stats:_Strength:_BaseValue: true
+    _Stats:_Strength:_LevelMultiplier: true
+    _Stats:_Strength:_LimitMultiplier: true
+    _Stats:_Strength:_Limits:Min: true
+    _Stats:_Strength:_Limits:Max: true
+    _Stats:_Strength:_UseRoundedValues: true
+
+
+#======================================================================================
+flightStatsCompareConfig:
+  sourceFrom:
+    sourceType: lastcreated
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseURL: http://media.schoolofdragons.com/DWADragonsUnity
+    baseSuffix: High
+    dataContainerRegexFilters:
+    - "^RS_SHARED/dw(.*?)do$"
+    - "!^RS_SHARED/dwdragonsskins(.*?)do$"
+    - "!^RS_SHARED/dw(.*?)(common|rare|epic|(legend(ary)?))do$"
+    - "!^RS_SHARED/dwshieldrounddo$"
+    - "!^RS_SHARED/dw(.*?)(saddle)(s?)do$"
+
+  localSourcesConfig:
+    baseDirectory: flightStatsHistory\sources
+    targetFileName: flightStats
+    targetFileExtension: txt
+    lastcreated: flightStatsHistory\sources\flightStats_2020.04.18.txt
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+  resultConfig:
+    makeFile: true
+    baseDirectory: flightStats\results
+    appendDate: true
+
+  #note: searchpattern can not be modified here,
+  #  because the search requires multiple interdependent files and spending hours on a generic config system would not be worth it
+
+  #set a value to false to ignore it (comparison output only, sources will always save all data)
+  statList:
+    _FlightType: true
+    _RollTurnRate: true
+    _RollDampRate: true
+    _YawTurnRate: true
+    _YawTurnFactor: true
+    _PitchTurnRate: true
+    _PitchDampRate: true
+    _Speed:_Min: true
+    _Speed:_Max: true
+    _Acceleration: true
+    _ManualFlapAccel: true
+    _ManualFlapTimer: true
+    _SpeedDampRate: true
+    _BrakeDecel: true
+    _ClimbAccelRate: true
+    _DiveAccelRate: true
+    _SpeedModifierOnCollision: true
+    _BounceOnCollision: true
+    _GlideDownMultiplier: true
+    _GravityModifier: true
+    _GravityClimbMultiplier: true
+    _GravityDiveMultiplier: true
+    _FlyingMaxUpPitch: true
+    _FlyingMaxDownPitch: true
+    _GlidingMaxUpPitch: true
+    _GlidingMaxDownPitch: true
+    _MaxRoll: true
+    _FlyingPositionBoostFactor: true

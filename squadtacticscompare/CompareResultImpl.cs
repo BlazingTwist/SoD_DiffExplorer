@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Text;
 
-namespace SoD_DiffExplorer.fireballcompare
+namespace SoD_DiffExplorer.squadtacticscompare
 {
 	class CompareResultImpl
 	{
-		public List<string> dragonOrder = new List<string>();
+		public List<string> characterOrder = new List<string>();
 		public List<string> statOrder = new List<string>();
 		public Dictionary<string, Dictionary<string, string>> sameValues;
 		public Dictionary<string, Dictionary<string, string>> removedValues;
@@ -15,10 +15,10 @@ namespace SoD_DiffExplorer.fireballcompare
 		public Dictionary<string, Dictionary<string, string>> changedValuesTo;
 
 		public CompareResultImpl(Dictionary<string, Dictionary<string, string>> from, Dictionary<string, Dictionary<string, string>> to, Dictionary<string, bool> statFilters) {
-			//build statorders
+			//build statOrders
 			foreach(string key in from.Keys) {
-				if(!dragonOrder.Contains(key)) {
-					dragonOrder.Add(key);
+				if(!characterOrder.Contains(key)) {
+					characterOrder.Add(key);
 				}
 				foreach(string statKey in from[key].Keys) {
 					if(!statOrder.Contains(statKey)) {
@@ -27,8 +27,8 @@ namespace SoD_DiffExplorer.fireballcompare
 				}
 			}
 			foreach(string key in to.Keys) {
-				if(!dragonOrder.Contains(key)) {
-					dragonOrder.Add(key);
+				if(!characterOrder.Contains(key)) {
+					characterOrder.Add(key);
 				}
 				foreach(string statKey in to[key].Keys) {
 					if(!statOrder.Contains(statKey)) {
@@ -36,7 +36,7 @@ namespace SoD_DiffExplorer.fireballcompare
 					}
 				}
 			}
-			dragonOrder.Sort();
+			characterOrder.Sort();
 			statOrder.Sort();
 
 			for(int i = statOrder.Count - 1; i >= 0; i--) {
@@ -88,16 +88,16 @@ namespace SoD_DiffExplorer.fireballcompare
 		public string FormatComparison(Dictionary<string, Dictionary<string, string>> data) {
 			StringBuilder result = new StringBuilder();
 
-			foreach(string dragon in dragonOrder) {
-				if(!data.ContainsKey(dragon)) {
+			foreach(string character in characterOrder) {
+				if(!data.ContainsKey(character)) {
 					continue;
 				}
-				result.Append("\n\t").Append(dragon);
-				Dictionary<string, string> dragonDict = data[dragon];
+				result.Append("\n\t").Append(character);
+				Dictionary<string, string> characterDict = data[character];
 				foreach(string stat in statOrder) {
 					result.Append("\t");
-					if(dragonDict.ContainsKey(stat)) {
-						result.Append(dragonDict[stat].Trim());
+					if(characterDict.ContainsKey(stat)) {
+						result.Append(characterDict[stat].Trim());
 					} else {
 						result.Append("null");
 					}
@@ -110,13 +110,13 @@ namespace SoD_DiffExplorer.fireballcompare
 		public string FormatComparisonChange(Dictionary<string, Dictionary<string, string>> from, Dictionary<string, Dictionary<string, string>> to) {
 			StringBuilder result = new StringBuilder();
 
-			foreach(string dragon in dragonOrder) {
-				if(!from.ContainsKey(dragon) || !to.ContainsKey(dragon)) {
+			foreach(string character in characterOrder) {
+				if(!from.ContainsKey(character) || !to.ContainsKey(character)) {
 					continue;
 				}
-				result.Append("\nto\t").Append(dragon);
+				result.Append("\nto\t").Append(character);
 
-				Dictionary<string, string> statsTo = to[dragon];
+				Dictionary<string, string> statsTo = to[character];
 				foreach(string stat in statOrder) {
 					result.Append("\t");
 					if(statsTo.ContainsKey(stat)) {
@@ -127,7 +127,7 @@ namespace SoD_DiffExplorer.fireballcompare
 				}
 
 				result.Append("\nfrom\t");
-				Dictionary<string, string> statsFrom = from[dragon];
+				Dictionary<string, string> statsFrom = from[character];
 				foreach(string stat in statOrder) {
 					result.Append("\t");
 					if(statsFrom.ContainsKey(stat)) {
@@ -135,7 +135,6 @@ namespace SoD_DiffExplorer.fireballcompare
 							if(statsFrom[stat] != statsTo[stat]) {
 								result.Append(statsFrom[stat].Trim());
 							}
-							//else no change, no print
 						} else {
 							result.Append(statsFrom[stat].Trim());
 						}
@@ -143,7 +142,6 @@ namespace SoD_DiffExplorer.fireballcompare
 						if(statsTo.ContainsKey(stat)) {
 							result.Append("null");
 						}
-						//else neither had any value -> no change, no print
 					}
 				}
 			}

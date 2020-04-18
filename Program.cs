@@ -4,6 +4,7 @@ using System.IO;
 using SoD_DiffExplorer.filedownloader;
 using SoD_DiffExplorer.addressablecompare;
 using SoD_DiffExplorer.fireballcompare;
+using SoD_DiffExplorer.squadtacticscompare;
 using SoD_DiffExplorer.menuutils;
 
 namespace SoD_DiffExplorer
@@ -15,12 +16,14 @@ namespace SoD_DiffExplorer
 		public static FileDownloader fileDownloader;
 		public static AddressableComparer addressableComparer;
 		public static FireballComparer fireballComparer;
+		public static SquadTacticsComparer squadTacticsComparer;
 
 		static void Main(string[] args) {
 			try {
 				IDeserializer deserializer = new DeserializerBuilder().Build();
 				using(StreamReader reader = File.OpenText("config.yaml")) {
 					config = deserializer.Deserialize<ConfigHolder>(reader);
+					config.Initialize();
 				}
 			} catch(Exception e) {
 				Console.WriteLine("Encountered an exception during parsing of the config!");
@@ -33,6 +36,7 @@ namespace SoD_DiffExplorer
 			fileDownloader = new FileDownloader(config.fileDownloaderConfig, menuUtils);
 			addressableComparer = new AddressableComparer(config.addressableCompareConfig, menuUtils);
 			fireballComparer = new FireballComparer(config.fireballCompareConfig, menuUtils);
+			squadTacticsComparer = new SquadTacticsComparer(config.squadTacticsCompareConfig, menuUtils);
 
 			try{
 				OpenMainMenu();
@@ -50,7 +54,7 @@ namespace SoD_DiffExplorer
 				"Open FileDownloader",
 				"Open AddressableComparer",
 				"Open FireballStatComparer",
-				"Open SquadTacticsStatComparer (not yet implemented)",
+				"Open SquadTacticsStatComparer",
 				"Open FlightStatComparer (not yet implemented)"
 			};
 			string backText = "quit";
@@ -71,7 +75,7 @@ namespace SoD_DiffExplorer
 						fireballComparer.OpenFireballComparerMenu();
 						break;
 					case 3:
-						//TODO
+						squadTacticsComparer.OpenSquadTacticsComparerMenu();
 						break;
 					case 4:
 						//TODO

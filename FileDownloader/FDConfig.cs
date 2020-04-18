@@ -3,12 +3,15 @@ using System.Text.RegularExpressions;
 using SoD_DiffExplorer.csutils;
 using System;
 using System.IO;
+using YamlDotNet.Serialization;
 
 namespace SoD_DiffExplorer.filedownloader
 {
 	class FDConfig
 	{
-		public BetterDict<string, string> onlineAddressDict = null;
+		[YamlIgnore]
+		public ConfigHolder configHolder;
+
 		public bool pauseDownloadOnError = false;
 		public bool doDownload = false;
 		public FDDownloadURL downloadURL = null;
@@ -43,7 +46,7 @@ namespace SoD_DiffExplorer.filedownloader
 		}
 
 		public string GetFileAddress(string fileName) {
-			foreach(KeyValuePair<string, string> pair in onlineAddressDict) {
+			foreach(KeyValuePair<string, string> pair in configHolder.onlineAddressDict) {
 				if(fileName.StartsWith(pair.Key)) {
 					fileName = pair.Value + fileName.Remove(0, pair.Key.Length);
 					break;

@@ -214,12 +214,24 @@ namespace SoD_DiffExplorer.menuutils
 		}
 
 		private void PrintOptions(string[] options, string goBackText, string spacing, int highlightLine) {
-			for(int i = 0; i < options.Length; i++) {
-				if(highlightLine == i) {
-					PrintHighlightetText(options[i], spacing);
-				} else {
-					Console.WriteLine(spacing + options[i]);
+			if(highlightLine < 0 || highlightLine >= options.Length) {
+				StringBuilder optionsString = new StringBuilder();
+				for(int i = 0; i < options.Length; i++) {
+					optionsString.Append(spacing).Append(options[i]).Append("\n");
 				}
+				Console.Write(optionsString.ToString());
+			} else {
+				StringBuilder optionsString = new StringBuilder();
+				for(int i = 0; i < highlightLine; i++) {
+					optionsString.Append(spacing).Append(options[i]).Append("\n");
+				}
+				Console.Write(optionsString.ToString());
+				PrintHighlightetText(options[highlightLine], spacing);
+				optionsString = new StringBuilder();
+				for(int i = (highlightLine + 1); i < options.Length; i++) {
+					optionsString.Append(spacing).Append(options[i]).Append("\n");
+				}
+				Console.Write(optionsString.ToString());
 			}
 
 			if(goBackText != null) {

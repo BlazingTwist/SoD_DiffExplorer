@@ -6,27 +6,27 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace SoD_DiffExplorer.fireballcompare
+namespace SoD_DiffExplorer.squadtacticscompare
 {
-	class FireballComparer
+	class SquadTacticsComparer
 	{
-		private FCConfig config;
+		private STCConfig config;
 		private MenuUtils menuUtils;
 
-		public FireballComparer(FCConfig config, MenuUtils menuUtils) {
+		public SquadTacticsComparer(STCConfig config, MenuUtils menuUtils) {
 			this.config = config;
 			this.menuUtils = menuUtils;
 		}
 
-		private void RunFireballComparison() {
-			Dictionary<string, Dictionary<string, string>> fireballFrom = config.GetFireballStatsFromSource(config.sourceFrom);
-			Dictionary<string, Dictionary<string, string>> fireballTo = config.GetFireballStatsFromSource(config.sourceTo);
+		private void RunSquadTacticsComparison() {
+			Dictionary<string, Dictionary<string, string>> characterFrom = config.GetSquadTacticsStatsFromSource(config.sourceFrom);
+			Dictionary<string, Dictionary<string, string>> characterTo = config.GetSquadTacticsStatsFromSource(config.sourceTo);
 
-			config.ManageMakeFile(fireballFrom, config.sourceFrom);
-			config.ManageMakeFile(fireballTo, config.sourceTo);
+			config.ManageMakeFile(characterFrom, config.sourceFrom);
+			config.ManageMakeFile(characterTo, config.sourceTo);
 
 			//do comparison
-			CompareResultImpl compareResult = new CompareResultImpl(fireballFrom, fireballTo, config.statList);
+			CompareResultImpl compareResult = new CompareResultImpl(characterFrom, characterTo, config.statList);
 			StringBuilder resultText = new StringBuilder();
 			resultText.Append("\t").Append(config.mapStatsBy).Append("\t").Append(string.Join("\t", compareResult.statOrder));
 			resultText.Append("\nnew").Append(compareResult.FormatComparison(compareResult.addedValues));
@@ -49,8 +49,8 @@ namespace SoD_DiffExplorer.fireballcompare
 			Console.ReadKey(true);
 		}
 
-		public void OpenFireballComparerMenu() {
-			string header = "Fireball Comparer:";
+		public void OpenSquadTacticsComparerMenu() {
+			string header = "SquadTactics Comparer:";
 			string[] options = new string[] {
 				"Adjust Configuration",
 				"Run Comparison\n"
@@ -68,7 +68,7 @@ namespace SoD_DiffExplorer.fireballcompare
 						break;
 					case 1:
 						Console.Clear();
-						RunFireballComparison();
+						RunSquadTacticsComparison();
 						break;
 					case 2:
 						return;
@@ -77,8 +77,8 @@ namespace SoD_DiffExplorer.fireballcompare
 		}
 
 		private void OpenConfigMenu() {
-			string header = "Fireball Comparer Config";
-			string backText = "Back to Fireball Comparer";
+			string header = "SquadTactics Comparer Config";
+			string backText = "Back to SquadTactics Comparer";
 			int spacing = 2;
 
 			int selection = 0;
@@ -113,7 +113,7 @@ namespace SoD_DiffExplorer.fireballcompare
 		}
 
 		private string[] GetConfigOptions() {
-			return new string[]{
+			return new string[] {
 				"adjust sourceFrom \t\t(" + GetSourceInfoString(config.sourceFrom) + ")",
 				"adjust sourceTo \t\t(" + GetSourceInfoString(config.sourceTo) + ")",
 				"adjust localSourcesConfig \t(" + GetLocalSourcesConfigInfoString() + ")",
@@ -123,60 +123,60 @@ namespace SoD_DiffExplorer.fireballcompare
 			};
 		}
 
-		private string GetSourceInfoString(FCSourceConfig sourceConfig) {
+		private string GetSourceInfoString(STCSourceConfig sourceConfig) {
 			List<string> values = new List<string>();
-			if(sourceConfig.sourceType == FCSourceType.online) {
-				FCOnlineSource fcosConfig = sourceConfig.online;
-				values.Add("platform = " + fcosConfig.platform);
-				values.Add("version = " + fcosConfig.version);
-				values.Add("makeFile = " + fcosConfig.makeFile);
-				if(fcosConfig.makeFile) {
-					values.Add("makeLastCreated = " + fcosConfig.makeLastCreated);
+			if(sourceConfig.sourceType == STCSourceType.online) {
+				STCOnlineSource onlineSource = sourceConfig.online;
+				values.Add("platform = " + onlineSource.platform);
+				values.Add("version = " + onlineSource.version);
+				values.Add("makeFile = " + onlineSource.makeFile);
+				if(onlineSource.makeFile) {
+					values.Add("makeLastCreated = " + onlineSource.makeLastCreated);
 				}
-			} else if(sourceConfig.sourceType == FCSourceType.local) {
-				FCLocalSource fclsConfig = sourceConfig.local;
+			} else if(sourceConfig.sourceType == STCSourceType.local) {
+				STCLocalSource localSource = sourceConfig.local;
 				if(config.localSourcesConfig.appendPlatform) {
-					values.Add("platform = " + fclsConfig.platform);
+					values.Add("platform = " + localSource.platform);
 				}
 				if(config.localSourcesConfig.appendVersion) {
-					values.Add("version = " + fclsConfig.version);
+					values.Add("version = " + localSource.version);
 				}
 				if(config.localSourcesConfig.appendDate) {
-					values.Add("date = " + fclsConfig.date);
+					values.Add("date = " + localSource.date);
 				}
-			} else if(sourceConfig.sourceType == FCSourceType.lastcreated) {
+			} else if(sourceConfig.sourceType == STCSourceType.lastcreated) {
 				values.Add(config.localSourcesConfig.lastcreated);
 			}
 			return string.Join(" | ", values);
 		}
 
 		private string GetLocalSourcesConfigInfoString() {
-			FCLocalSourceConfig fclsConfig = config.localSourcesConfig;
-			return "appendPlatform = " + fclsConfig.appendPlatform + " | appendVersion = " + fclsConfig.appendVersion + " | appendDate = " + fclsConfig.appendDate;
+			STCLocalSourceConfig lsConfig = config.localSourcesConfig;
+			return "appendPlatform = " + lsConfig.appendPlatform + " | appendVersion = " + lsConfig.appendVersion + " | appendDate = " + lsConfig.appendDate;
 		}
 
 		private string GetResultConfigInfoString() {
-			FCResultConfig fcrConfig = config.resultConfig;
-			return "makeFile = " + fcrConfig.makeFile + " | appendDate = " + fcrConfig.appendDate;
+			STCResultConfig rConfig = config.resultConfig;
+			return "makeFile = " + rConfig.makeFile + " | appendDate = " + rConfig.appendDate;
 		}
 
 		private string GetStatListInfoString() {
 			return config.statList.Where(kvp => kvp.Value).ToArray().Length + " selected";
 		}
 
-		private void OpenSourceConfigMenu(FCSourceConfig sourceConfig, string sourceName) {
+		private void OpenSourceConfigMenu(STCSourceConfig sourceConfig, string sourceName) {
 			string header = "Currently editing " + sourceName;
-			string backText = "Back to Fireball Config Menu";
+			string backtext = "Back to SquadTactics Config Menu";
 			int spacing = 3;
 
 			int selection = 0;
 			while(true) {
 				string[] options = GetSourceConfigOptions(sourceConfig);
-				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backtext, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
-						sourceConfig.sourceType = Enum.Parse<FCSourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfig.sourceType.ToString(), Enum.GetNames(typeof(FCSourceType)), spacing));
+						sourceConfig.sourceType = Enum.Parse<STCSourceType>(menuUtils.OpenEnumConfigEditor("sourceType", sourceConfig.sourceType.ToString(), Enum.GetNames(typeof(STCSourceType)), spacing));
 						break;
 					case 1:
 						sourceConfig.online.platform = menuUtils.OpenSimpleConfigEditor("online.platform", sourceConfig.online.platform);
@@ -205,7 +205,7 @@ namespace SoD_DiffExplorer.fireballcompare
 			}
 		}
 
-		private string[] GetSourceConfigOptions(FCSourceConfig sourceConfig) {
+		private string[] GetSourceConfigOptions(STCSourceConfig sourceConfig) {
 			return new string[] {
 				"change sourceType \t\t\t(" + sourceConfig.sourceType + ")\n",
 				"change online.platform \t\t(" + sourceConfig.online.platform + ")",
@@ -220,7 +220,7 @@ namespace SoD_DiffExplorer.fireballcompare
 
 		private void OpenLocalSourcesConfigMenu() {
 			string header = "Currently editing localSourcesConfig";
-			string backText = "Back to Fireball Config Menu";
+			string backText = "Back to SquadTactics Config Menu";
 			int spacing = 3;
 
 			int selection = 0;
@@ -255,7 +255,7 @@ namespace SoD_DiffExplorer.fireballcompare
 
 		private void OpenResultConfigMenu() {
 			string header = "Currently editing resultConfig";
-			string backText = "Back to Fireball Config Menu";
+			string backText = "Back to SquadTactics Config Menu";
 			int spacing = 3;
 
 			int selection = 0;
@@ -283,7 +283,7 @@ namespace SoD_DiffExplorer.fireballcompare
 		private void OpenStatListConfigMenu() {
 			List<KeyValuePair<string, bool>> orderedStatList = config.statList.Select(kvp => kvp).ToList();
 			string header = "Currently editing statList (filtered stats)";
-			string backText = "Back to Fireball Config Menu";
+			string backText = "Back to SquadTactics Config Menu";
 			int spacing = 3;
 
 			int selection = 0;

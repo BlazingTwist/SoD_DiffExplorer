@@ -7,51 +7,51 @@ using System.Net;
 using System.Linq;
 using YamlDotNet.Serialization;
 
-namespace SoD_DiffExplorer.fireballcompare
+namespace SoD_DiffExplorer.squadtacticscompare
 {
-	class FCConfig
+	class STCConfig
 	{
-		public FCSourceConfig sourceFrom = null;
-		public FCSourceConfig sourceTo = null;
-		public FCOnlineSourceConfig onlineSourcesConfig = null;
-		public FCLocalSourceConfig localSourcesConfig = null;
-		public FCResultConfig resultConfig = null;
+		public STCSourceConfig sourceFrom = null;
+		public STCSourceConfig sourceTo = null;
+		public STCOnlineSourceConfig onlineSourcesConfig = null;
+		public STCLocalSourceConfig localSourcesConfig = null;
+		public STCResultConfig resultConfig = null;
 		public List<string> targetStatPath = null;
 		public string mapStatsBy = null;
 		public BetterDict<string, bool> statList = null;
 
 		public void SaveConfig() {
 			BetterDict<string, string> simpleChangeDict = new BetterDict<string, string> {
-				{"fireballCompareConfig.sourceFrom.sourceType", sourceFrom.sourceType.ToString()},
-				{"fireballCompareConfig.sourceFrom.online.platform", sourceFrom.online.platform},
-				{"fireballCompareConfig.sourceFrom.online.version", sourceFrom.online.version},
-				{"fireballCompareConfig.sourceFrom.online.makeFile", sourceFrom.online.makeFile.ToString()},
-				{"fireballCompareConfig.sourceFrom.online.makeLastCreated", sourceFrom.online.makeLastCreated.ToString()},
-				{"fireballCompareConfig.sourceFrom.local.platform", sourceFrom.local.platform},
-				{"fireballCompareConfig.sourceFrom.local.version", sourceFrom.local.version},
-				{"fireballCompareConfig.sourceFrom.local.date", sourceFrom.local.date},
+				{"squadTacticsCompareConfig.sourceFrom.sourceType", sourceFrom.sourceType.ToString()},
+				{"squadTacticsCompareConfig.sourceFrom.online.platform", sourceFrom.online.platform},
+				{"squadTacticsCompareConfig.sourceFrom.online.version", sourceFrom.online.version},
+				{"squadTacticsCompareConfig.sourceFrom.online.makeFile", sourceFrom.online.makeFile.ToString()},
+				{"squadTacticsCompareConfig.sourceFrom.online.makeLastCreated", sourceFrom.online.makeLastCreated.ToString()},
+				{"squadTacticsCompareConfig.sourceFrom.local.platform", sourceFrom.local.platform},
+				{"squadTacticsCompareConfig.sourceFrom.local.version", sourceFrom.local.version},
+				{"squadTacticsCompareConfig.sourceFrom.local.date", sourceFrom.local.date},
 
-				{"fireballCompareConfig.sourceTo.sourceType", sourceTo.sourceType.ToString()},
-				{"fireballCompareConfig.sourceTo.online.platform", sourceTo.online.platform},
-				{"fireballCompareConfig.sourceTo.online.version", sourceTo.online.version},
-				{"fireballCompareConfig.sourceTo.online.makeFile", sourceTo.online.makeFile.ToString()},
-				{"fireballCompareConfig.sourceTo.online.makeLastCreated", sourceTo.online.makeLastCreated.ToString()},
-				{"fireballCompareConfig.sourceTo.local.platform", sourceTo.local.platform},
-				{"fireballCompareConfig.sourceTo.local.version", sourceTo.local.version},
-				{"fireballCompareConfig.sourceTo.local.date", sourceTo.local.date},
+				{"squadTacticsCompareConfig.sourceTo.sourceType", sourceTo.sourceType.ToString()},
+				{"squadTacticsCompareConfig.sourceTo.online.platform", sourceTo.online.platform},
+				{"squadTacticsCompareConfig.sourceTo.online.version", sourceTo.online.version},
+				{"squadTacticsCompareConfig.sourceTo.online.makeFile", sourceTo.online.makeFile.ToString()},
+				{"squadTacticsCompareConfig.sourceTo.online.makeLastCreated", sourceTo.online.makeLastCreated.ToString()},
+				{"squadTacticsCompareConfig.sourceTo.local.platform", sourceTo.local.platform},
+				{"squadTacticsCompareConfig.sourceTo.local.version", sourceTo.local.version},
+				{"squadTacticsCompareConfig.sourceTo.local.date", sourceTo.local.date},
 
-				{"fireballCompareConfig.localSourcesConfig.lastcreated", localSourcesConfig.lastcreated},
-				{"fireballCompareConfig.localSourcesConfig.appendPlatform", localSourcesConfig.appendPlatform.ToString()},
-				{"fireballCompareConfig.localSourcesConfig.appendVersion", localSourcesConfig.appendVersion.ToString()},
-				{"fireballCompareConfig.localSourcesConfig.appendDate", localSourcesConfig.appendDate.ToString()},
+				{"squadTacticsCompareConfig.localSourcesConfig.lastcreated", localSourcesConfig.lastcreated},
+				{"squadTacticsCompareConfig.localSourcesConfig.appendPlatform", localSourcesConfig.appendPlatform.ToString()},
+				{"squadTacticsCompareConfig.localSourcesConfig.appendVersion", localSourcesConfig.appendVersion.ToString()},
+				{"squadTacticsCompareConfig.localSourcesConfig.appendDate", localSourcesConfig.appendDate.ToString()},
 
-				{"fireballCompareConfig.resultConfig.makeFile", resultConfig.makeFile.ToString()},
-				{"fireballCompareConfig.resultConfig.appendDate", resultConfig.appendDate.ToString()}
+				{"squadTacticsCompareConfig.resultConfig.makeFile", resultConfig.makeFile.ToString()},
+				{"squadTacticsCompareConfig.resultConfig.appendDate", resultConfig.appendDate.ToString()}
 			};
 
-			BetterDict<string, string>  statFilterChangeDict = new BetterDict<string, string>(statList.ToDictionary(
+			BetterDict<string, string> statFilterChangeDict = new BetterDict<string, string>(statList.ToDictionary(
 				kvp => {
-					return "fireballCompareConfig.statList." + kvp.Key;
+					return "squadTacticsCompareConfig.statList." + kvp.Key;
 				}, kvp => {
 					return kvp.Value.ToString();
 				}));
@@ -72,7 +72,7 @@ namespace SoD_DiffExplorer.fireballcompare
 
 		public void SaveLastCreatedSource(string value) {
 			localSourcesConfig.lastcreated = value;
-			string yamlPath = "fireballCompareConfig.localSourcesConfig.lastcreated";
+			string yamlPath = "squadTacticsCompareConfig.localSourcesConfig.lastcreated";
 
 			List<string> lines = YamlUtils.GetAllConfigLines();
 			if(YamlUtils.ChangeSimpleValue(ref lines, yamlPath, value)) {
@@ -85,9 +85,9 @@ namespace SoD_DiffExplorer.fireballcompare
 			}
 		}
 
-		public void ManageMakeFile(Dictionary<string, Dictionary<string, string>> stats, FCSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == FCSourceType.online && sourceConfig.online.makeFile) {
-				Console.WriteLine("parsing fireballStatSource to file from onlineSource, because makeFile is true");
+		public void ManageMakeFile(Dictionary<string, Dictionary<string, string>> stats, STCSourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == STCSourceType.online && sourceConfig.online.makeFile) {
+				Console.WriteLine("parsing squadTacticsStatSource to file from onlineSource, because makeFile is true");
 				string targetMakeFile = GetLocalSourceFile(sourceConfig);
 				string targetMakeFileDirectory = Path.GetDirectoryName(targetMakeFile);
 
@@ -110,34 +110,25 @@ namespace SoD_DiffExplorer.fireballcompare
 			}
 		}
 
-		public Dictionary<string, Dictionary<string, string>> GetFireballStatsFromSource(FCSourceConfig sourceConfig) {
-			if(sourceConfig.sourceType == FCSourceType.online) {
+		public Dictionary<string, Dictionary<string, string>> GetSquadTacticsStatsFromSource(STCSourceConfig sourceConfig) {
+			if(sourceConfig.sourceType == STCSourceType.online) {
 				using(WebClient client = new WebClient()) {
-					using(MemoryStream memoryStream = new MemoryStream(client.DownloadData(GetFireballFileURL(sourceConfig)))) {
-						return GetFireballStatsFromStream(memoryStream);
+					using(MemoryStream memoryStream = new MemoryStream(client.DownloadData(GetSquadTacticsFileURL(sourceConfig)))) {
+						return GetSquadTacticsStatsFromStream(memoryStream);
 					}
 				}
-			}else if(sourceConfig.sourceType == FCSourceType.local) {
-				string sourceFile = GetLocalSourceFile(sourceConfig);
-				using(StreamReader reader = new StreamReader(sourceFile)) {
-					IDeserializer deserializer = new DeserializerBuilder().Build();
-					Console.WriteLine("parsing stats from local source: " + sourceFile);
-					return deserializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(reader);
-				}
-			}else if(sourceConfig.sourceType == FCSourceType.lastcreated) {
-				using(StreamReader reader = new StreamReader(localSourcesConfig.lastcreated)) {
-					IDeserializer deserializer = new DeserializerBuilder().Build();
-					Console.WriteLine("parsing stats from lastcreated source: " + localSourcesConfig.lastcreated);
-					return deserializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(reader);
-				}
+			} else if(sourceConfig.sourceType == STCSourceType.local) {
+				return GetSquadTacticsStatsFromFile(GetLocalSourceFile(sourceConfig));
+			} else if(sourceConfig.sourceType == STCSourceType.lastcreated) {
+				return GetSquadTacticsStatsFromFile(localSourcesConfig.lastcreated);
 			}
 			return null;
 		}
 
-		private Dictionary<string, Dictionary<string, string>> GetFireballStatsFromStream(Stream stream) {
+		private Dictionary<string, Dictionary<string, string>> GetSquadTacticsStatsFromStream(Stream stream) {
 			AssetToolUtils assetToolUtils = new AssetToolUtils();
 			List<AssetTypeValueField> monoData = assetToolUtils.GetMonobehaviourData(stream, targetStatPath);
-			
+
 			if(monoData.Count != 1) {
 				Console.WriteLine("Unexpected amount for files found! Aborting...");
 				return null;
@@ -147,9 +138,9 @@ namespace SoD_DiffExplorer.fireballcompare
 			foreach(AssetTypeValueField arrayEntry in monoData[0].GetChildrenList()) {
 				string mapValue = null;
 				Dictionary<string, string> tempStats = new Dictionary<string, string>();
-				
-				foreach(AssetTypeValueField weaponParam in arrayEntry.GetChildrenList()) {
-					List<Tuple<string, string>> statEntrys = ResolveStatListField(weaponParam);
+
+				foreach(AssetTypeValueField characterParam in arrayEntry.GetChildrenList()) {
+					List<Tuple<string, string>> statEntrys = ResolveStatListField(characterParam);
 					if(statEntrys != null && statEntrys.Count > 0) {
 						statEntrys.ForEach(statEntry => {
 							if(statEntry.Item1 == mapStatsBy) {
@@ -172,20 +163,19 @@ namespace SoD_DiffExplorer.fireballcompare
 			return result;
 		}
 
+		private Dictionary<string, Dictionary<string, string>> GetSquadTacticsStatsFromFile(string filePath) {
+			using(StreamReader reader = new StreamReader(filePath)) {
+				IDeserializer deserializer = new DeserializerBuilder().Build();
+				Console.WriteLine("parsing stats from local source: " + filePath);
+				return deserializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(reader);
+			}
+		}
+
 		private List<Tuple<string, string>> ResolveStatListField(AssetTypeValueField field) {
 			if(statList.ContainsKey(field.GetName())) {
-				/*if(statList[field.GetName()]) {
-					return new List<Tuple<string, string>> {new Tuple<string, string>(field.GetName(), field.GetValue().AsString())};
-				} else {
-					return null;
-				}*/
-
-				//to ensure consistent file saving, allow disabled stats as well
-				return new List<Tuple<string, string>> {new Tuple<string, string>(field.GetName(), field.GetValue().AsString())};
+				return new List<Tuple<string, string>> { new Tuple<string, string>(field.GetName(), field.GetValue().AsString()) };
 			} else {
 				List<string[]> specialStats = statList
-					//same here
-					//.Where(pair => pair.Key.Contains(':') && pair.Value)
 					.Where(pair => pair.Key.Contains(':'))
 					.Select(pair => pair.Key.Split(':'))
 					.ToList();
@@ -203,7 +193,6 @@ namespace SoD_DiffExplorer.fireballcompare
 				List<string[]> applicableStats = applyableStats.Where(stats => stats.Length > matchDepth && stats[matchDepth] == field.GetName()).ToList();
 				if(applicableStats.Count > 0) {
 					foreach(string[] stats in applicableStats) {
-
 						if(matchDepth == (stats.Length - 1)) {
 							//found!
 							result.Add(new Tuple<string, string>(string.Join(":", stats), field.value.AsString()));
@@ -221,13 +210,13 @@ namespace SoD_DiffExplorer.fireballcompare
 			return result;
 		}
 
-		private string GetFireballFileURL(FCSourceConfig sourceConfig) {
+		private string GetSquadTacticsFileURL(STCSourceConfig sourceConfig) {
 			return string.Join('/', onlineSourcesConfig.baseURL, sourceConfig.online.platform, sourceConfig.online.version, onlineSourcesConfig.baseSuffix, onlineSourcesConfig.dataContainer);
 		}
 
-		private string GetLocalSourceFile(FCSourceConfig sourceConfig) {
+		private string GetLocalSourceFile(STCSourceConfig sourceConfig) {
 			string fileName = localSourcesConfig.targetFileName;
-			if(sourceConfig.sourceType == FCSourceType.online) {
+			if(sourceConfig.sourceType == STCSourceType.online) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.online.platform);
 				}
@@ -237,7 +226,7 @@ namespace SoD_DiffExplorer.fireballcompare
 				if(localSourcesConfig.appendDate) {
 					fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
 				}
-			} else if(sourceConfig.sourceType == FCSourceType.local) {
+			} else if(sourceConfig.sourceType == STCSourceType.local) {
 				if(localSourcesConfig.appendPlatform) {
 					fileName += ("_" + sourceConfig.local.platform);
 				}
