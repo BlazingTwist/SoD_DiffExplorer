@@ -14,12 +14,12 @@ namespace SoD_DiffExplorer.fireballcompare
 	{
 		public SourceConfig sourceFrom = null;
 		public SourceConfig sourceTo = null;
-		public FCOnlineSourceConfig onlineSourcesConfig = null;
+		public SimpleOnlineSourcesConfig onlineSourcesConfig = null;
 		public LocalSourcesConfig localSourcesConfig = null;
 		public ResultConfig resultConfig = null;
 		public List<string> targetStatPath = null;
-		public string mapStatsBy = null;
-		public BetterDict<string, bool> statList = null;
+		public MappingValue mapStatsBy = null;
+		public List<ResultFilter> displayFilter = null;
 
 		public void SaveConfig() {
 			BetterDict<string, string> simpleChangeDict = new BetterDict<string, string> {
@@ -50,15 +50,8 @@ namespace SoD_DiffExplorer.fireballcompare
 				{"fireballCompareConfig.resultConfig.appendDate", resultConfig.appendDate.ToString()}
 			};
 
-			BetterDict<string, string>  statFilterChangeDict = new BetterDict<string, string>(statList.ToDictionary(
-				kvp => {
-					return "fireballCompareConfig.statList." + kvp.Key;
-				}, kvp => {
-					return kvp.Value.ToString();
-				}));
-
 			List<string> lines = YamlUtils.GetAllConfigLines();
-			if(YamlUtils.ChangeSimpleValues(ref lines, simpleChangeDict) && YamlUtils.ChangeSimpleValues(ref lines, statFilterChangeDict)) {
+			if(YamlUtils.ChangeSimpleValues(ref lines, simpleChangeDict) && YamlUtils.ChangeSimpleObjectListContent(ref lines, "fireballCompareConfig.displayFilter", displayFilter.ToList<YamlObject>())) {
 				Console.WriteLine("config saving was successful");
 				using(StreamWriter writer = new StreamWriter("config.yaml", false)) {
 					lines.ForEach(line => writer.WriteLine(line));
@@ -118,14 +111,14 @@ namespace SoD_DiffExplorer.fireballcompare
 						return GetFireballStatsFromStream(memoryStream);
 					}
 				}
-			}else if(sourceConfig.sourceType == SourceType.local) {
+			} else if(sourceConfig.sourceType == SourceType.local) {
 				string sourceFile = GetLocalSourceFile(sourceConfig);
 				using(StreamReader reader = new StreamReader(sourceFile)) {
 					IDeserializer deserializer = new DeserializerBuilder().Build();
 					Console.WriteLine("parsing stats from local source: " + sourceFile);
 					return deserializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(reader);
 				}
-			}else if(sourceConfig.sourceType == SourceType.lastcreated) {
+			} else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				using(StreamReader reader = new StreamReader(localSourcesConfig.lastcreated)) {
 					IDeserializer deserializer = new DeserializerBuilder().Build();
 					Console.WriteLine("parsing stats from lastcreated source: " + localSourcesConfig.lastcreated);
@@ -138,7 +131,7 @@ namespace SoD_DiffExplorer.fireballcompare
 		private Dictionary<string, Dictionary<string, string>> GetFireballStatsFromStream(Stream stream) {
 			AssetToolUtils assetToolUtils = new AssetToolUtils();
 			List<AssetTypeValueField> monoData = assetToolUtils.GetMonobehaviourData(stream, targetStatPath);
-			
+
 			if(monoData.Count != 1) {
 				Console.WriteLine("Unexpected amount for files found! Aborting...");
 				return null;
@@ -148,12 +141,12 @@ namespace SoD_DiffExplorer.fireballcompare
 			foreach(AssetTypeValueField arrayEntry in monoData[0].GetChildrenList()) {
 				string mapValue = null;
 				Dictionary<string, string> tempStats = new Dictionary<string, string>();
-				
+
 				foreach(AssetTypeValueField weaponParam in arrayEntry.GetChildrenList()) {
 					List<Tuple<string, string>> statEntrys = ResolveStatListField(weaponParam);
 					if(statEntrys != null && statEntrys.Count > 0) {
 						statEntrys.ForEach(statEntry => {
-							if(statEntry.Item1 == mapStatsBy) {
+							if(statEntry.Item1 == mapStatsBy.path) {
 								mapValue = statEntry.Item2;
 							} else {
 								tempStats[statEntry.Item1] = statEntry.Item2;
@@ -163,7 +156,7 @@ namespace SoD_DiffExplorer.fireballcompare
 				}
 
 				if(mapValue == null) {
-					Console.WriteLine("Could not find mapValue! Discarding statmap...");
+					Console.WriteLine("Could not find mapValue (" + mapStatsBy.path + ")! Discarding statmap...");
 					Console.WriteLine("\t" + string.Join("\n\t", tempStats.Select(x => x.Key + "=" + x.Value).ToArray()));
 				} else {
 					result[mapValue] = tempStats;
@@ -174,23 +167,17 @@ namespace SoD_DiffExplorer.fireballcompare
 		}
 
 		private List<Tuple<string, string>> ResolveStatListField(AssetTypeValueField field) {
-			if(statList.ContainsKey(field.GetName())) {
-				/*if(statList[field.GetName()]) {
-					return new List<Tuple<string, string>> {new Tuple<string, string>(field.GetName(), field.GetValue().AsString())};
-				} else {
-					return null;
-				}*/
-
-				//to ensure consistent file saving, allow disabled stats as well
-				return new List<Tuple<string, string>> {new Tuple<string, string>(field.GetName(), field.GetValue().AsString())};
+			if(displayFilter.Any(filter => filter.path == field.GetName()) || mapStatsBy.path == field.GetName()) {
+				return new List<Tuple<string, string>> { new Tuple<string, string>(field.GetName(), field.GetValue().AsString()) };
 			} else {
-				List<string[]> specialStats = statList
-					//same here
-					//.Where(pair => pair.Key.Contains(':') && pair.Value)
-					.Where(pair => pair.Key.Contains(':'))
-					.Select(pair => pair.Key.Split(':'))
+				List<string[]> specialStats = displayFilter
+					.Where(filter => filter.path.Contains(':'))
+					.Select(filter => filter.path.Split(':'))
 					.ToList();
-				return ResolveSpecialStats(specialStats, new List<AssetTypeValueField>{field});
+				if(mapStatsBy.path.Contains(':')) {
+					specialStats.Add(mapStatsBy.path.Split(':'));
+				}
+				return ResolveSpecialStats(specialStats, new List<AssetTypeValueField> { field });
 			}
 		}
 
@@ -211,7 +198,7 @@ namespace SoD_DiffExplorer.fireballcompare
 						}
 					}
 
-					if(field.GetChildrenCount() > 0){
+					if(field.GetChildrenCount() > 0) {
 						List<Tuple<string, string>> found = ResolveSpecialStats(applicableStats, field.GetChildrenList().ToList(), matchDepth + 1);
 						if(found != null) {
 							result.AddRange(found);

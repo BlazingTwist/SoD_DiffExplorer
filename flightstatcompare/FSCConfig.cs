@@ -25,11 +25,10 @@ namespace SoD_DiffExplorer.flightstatcompare
 		public LocalSourcesConfig localSourcesConfig = null;
 		public ResultConfig resultConfig = null;
 		public BetterDict<int, string> flightTypesDict = null;
-		public BetterDict<string, bool> statList = null;
+		public List<ResultFilter> displayFilter;
 
 		public void SaveConfig() {
-			List<BetterDict<string, string>> simpleChangeDicts = new List<BetterDict<string, string>>();
-			simpleChangeDicts.Add(new BetterDict<string, string>{
+			BetterDict<string, string> simpleChangeDict = new BetterDict<string, string>{
 				{"flightStatsCompareConfig.sourceFrom.sourceType", sourceFrom.sourceType.ToString()},
 				{"flightStatsCompareConfig.sourceFrom.online.platform", sourceFrom.online.platform},
 				{"flightStatsCompareConfig.sourceFrom.online.version", sourceFrom.online.version},
@@ -55,18 +54,10 @@ namespace SoD_DiffExplorer.flightstatcompare
 
 				{"flightStatsCompareConfig.resultConfig.makeFile", resultConfig.makeFile.ToString()},
 				{"flightStatsCompareConfig.resultConfig.appendDate", resultConfig.appendDate.ToString()}
-			});
-			simpleChangeDicts.Add(new BetterDict<string, string>(statList.ToDictionary(
-				kvp => {
-					return "flightStatsCompareConfig.statList." + kvp.Key;
-				}, kvp => {
-					return kvp.Value.ToString();
-				}
-			)));
+			};
 
 			List<string> lines = YamlUtils.GetAllConfigLines();
-			if(YamlUtils.ChangeSimpleValues(ref lines, simpleChangeDicts)
-				&& YamlUtils.ChangeSimpleListContent(ref lines, "flightStatsCompareConfig.onlineSourcesConfig.dataContainerRegexFilters", onlineSourcesConfig.dataContainerRegexFilters)) {
+			if(YamlUtils.ChangeSimpleValues(ref lines, simpleChangeDict) && YamlUtils.ChangeSimpleObjectListContent(ref lines, "flightStatsCompareConfig.displayFilter", displayFilter.ToList<YamlObject>())) {
 				Console.WriteLine("config saving was successful");
 				using(StreamWriter writer = new StreamWriter("config.yaml", false)) {
 					lines.ForEach(line => writer.WriteLine(line));
@@ -270,12 +261,12 @@ namespace SoD_DiffExplorer.flightstatcompare
 		}
 
 		private List<Tuple<string, string>> ResolveStatListField(AssetTypeValueField field) {
-			if(statList.ContainsKey(field.GetName())) {
+			if(displayFilter.Any(filter => filter.path == field.GetName())){
 				return new List<Tuple<string, string>> {new Tuple<string, string>(field.GetName(), field.GetValue().AsString())};
 			} else {
-				List<string[]> specialStats = statList
-					.Where(pair => pair.Key.Contains(':'))
-					.Select(pair => pair.Key.Split(':'))
+				List<string[]> specialStats = displayFilter
+					.Where(filter => filter.path.Contains(':'))
+					.Select(filter => filter.path.Split(':'))
 					.ToList();
 				return ResolveSpecialStats(specialStats, new List<AssetTypeValueField>{field});
 			}

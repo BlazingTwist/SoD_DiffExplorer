@@ -1,6 +1,6 @@
-﻿namespace SoD_DiffExplorer.fireballcompare
+﻿namespace SoD_DiffExplorer.commonconfig
 {
-	class FCOnlineSourceConfig
+	class SimpleOnlineSourcesConfig
 	{
 		public string baseURL = null;
 		public string baseSuffix = null;

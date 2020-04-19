@@ -18,15 +18,6 @@ namespace SoD_DiffExplorer.csutils
 			return lines;
 		}
 
-		public static bool ChangeSimpleValues(ref List<string> lines, List<BetterDict<string, string>> changeDicts) {
-			foreach(BetterDict<string, string> changeDict in changeDicts) {
-				if(!ChangeSimpleValues(ref lines, changeDict)) {
-					return false;
-				}
-			}
-			return true;
-		}
-
 		public static bool ChangeSimpleValues(ref List<string> lines, BetterDict<string, string> changeDict) {
 			foreach(KeyValuePair<string, string> pair in changeDict) {
 				if(!ChangeSimpleValue(ref lines, pair.Key, pair.Value)) {
@@ -108,7 +99,7 @@ namespace SoD_DiffExplorer.csutils
 					i += targetValues.Count;
 				}
 				lines.RemoveAt(i);
-				//hack to preserve forward order as I'm to lazy for iterators right now
+				//hack to preserve forward order as I'm too lazy for iterators right now
 				i--;
 			}
 
@@ -117,6 +108,87 @@ namespace SoD_DiffExplorer.csutils
 			//replace at every -
 
 			return allValuesInserted;
+		}
+
+		//yamlpath being the path to the list containing the object
+		public static bool ChangeSimpleObjectListContent(ref List<string> lines, string yamlPath, List<YamlObject> yamlObjects) {
+			if(yamlObjects.Count == 0) {
+				return true;
+			}
+
+			int fieldIndex = FindFieldIndex(lines, yamlPath);
+			if(fieldIndex < 0) {
+				Console.WriteLine("returning false, because key not found, key was: " + yamlPath);
+				return false;
+			}
+
+			int printedObject = 0;
+			int currentPropertyIndex = 0;
+			string[] currentObjectKeys = yamlObjects[0].GetFieldNames();
+			string[] currentObjectValues = yamlObjects[0].GetFieldValues();
+			int targetSpaces = CountStartingSpaces(lines[fieldIndex]);
+			for(int i = fieldIndex + 1; i < lines.Count; i++) {
+				string line = lines[i];
+				if(string.IsNullOrWhiteSpace(line)) {
+					continue;
+				}
+				int startingSpaces = CountStartingSpaces(line);
+				string subLine = line.Substring(startingSpaces);
+				if(subLine.StartsWith("#")) {
+					continue;
+				}
+				if(startingSpaces != targetSpaces && startingSpaces != (targetSpaces + 2)) {
+					break;
+				}
+				if(startingSpaces == targetSpaces) {
+					if(!subLine.StartsWith("- ")) {
+						break;
+					}
+					if(currentPropertyIndex != 0) {
+						//out of sync
+						break;
+					}
+					string keySection = subLine.Substring(2);
+					if(!keySection.StartsWith(currentObjectKeys[0])) {
+						break;
+					}
+					string valueSection = keySection.Substring(currentObjectKeys[0].Length);
+					if(valueSection.StartsWith(": ") || (valueSection.Length == 1 && valueSection.StartsWith(":"))) {
+						lines[i] = new string(' ', targetSpaces) + "- " + currentObjectKeys[0] + ": " + currentObjectValues[0];
+						currentPropertyIndex++;
+					} else {
+						break;
+					}
+				} else {
+					if(currentPropertyIndex == 0) {
+						//out of sync
+						break;
+					}
+					if(!subLine.StartsWith(currentObjectKeys[currentPropertyIndex])) {
+						break;
+					}
+					string valueSection = subLine.Substring(currentObjectKeys[currentPropertyIndex].Length);
+					if(valueSection.StartsWith(": ") || (valueSection.Length == 1 && valueSection.StartsWith(":"))) {
+						lines[i] = new string(' ', startingSpaces) + currentObjectKeys[currentPropertyIndex] + ": " + currentObjectValues[currentPropertyIndex];
+						currentPropertyIndex++;
+					} else {
+						break;
+					}
+				}
+
+				if(currentPropertyIndex == currentObjectKeys.Length) {
+					currentPropertyIndex = 0;
+					printedObject++;
+					if(printedObject == yamlObjects.Count) {
+						//done
+						break;
+					}
+					currentObjectKeys = yamlObjects[printedObject].GetFieldNames();
+					currentObjectValues = yamlObjects[printedObject].GetFieldValues();
+				}
+			}
+
+			return printedObject == yamlObjects.Count;
 		}
 
 		private static int FindFieldIndex(List<string> lines, string yamlPath) {

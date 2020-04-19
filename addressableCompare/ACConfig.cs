@@ -12,7 +12,7 @@ namespace SoD_DiffExplorer.addressablecompare
 	{
 		public SourceConfig sourceFrom = null;
 		public SourceConfig sourceTo = null;
-		public ACOnlineSourceConfig onlineSourcesConfig = null;
+		public SimpleOnlineSourcesConfig onlineSourcesConfig = null;
 		public LocalSourcesConfig localSourcesConfig = null;
 		public ResultConfig resultConfig = null;
 
@@ -138,7 +138,7 @@ namespace SoD_DiffExplorer.addressablecompare
 		}
 
 		private string GetAssetInfoURL(SourceConfig sourceConfig) {
-			return onlineSourcesConfig.baseURL + "/" + sourceConfig.online.platform + "/" + sourceConfig.online.version + "/" + onlineSourcesConfig.baseSuffix + "/" + onlineSourcesConfig.assetInfo;
+			return onlineSourcesConfig.baseURL + "/" + sourceConfig.online.platform + "/" + sourceConfig.online.version + "/" + onlineSourcesConfig.baseSuffix + "/" + onlineSourcesConfig.dataContainer;
 		}
 
 		private string GetLocalSourceFile(SourceConfig sourceConfig) {

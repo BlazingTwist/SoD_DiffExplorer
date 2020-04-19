@@ -1,4 +1,5 @@
-﻿using SoD_DiffExplorer.csutils;
+﻿using SoD_DiffExplorer.commonconfig;
+using SoD_DiffExplorer.csutils;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 	class CompareResultImpl
 	{
 		public List<string> dragonOrder = new List<string>();
-		public List<string> statOrder = new List<string>();
+		public List<ResultFilter> resultFilter;
 		public BetterDict<int, string> flightTypesDict = null;
 		public Dictionary<string, List<Dictionary<string, string>>> sameValues;
 		public Dictionary<string, List<Dictionary<string, string>>> removedValues;
@@ -16,7 +17,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 		public Dictionary<string, List<Dictionary<string, string>>> changedValuesFrom;
 		public Dictionary<string, List<Dictionary<string, string>>> changedValuesTo;
 
-		public CompareResultImpl(Dictionary<string, List<Dictionary<string, string>>> from, Dictionary<string, List<Dictionary<string, string>>> to, Dictionary<string, bool> statFilters, BetterDict<int, string> flightTypesDict) {
+		public CompareResultImpl(Dictionary<string, List<Dictionary<string, string>>> from, Dictionary<string, List<Dictionary<string, string>>> to, List<ResultFilter> displayFilters, BetterDict<int, string> flightTypesDict) {
 			this.flightTypesDict = flightTypesDict;
 
 			//build statorders
@@ -24,35 +25,15 @@ namespace SoD_DiffExplorer.flightstatcompare
 				if(!dragonOrder.Contains(key)) {
 					dragonOrder.Add(key);
 				}
-				for(int flightType = 0; flightType < from[key].Count; flightType++) {
-					foreach(string statKey in from[key][flightType].Keys) {
-						if(!statOrder.Contains(statKey)) {
-							statOrder.Add(statKey);
-						}
-					}
-				}
 			}
 			foreach(string key in to.Keys) {
 				if(!dragonOrder.Contains(key)) {
 					dragonOrder.Add(key);
 				}
-				for(int flightType = 0; flightType < to[key].Count; flightType++) {
-					foreach(string statKey in to[key][flightType].Keys) {
-						if(!statOrder.Contains(statKey)) {
-							statOrder.Add(statKey);
-						}
-					}
-				}
 			}
 			dragonOrder.Sort();
-			statOrder.Sort();
-
-			for(int i = statOrder.Count - 1; i >= 0; i--) {
-				string stat = statOrder[i];
-				if(!statFilters.ContainsKey(stat) || !statFilters[stat]) {
-					statOrder.RemoveAt(i);
-				}
-			}
+			
+			resultFilter = displayFilters.Where(filter => filter.isAllowed).ToList();
 
 			//gather removed values
 			removedValues = from.Where(kvp => !to.ContainsKey(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -145,7 +126,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 							Dictionary<string, string> statsFrom = from[dragon][i];
 							Dictionary<string, string> statsTo = to[dragon][i];
 
-							foreach(string stat in statOrder) {
+							foreach(string stat in resultFilter.Select(filter => filter.path)) {
 								result.Append("\t");
 								if(statsFrom.ContainsKey(stat)) {
 									if(statsTo.ContainsKey(stat)) {
@@ -213,7 +194,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 		}
 
 		private void AppendAllStats(ref StringBuilder builder, Dictionary<string, string> dict) {
-			foreach(string stat in statOrder) {
+			foreach(string stat in resultFilter.Select(filter => filter.path)) {
 				builder.Append("\t");
 				if(dict.ContainsKey(stat)) {
 					builder.Append(dict[stat].Trim());

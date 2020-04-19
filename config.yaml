@@ -132,7 +132,7 @@ addressableCompareConfig:
   onlineSourcesConfig:
     baseURL: http://media.schoolofdragons.com/DWADragonsUnity
     baseSuffix: High
-    assetInfo: data/AssetVersionsDO.xml
+    dataContainer: data/AssetVersionsDO.xml
 
   #used when you set 'makeFile' to true or your 'sourceType' is 'local'
   localSourcesConfig:
@@ -207,28 +207,79 @@ fireballCompareConfig:
   - Array:Array
 
   #Basically just an internal value, this defines that the value of '_Name' can be used as a unique key (and makes '_Name' the first result-Column)
-  mapStatsBy: _Name
+  mapStatsBy:
+    path: _Name
+    outputName: Name
 
   #set a value to false to ignore it
-  statList:
-    _Name: true
-    _MinSpeed: true
-    _MaxTimeToTarget: true
-    _Damage: true
-    _CriticalDamageMultiplier: true
-    _CriticalDamageChance: true
-    _Energy: true
-    _TouchRadius: true
-    _Lifetime: true
-    _TotalShots: true
-    _Cooldown: true
-    _Range: true
-    _Homing: true
-    _SlowEffect: true
-    _AmmoType: true
-    _RechargeRange:Min: true
-    _RechargeRange:Max: true
-    _AvailableShots: true
+  displayFilter:
+  - path: _MinSpeed
+    isAllowed: true
+    outputName: MinSpeed
+
+  - path: _MaxTimeToTarget
+    isAllowed: true
+    outputName: MaxTimeToTarget
+
+  - path: _Damage
+    isAllowed: true
+    outputName: Damage
+
+  - path: _CriticalDamageMultiplier
+    isAllowed: true
+    outputName: CritMultiplier
+
+  - path: _CriticalDamageChance
+    isAllowed: true
+    outputName: CritChance
+
+  - path: _Energy
+    isAllowed: true
+    outputName: Energy
+
+  - path: _TouchRadius
+    isAllowed: true
+    outputName: TouchRadius
+
+  - path: _Lifetime
+    isAllowed: true
+    outputName: Lifetime
+
+  - path: _TotalShots
+    isAllowed: true
+    outputName: TotalShots
+
+  - path: _Cooldown
+    isAllowed: true
+    outputName: Cooldown
+
+  - path: _Range
+    isAllowed: true
+    outputName: Range
+
+  - path: _Homing
+    isAllowed: true
+    outputName: Homing
+
+  - path: _SlowEffect
+    isAllowed: true
+    outputName: SlowEffect
+
+  - path: _AmmoType
+    isAllowed: true
+    outputName: AmmoType
+
+  - path: _RechargeRange:Min
+    isAllowed: true
+    outputName: Recharge:Min
+
+  - path: _RechargeRange:Max
+    isAllowed: true
+    outputName: Recharge:Max
+
+  - path: _AvailableShots
+    isAllowed: true
+    outputName: AvailableShots
 
 
 #======================================================================================
@@ -282,73 +333,231 @@ squadTacticsCompareConfig:
   - _Characters:CharacterData
   - Array:Array
 
-  #Basically just an internal value, this defines that the value of '_Name' can be used as a unique key (and makes '_Name' the first result-Column)
-  mapStatsBy: _NameID
+  mapStatsBy:
+    path: _NameID
+    outputName: NameID
 
-  #set a value to false to ignore it (comparison output only, sources will always save all data)
-  statList:
-    _NameID: true
-    _Available: true
-    _DisplayNameText:_Text: true
-    _DisplayNameText:_ID: true
-    _SpeciesText:_Text: true
-    _SpeciesText:_ID: true
+  #defines which properties will be displayed, their outputName and their outputOrder
+  displayFilter:
+  - path: _Available
+    isAllowed: true
+    outputName: Available
 
-    _Stats:_CriticalChance:_BaseValue: true
-    _Stats:_CriticalChance:_LevelMultiplier: true
-    _Stats:_CriticalChance:_LimitMultiplier: true
-    _Stats:_CriticalChance:_Limits:Min: true
-    _Stats:_CriticalChance:_Limits:Max: true
-    _Stats:_CriticalChance:_UseRoundedValues: true
+  - path: _DisplayNameText:_Text
+    isAllowed: true
+    outputName: DisplayName
 
-    _Stats:_CriticalDamageMultiplier:_BaseValue: true
-    _Stats:_CriticalDamageMultiplier:_LevelMultiplier: true
-    _Stats:_CriticalDamageMultiplier:_LimitMultiplier: true
-    _Stats:_CriticalDamageMultiplier:_Limits:Min: true
-    _Stats:_CriticalDamageMultiplier:_Limits:Max: true
-    _Stats:_CriticalDamageMultiplier:_UseRoundedValues: true
+  - path: _DisplayNameText:_ID
+    isAllowed: true
+    outputName: DisplayNameID
 
-    _Stats:_DodgeChance:_BaseValue: true
-    _Stats:_DodgeChance:_LevelMultiplier: true
-    _Stats:_DodgeChance:_LimitMultiplier: true
-    _Stats:_DodgeChance:_Limits:Min: true
-    _Stats:_DodgeChance:_Limits:Max: true
-    _Stats:_DodgeChance:_UseRoundedValues: true
+  - path: _SpeciesText:_Text
+    isAllowed: true
+    outputName: Species
 
-    _Stats:_FirePower:_BaseValue: true
-    _Stats:_FirePower:_LevelMultiplier: true
-    _Stats:_FirePower:_LimitMultiplier: true
-    _Stats:_FirePower:_Limits:Min: true
-    _Stats:_FirePower:_Limits:Max: true
-    _Stats:_FirePower:_UseRoundedValues: true
+  - path: _SpeciesText:_ID
+    isAllowed: true
+    outputName: SpeciesID
 
-    _Stats:_HealingPower:_BaseValue: true
-    _Stats:_HealingPower:_LevelMultiplier: true
-    _Stats:_HealingPower:_LimitMultiplier: true
-    _Stats:_HealingPower:_Limits:Min: true
-    _Stats:_HealingPower:_Limits:Max: true
-    _Stats:_HealingPower:_UseRoundedValues: true
+  #Stats : CriticalChance
+  - path: _Stats:_CriticalChance:_BaseValue
+    isAllowed: true
+    outputName: CriticalChance:BaseValue
 
-    _Stats:_Health:_BaseValue: true
-    _Stats:_Health:_LevelMultiplier: true
-    _Stats:_Health:_LimitMultiplier: true
-    _Stats:_Health:_Limits:Min: true
-    _Stats:_Health:_Limits:Max: true
-    _Stats:_Health:_UseRoundedValues: true
+  - path: _Stats:_CriticalChance:_LevelMultiplier
+    isAllowed: true
+    outputName: CriticalChance:LevelMultiplier
 
-    _Stats:_Movement:_BaseValue: true
-    _Stats:_Movement:_LevelMultiplier: true
-    _Stats:_Movement:_LimitMultiplier: true
-    _Stats:_Movement:_Limits:Min: true
-    _Stats:_Movement:_Limits:Max: true
-    _Stats:_Movement:_UseRoundedValues: true
+  - path: _Stats:_CriticalChance:_LimitMultiplier
+    isAllowed: true
+    outputName: CriticalChance:LimitMultiplier
 
-    _Stats:_Strength:_BaseValue: true
-    _Stats:_Strength:_LevelMultiplier: true
-    _Stats:_Strength:_LimitMultiplier: true
-    _Stats:_Strength:_Limits:Min: true
-    _Stats:_Strength:_Limits:Max: true
-    _Stats:_Strength:_UseRoundedValues: true
+  - path: _Stats:_CriticalChance:_Limits:Min
+    isAllowed: true
+    outputName: CriticalChance:Min
+
+  - path: _Stats:_CriticalChance:_Limits:Max
+    isAllowed: true
+    outputName: CriticalChance:Max
+
+  - path: _Stats:_CriticalChance:_UseRoundedValues
+    isAllowed: true
+    outputName: CriticalChance:Round
+
+  #Stats : CriticalDamageMultiplier
+  - path: _Stats:_CriticalDamageMultiplier:_BaseValue
+    isAllowed: true
+    outputName: CriticalDamageMultiplier:BaseValue
+
+  - path: _Stats:_CriticalDamageMultiplier:_LevelMultiplier
+    isAllowed: true
+    outputName: CriticalDamageMultiplier:LevelMultiplier
+
+  - path: _Stats:_CriticalDamageMultiplier:_LimitMultiplier
+    isAllowed: true
+    outputName: CriticalDamageMultiplier:LimitMultiplier
+
+  - path: _Stats:_CriticalDamageMultiplier:_Limits:Min
+    isAllowed: true
+    outputName: CriticalDamageMultiplier:Min
+
+  - path: _Stats:_CriticalDamageMultiplier:_Limits:Max
+    isAllowed: true
+    outputName: CriticalDamageMultiplier:Max
+
+  - path: _Stats:_CriticalDamageMultiplier:_UseRoundedValues
+    isAllowed: true
+    outputName: CriticalDamageMultiplier:Round
+
+  #Stats : DodgeChance
+  - path: _Stats:_DodgeChance:_BaseValue
+    isAllowed: true
+    outputName: DodgeChance:BaseValue
+
+  - path: _Stats:_DodgeChance:_LevelMultiplier
+    isAllowed: true
+    outputName: DodgeChance:LevelMultiplier
+
+  - path: _Stats:_DodgeChance:_LimitMultiplier
+    isAllowed: true
+    outputName: DodgeChance:LimitMultiplier
+
+  - path: _Stats:_DodgeChance:_Limits:Min
+    isAllowed: true
+    outputName: DodgeChance:Min
+
+  - path: _Stats:_DodgeChance:_Limits:Max
+    isAllowed: true
+    outputName: DodgeChance:Max
+
+  - path: _Stats:_DodgeChance:_UseRoundedValues
+    isAllowed: true
+    outputName: DodgeChance:Round
+
+  #Stats : FirePower
+  - path: _Stats:_FirePower:_BaseValue
+    isAllowed: true
+    outputName: FirePower:BaseValue
+
+  - path: _Stats:_FirePower:_LevelMultiplier
+    isAllowed: true
+    outputName: FirePower:LevelMultiplier
+
+  - path: _Stats:_FirePower:_LimitMultiplier
+    isAllowed: true
+    outputName: FirePower:LimitMultiplier
+
+  - path: _Stats:_FirePower:_Limits:Min
+    isAllowed: true
+    outputName: FirePower:Min
+
+  - path: _Stats:_FirePower:_Limits:Max
+    isAllowed: true
+    outputName: FirePower:Max
+
+  - path: _Stats:_FirePower:_UseRoundedValues
+    isAllowed: true
+    outputName: FirePower:Round
+
+  #Stats : HealingPower
+  - path: _Stats:_HealingPower:_BaseValue
+    isAllowed: true
+    outputName: HealingPower:BaseValue
+
+  - path: _Stats:_HealingPower:_LevelMultiplier
+    isAllowed: true
+    outputName: HealingPower:LevelMultiplier
+
+  - path: _Stats:_HealingPower:_LimitMultiplier
+    isAllowed: true
+    outputName: HealingPower:LimitMultiplier
+
+  - path: _Stats:_HealingPower:_Limits:Min
+    isAllowed: true
+    outputName: HealingPower:Min
+
+  - path: _Stats:_HealingPower:_Limits:Max
+    isAllowed: true
+    outputName: HealingPower:Max
+
+  - path: _Stats:_HealingPower:_UseRoundedValues
+    isAllowed: true
+    outputName: HealingPower:Round
+
+  #Stats : Health
+  - path: _Stats:_Health:_BaseValue
+    isAllowed: true
+    outputName: Health:BaseValue
+
+  - path: _Stats:_Health:_LevelMultiplier
+    isAllowed: true
+    outputName: Health:LevelMultiplier
+
+  - path: _Stats:_Health:_LimitMultiplier
+    isAllowed: true
+    outputName: Health:LimitMultiplier
+
+  - path: _Stats:_Health:_Limits:Min
+    isAllowed: true
+    outputName: Health:Min
+
+  - path: _Stats:_Health:_Limits:Max
+    isAllowed: true
+    outputName: Health:Max
+
+  - path: _Stats:_Health:_UseRoundedValues
+    isAllowed: true
+    outputName: Health:Round
+
+  #Stats : Movement
+  - path: _Stats:_Movement:_BaseValue
+    isAllowed: true
+    outputName: Movement:BaseValue
+
+  - path: _Stats:_Movement:_LevelMultiplier
+    isAllowed: true
+    outputName: Movement:LevelMultiplier
+
+  - path: _Stats:_Movement:_LimitMultiplier
+    isAllowed: true
+    outputName: Movement:LimitMultiplier
+
+  - path: _Stats:_Movement:_Limits:Min
+    isAllowed: true
+    outputName: Movement:Min
+
+  - path: _Stats:_Movement:_Limits:Max
+    isAllowed: true
+    outputName: Movement:Max
+
+  - path: _Stats:_Movement:_UseRoundedValues
+    isAllowed: true
+    outputName: Movement:Round
+
+  #Stats : Strength
+  - path: _Stats:_Strength:_BaseValue
+    isAllowed: true
+    outputName: Strength:BaseValue
+
+  - path: _Stats:_Strength:_LevelMultiplier
+    isAllowed: true
+    outputName: Strength:LevelMultiplier
+
+  - path: _Stats:_Strength:_LimitMultiplier
+    isAllowed: true
+    outputName: Strength:LimitMultiplier
+
+  - path: _Stats:_Strength:_Limits:Min
+    isAllowed: true
+    outputName: Strength:Min
+
+  - path: _Stats:_Strength:_Limits:Max
+    isAllowed: true
+    outputName: Strength:Max
+
+  - path: _Stats:_Strength:_UseRoundedValues
+    isAllowed: true
+    outputName: Strength:Round
 
 
 #======================================================================================
@@ -411,35 +620,343 @@ flightStatsCompareConfig:
     2: Racing
 
   #set a value to false to ignore it (comparison output only, sources will always save all data)
-  statList:
-    _RollTurnRate: true
-    _RollDampRate: true
-    _YawTurnRate: true
-    _YawTurnFactor: true
-    _PitchTurnRate: true
-    _PitchDampRate: true
-    _Speed:_Min: true
-    _Speed:_Max: true
-    _Acceleration: true
-    _ManualFlapAccel: true
-    _ManualFlapTimer: true
-    _SpeedDampRate: true
-    _BrakeDecel: true
-    _ClimbAccelRate: true
-    _DiveAccelRate: true
-    _SpeedModifierOnCollision: true
-    _BounceOnCollision: true
-    _GlideDownMultiplier: true
-    _GravityModifier: true
-    _GravityClimbMultiplier: true
-    _GravityDiveMultiplier: true
-    _FlyingMaxUpPitch: true
-    _FlyingMaxDownPitch: true
-    _GlidingMaxUpPitch: true
-    _GlidingMaxDownPitch: true
-    _MaxRoll: true
-    _FlyingPositionBoostFactor: true
+  displayFilter:
+  - path: _RollTurnRate
+    isAllowed: true
+    outputName: RollTurnRate
+
+  - path: _RollDampRate
+    isAllowed: true
+    outputName: RollDampRate
+
+  - path: _YawTurnRate
+    isAllowed: true
+    outputName: YawTurnRate
+
+  - path: _YawTurnFactor
+    isAllowed: true
+    outputName: YawTurnFactor
+
+  - path: _PitchTurnRate
+    isAllowed: true
+    outputName: PitchTurnRate
+
+  - path: _PitchDampRate
+    isAllowed: true
+    outputName: PitchDampRate
+
+  - path: _Speed:_Min
+    isAllowed: true
+    outputName: Speed:Min
+
+  - path: _Speed:_Max
+    isAllowed: true
+    outputName: Speed:Max
+
+  - path: _Acceleration
+    isAllowed: true
+    outputName: Acceleration
+
+  - path: _ManualFlapAccel
+    isAllowed: true
+    outputName: ManualFlapAccel
+
+  - path: _ManualFlapTimer
+    isAllowed: true
+    outputName: ManualFlapTimer
+
+  - path: _SpeedDampRate
+    isAllowed: true
+    outputName: SpeedDampRate
+
+  - path: _BrakeDecel
+    isAllowed: true
+    outputName: BrakeDecel
+
+  - path: _ClimbAccelRate
+    isAllowed: true
+    outputName: ClimbAccelRate
+
+  - path: _DiveAccelRate
+    isAllowed: true
+    outputName: DiveAccelRate
+
+  - path: _SpeedModifierOnCollision
+    isAllowed: true
+    outputName: SpeedModifierOnCollision
+
+  - path: _BounceOnCollision
+    isAllowed: true
+    outputName: BounceOnCollision
+
+  - path: _GlideDownMultiplier
+    isAllowed: true
+    outputName: GlideDownMult
+
+  - path: _GravityModifier
+    isAllowed: true
+    outputName: GravityModifier
+
+  - path: _GravityClimbMultiplier
+    isAllowed: true
+    outputName: GravityClimbMult
+
+  - path: _GravityDiveMultiplier
+    isAllowed: true
+    outputName: GravityDiveMult
+
+  - path: _FlyingMaxUpPitch
+    isAllowed: true
+    outputName: FlyMaxUpPitch
+
+  - path: _FlyingMaxDownPitch
+    isAllowed: true
+    outputName: FlyMaxDownPitch
+
+  - path: _GlidingMaxUpPitch
+    isAllowed: true
+    outputName: GlideMaxUpPitch
+
+  - path: _GlidingMaxDownPitch
+    isAllowed: true
+    outputName: GlideMaxDownPitch
+
+  - path: _MaxRoll
+    isAllowed: true
+    outputName: MaxRoll
+
+  - path: _FlyingPositionBoostFactor
+    isAllowed: true
+    outputName: PositionBoost
 
 
 #======================================================================================
 timedMissionCompareConfig:
+  sourceFrom:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.6.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseURL: http://media.schoolofdragons.com/DWADragonsUnity
+    baseSuffix: High
+    dataContainer: data/TimedMissionDO.xml
+
+  localSourcesConfig:
+    baseDirectory: timedMissionHistory\sources
+    targetFileName: timedMission
+    targetFileExtension: txt
+    lastcreated: timedMissionHistory\sources\timedMission_2020.04.18.txt
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+  resultConfig:
+    makeFile: true
+    baseDirectory: timedMissionHistory\results
+    appendDate: true
+
+  #defines which properties will be displayed, their outputName and their outputOrder
+  displayFilter:
+  - path: Title:Text
+    isAllowed: true
+    outputName: TitleText
+
+  - path: Title:ID
+    isAllowed: true
+    outputName: TitleID
+
+  - path: Description:Text
+    isAllowed: true
+    outputName: DescriptionText
+
+  - path: Description:ID
+    isAllowed: true
+    outputName: DescriptionID
+
+  - path: Icon
+    isAllowed: true
+    outputName: Icon
+
+  - path: Probability
+    isAllowed: true
+    outputName: Probability
+
+  - path: Difficulty
+    isAllowed: true
+    outputName: Difficulty
+
+  - path: Hint:Text
+    isAllowed: true
+    outputName: HintText
+
+  - path: Hint:ID
+    isAllowed: true
+    outputName: HintID
+
+  - path: HintIcon
+    isAllowed: true
+    outputName: HintIcon
+
+  - path: CostList:CostItems:ItemID
+    isAllowed: true
+    outputName: CostItemID
+
+  - path: CostList:CostItems:Duration
+    isAllowed: true
+    outputName: CostItemDuration
+
+  - path: Duration
+    isAllowed: true
+    outputName: Duration
+
+  - path: PetCount:Min
+    isAllowed: true
+    outputName: PetCount:Min
+
+  - path: PetCount:Max
+    isAllowed: true
+    outputName: PetCount:Max
+
+  - path: Logs
+    isAllowed: true
+    outputName: Logs
+
+  - path: MaxNoOfTimes
+    isAllowed: true
+    outputName: MaxNoOfTimes
+
+  - path: Type
+    isAllowed: true
+    outputName: Slot
+
+  - path: Prerequisites:Type
+    isAllowed: true
+    outputName: Prerequisite:Type
+
+  - path: Prerequisites:Value
+    isAllowed: true
+    outputName: Prerequisite:Value
+
+  - path: Prerequisites:Quantity
+    isAllowed: true
+    outputName: Prerequisite:Quantity
+
+  - path: Qualify:IsIncludeList
+    isAllowed: true
+    outputName: Qualify:IsIncludeList
+
+  - path: Qualify:QualifyList:Type
+    isAllowed: true
+    outputName: Qualify:Type
+
+  - path: Qualify:QualifyList:Value
+    isAllowed: true
+    outputName: Qualify:Value
+
+  - path: WinFactor
+    isAllowed: true
+    outputName: WinFactor
+
+  - path: WinFactorPerDragon
+    isAllowed: true
+    outputName: WinFactorPerDragon
+
+  - path: DragonFactors:Type
+    isAllowed: true
+    outputName: DragonFactor:Type
+
+  - path: DragonFactors:Value
+    isAllowed: true
+    outputName: DragonFactor:Value
+
+  - path: DragonFactors:Factor
+    isAllowed: true
+    outputName: DragonFactor:Factor
+
+  - path: DragonEnergyCost
+    isAllowed: true
+    outputName: DragonEnergyCost
+
+  - path: WinAchID
+    isAllowed: true
+    outputName: WinAchID
+
+  - path: WinAchievements:PetCount
+    isAllowed: true
+    outputName: WinAchs:PetCount
+
+  - path: WinAchievements:AchID
+    isAllowed: true
+    outputName: WinAchs:AchID
+
+  - path: WinRewards:a
+    isAllowed: true
+    outputName: WR:Amount
+
+  - path: WinRewards:p
+    isAllowed: true
+    outputName: WR:PointTypeID
+
+  - path: WinRewards:ii
+    isAllowed: true
+    outputName: WR:ItemID
+
+  - path: WinRewards:t
+    isAllowed: true
+    outputName: WR:EntityTypeID
+
+  - path: WinRewards:r
+    isAllowed: true
+    outputName: WR:RewardID
+
+  - path: LoseAchID
+    isAllowed: true
+    outputName: LoseAchID
+
+  - path: LoseAchievements:PetCount
+    isAllowed: true
+    outputName: LoseAchs:PetCount
+
+  - path: LoseAchievements:AchID
+    isAllowed: true
+    outputName: LoseAchs:AchID
+
+  - path: LoseRewards:a
+    isAllowed: true
+    outputName: LR:Amount
+
+  - path: LoseRewards:p
+    isAllowed: true
+    outputName: LR:PointTypeID
+
+  - path: LoseRewards:ii
+    isAllowed: true
+    outputName: LR:ItemID
+
+  - path: LoseRewards:t
+    isAllowed: true
+    outputName: LR:EntityTypeID
+
+  - path: LoseRewards:r
+    isAllowed: true
+    outputName: LR:RewardID

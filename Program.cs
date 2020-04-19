@@ -7,6 +7,7 @@ using SoD_DiffExplorer.fireballcompare;
 using SoD_DiffExplorer.squadtacticscompare;
 using SoD_DiffExplorer.flightstatcompare;
 using SoD_DiffExplorer.menuutils;
+using SoD_DiffExplorer.timedmissioncompare;
 
 namespace SoD_DiffExplorer
 {
@@ -19,6 +20,7 @@ namespace SoD_DiffExplorer
 		public static FireballComparer fireballComparer;
 		public static SquadTacticsComparer squadTacticsComparer;
 		public static FlightStatsComparer flightStatsComparer;
+		public static TimedMissionComparer timedMissionComparer;
 
 		static void Main(string[] args) {
 			try {
@@ -31,6 +33,7 @@ namespace SoD_DiffExplorer
 				Console.WriteLine("Encountered an exception during parsing of the config!");
 				Console.WriteLine("Exception: " + e.ToString());
 				Console.WriteLine(e.StackTrace);
+				Console.ReadKey(true);
 				return;
 			}
 
@@ -40,10 +43,11 @@ namespace SoD_DiffExplorer
 			fireballComparer = new FireballComparer(config.fireballCompareConfig, menuUtils);
 			squadTacticsComparer = new SquadTacticsComparer(config.squadTacticsCompareConfig, menuUtils);
 			flightStatsComparer = new FlightStatsComparer(config.flightStatsCompareConfig, menuUtils);
+			timedMissionComparer = new TimedMissionComparer(config.timedMissionCompareConfig, menuUtils);
 
-			try{
+			try {
 				OpenMainMenu();
-			}catch(Exception e) {
+			} catch(Exception e) {
 				Console.WriteLine("caught exception!");
 				Console.WriteLine(e.ToString());
 				Console.WriteLine(e.StackTrace);
@@ -58,7 +62,8 @@ namespace SoD_DiffExplorer
 				"Open AddressableComparer",
 				"Open FireballStatComparer",
 				"Open SquadTacticsStatComparer",
-				"Open FlightStatComparer"
+				"Open FlightStatComparer",
+				"Open TimedMissionComparer\n"
 			};
 			string backText = "quit";
 			int spacing = 0;
@@ -84,6 +89,9 @@ namespace SoD_DiffExplorer
 						flightStatsComparer.OpenFlightStatsComparerMenu();
 						break;
 					case 5:
+						timedMissionComparer.OpenTimedMissionComparerMenu();
+						break;
+					case 6:
 						return;
 				}
 			}

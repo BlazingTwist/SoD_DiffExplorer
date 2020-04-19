@@ -7,29 +7,29 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace SoD_DiffExplorer.flightstatcompare
+namespace SoD_DiffExplorer.timedmissioncompare
 {
-	class FlightStatsComparer
+	class TimedMissionComparer
 	{
-		private FSCConfig config;
+		private TMCConfig config;
 		private MenuUtils menuUtils;
 
-		public FlightStatsComparer(FSCConfig config, MenuUtils menuUtils){
+		public TimedMissionComparer(TMCConfig config, MenuUtils menuUtils) {
 			this.config = config;
 			this.menuUtils = menuUtils;
 		}
 
-		private void RunFlightStatsComparison() {
-			Dictionary<string, List<Dictionary<string, string>>> flightStatsFrom = config.GetFlightStatsFromSource(config.sourceFrom);
-			Dictionary<string, List<Dictionary<string, string>>> flightStatsTo = config.GetFlightStatsFromSource(config.sourceTo);
+		private void RunTimedMissionComparison() {
+			Dictionary<int, Dictionary<string, List<string>>> missionsFrom = config.GetMissionDataFromSource(config.sourceFrom);
+			Dictionary<int, Dictionary<string, List<string>>> missionsTo = config.GetMissionDataFromSource(config.sourceTo);
 
-			config.ManageMakeFile(flightStatsFrom, config.sourceFrom);
-			config.ManageMakeFile(flightStatsTo, config.sourceTo);
+			config.ManageMakeFile(missionsFrom, config.sourceFrom);
+			config.ManageMakeFile(missionsTo, config.sourceTo);
 
 			//do comparison
-			CompareResultImpl compareResult = new CompareResultImpl(flightStatsFrom, flightStatsTo, config.displayFilter, config.flightTypesDict);
+			CompareResultImpl compareResult = new CompareResultImpl(missionsFrom, missionsTo, config.displayFilter);
 			StringBuilder resultText = new StringBuilder();
-			resultText.Append("\tDragonName\tStatType\t").Append(string.Join('\t', compareResult.resultFilter.Select(filter => filter.outputName)));
+			resultText.Append("\tmissionID\t").Append(string.Join("\t", compareResult.resultFilter.Select(filter => filter.outputName)));
 			resultText.Append("\nnew").Append(compareResult.FormatComparison(compareResult.addedValues));
 			resultText.Append("\nchanged").Append(compareResult.FormatComparisonChange(compareResult.changedValuesFrom, compareResult.changedValuesTo));
 			resultText.Append("\nremoved").Append(compareResult.FormatComparison(compareResult.removedValues));
@@ -50,14 +50,14 @@ namespace SoD_DiffExplorer.flightstatcompare
 			Console.ReadKey(true);
 		}
 
-		public void OpenFlightStatsComparerMenu() {
-			string header = "FlightStats Comparer:";
+		public void OpenTimedMissionComparerMenu() {
+			string header = "TimedMission Comparer:";
 			string[] options = new string[] {
 				"Adjust Configuration",
 				"Run Comparison\n"
 			};
 			string backtext = "Back to Main Menu";
-			int spacing  = 1;
+			int spacing = 1;
 
 			int selection = 0;
 			while(true) {
@@ -69,7 +69,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 						break;
 					case 1:
 						Console.Clear();
-						RunFlightStatsComparison();
+						RunTimedMissionComparison();
 						break;
 					case 2:
 						return;
@@ -78,8 +78,8 @@ namespace SoD_DiffExplorer.flightstatcompare
 		}
 
 		private void OpenConfigMenu() {
-			string header = "FlightStats Comparer Config";
-			string backText = "Back to FlightStats Comparer";
+			string header = "TimedMission Comparer Config";
+			string backText = "Back to TimedMission Comparer";
 			int spacing = 2;
 
 			int selection = 0;
@@ -101,7 +101,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 						OpenResultConfigMenu();
 						break;
 					case 4:
-						OpenStatListConfigMenu();
+						OpenDisplayFilterConfigMenu();
 						break;
 					case 5:
 						Console.Clear();
@@ -114,7 +114,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 		}
 
 		private string[] GetConfigOptions() {
-			return new string[]{
+			return new string[] {
 				"adjust sourceFrom \t\t(" + GetSourceInfoString(config.sourceFrom) + ")",
 				"adjust sourceTo \t\t(" + GetSourceInfoString(config.sourceTo) + ")",
 				"adjust localSourcesConfig \t(" + GetLocalSourcesConfigInfoString() + ")",
@@ -127,23 +127,23 @@ namespace SoD_DiffExplorer.flightstatcompare
 		private string GetSourceInfoString(SourceConfig sourceConfig) {
 			List<string> values = new List<string>();
 			if(sourceConfig.sourceType == SourceType.online) {
-				OnlineSource fscosConfig = sourceConfig.online;
-				values.Add("platform = " + fscosConfig.platform);
-				values.Add("version = " + fscosConfig.version);
-				values.Add("makeFile = " + fscosConfig.makeFile);
-				if(fscosConfig.makeFile) {
-					values.Add("makeLastCreated = " + fscosConfig.makeLastCreated);
+				OnlineSource onlineSource = sourceConfig.online;
+				values.Add("platform = " + onlineSource.platform);
+				values.Add("version = " + onlineSource.version);
+				values.Add("makeFile = " + onlineSource.makeFile);
+				if(onlineSource.makeFile) {
+					values.Add("makeLastCreated = " + onlineSource.makeLastCreated);
 				}
 			} else if(sourceConfig.sourceType == SourceType.local) {
-				LocalSource fsclsConfig = sourceConfig.local;
+				LocalSource localSource = sourceConfig.local;
 				if(config.localSourcesConfig.appendPlatform) {
-					values.Add("platform = " + fsclsConfig.platform);
+					values.Add("platform = " + localSource.platform);
 				}
 				if(config.localSourcesConfig.appendVersion) {
-					values.Add("version = " + fsclsConfig.version);
+					values.Add("version = " + localSource.version);
 				}
 				if(config.localSourcesConfig.appendDate) {
-					values.Add("date = " + fsclsConfig.date);
+					values.Add("date = " + localSource.date);
 				}
 			} else if(sourceConfig.sourceType == SourceType.lastcreated) {
 				values.Add(config.localSourcesConfig.lastcreated);
@@ -152,13 +152,13 @@ namespace SoD_DiffExplorer.flightstatcompare
 		}
 
 		private string GetLocalSourcesConfigInfoString() {
-			LocalSourcesConfig fsclsConfig = config.localSourcesConfig;
-			return "appendPlatform = " + fsclsConfig.appendPlatform + " | appendVersion = " + fsclsConfig.appendVersion + " | appendDate = " + fsclsConfig.appendDate;
+			LocalSourcesConfig lsConfig = config.localSourcesConfig;
+			return "appendPlatform = " + lsConfig.appendPlatform + " | appendVersion = " + lsConfig.appendVersion + " | appendDate = " + lsConfig.appendDate;
 		}
 
 		private string GetResultConfigInfoString() {
-			ResultConfig fscrConfig = config.resultConfig;
-			return "makeFile = " + fscrConfig.makeFile + " | appendDate = " + fscrConfig.appendDate;
+			ResultConfig rConfig = config.resultConfig;
+			return "makeFile = " + rConfig.makeFile + " | appendDate = " + rConfig.appendDate;
 		}
 
 		private string GetDisplayFilterInfoString() {
@@ -167,13 +167,13 @@ namespace SoD_DiffExplorer.flightstatcompare
 
 		private void OpenSourceConfigMenu(SourceConfig sourceConfig, string sourceName) {
 			string header = "Currently editing " + sourceName;
-			string backText = "Back to FlightStats Config Menu";
+			string backtext = "Back to TimedMission Config Menu";
 			int spacing = 3;
 
 			int selection = 0;
 			while(true) {
 				string[] options = GetSourceConfigOptions(sourceConfig);
-				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
+				selection = menuUtils.OpenSelectionMenu(options, backtext, header, selection, spacing);
 
 				switch(selection) {
 					case 0:
@@ -221,7 +221,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 
 		private void OpenLocalSourcesConfigMenu() {
 			string header = "Currently editing localSourcesConfig";
-			string backText = "Back to FlightStats Config Menu";
+			string backText = "Back to TimedMission Config Menu";
 			int spacing = 3;
 
 			int selection = 0;
@@ -256,7 +256,7 @@ namespace SoD_DiffExplorer.flightstatcompare
 
 		private void OpenResultConfigMenu() {
 			string header = "Currently editing resultConfig";
-			string backText = "Back to FlightStats Config Menu";
+			string backText = "Back to TimedMission Config Menu";
 			int spacing = 3;
 
 			int selection = 0;
@@ -281,9 +281,9 @@ namespace SoD_DiffExplorer.flightstatcompare
 			}
 		}
 
-		private void OpenStatListConfigMenu() {
+		private void OpenDisplayFilterConfigMenu() {
 			string header = "Currently editing statList (filtered stats)";
-			string backText = "Back to FlightStats Config Menu";
+			string backText = "Back to TimedMission Config Menu";
 			int spacing = 3;
 
 			int selection = 0;

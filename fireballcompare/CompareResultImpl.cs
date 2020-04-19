@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SoD_DiffExplorer.commonconfig;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -7,44 +8,28 @@ namespace SoD_DiffExplorer.fireballcompare
 	class CompareResultImpl
 	{
 		public List<string> dragonOrder = new List<string>();
-		public List<string> statOrder = new List<string>();
+		public List<ResultFilter> resultFilter;
 		public Dictionary<string, Dictionary<string, string>> sameValues;
 		public Dictionary<string, Dictionary<string, string>> removedValues;
 		public Dictionary<string, Dictionary<string, string>> addedValues;
 		public Dictionary<string, Dictionary<string, string>> changedValuesFrom;
 		public Dictionary<string, Dictionary<string, string>> changedValuesTo;
 
-		public CompareResultImpl(Dictionary<string, Dictionary<string, string>> from, Dictionary<string, Dictionary<string, string>> to, Dictionary<string, bool> statFilters) {
+		public CompareResultImpl(Dictionary<string, Dictionary<string, string>> from, Dictionary<string, Dictionary<string, string>> to, List<ResultFilter> displayFilters) {
 			//build statorders
 			foreach(string key in from.Keys) {
 				if(!dragonOrder.Contains(key)) {
 					dragonOrder.Add(key);
-				}
-				foreach(string statKey in from[key].Keys) {
-					if(!statOrder.Contains(statKey)) {
-						statOrder.Add(statKey);
-					}
 				}
 			}
 			foreach(string key in to.Keys) {
 				if(!dragonOrder.Contains(key)) {
 					dragonOrder.Add(key);
 				}
-				foreach(string statKey in to[key].Keys) {
-					if(!statOrder.Contains(statKey)) {
-						statOrder.Add(statKey);
-					}
-				}
 			}
 			dragonOrder.Sort();
-			statOrder.Sort();
-
-			for(int i = statOrder.Count - 1; i >= 0; i--) {
-				string stat = statOrder[i];
-				if(!statFilters.ContainsKey(stat) || !statFilters[stat]) {
-					statOrder.RemoveAt(i);
-				}
-			}
+			
+			resultFilter = displayFilters.Where(filter => filter.isAllowed).ToList();
 
 			//gather removed values
 			removedValues = from.Where(kvp => !to.ContainsKey(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -94,7 +79,7 @@ namespace SoD_DiffExplorer.fireballcompare
 				}
 				result.Append("\n\t").Append(dragon);
 				Dictionary<string, string> dragonDict = data[dragon];
-				foreach(string stat in statOrder) {
+				foreach(string stat in resultFilter.Select(filter => filter.path)) {
 					result.Append("\t");
 					if(dragonDict.ContainsKey(stat)) {
 						result.Append(dragonDict[stat].Trim());
@@ -117,7 +102,7 @@ namespace SoD_DiffExplorer.fireballcompare
 				result.Append("\nto\t").Append(dragon);
 
 				Dictionary<string, string> statsTo = to[dragon];
-				foreach(string stat in statOrder) {
+				foreach(string stat in resultFilter.Select(filter => filter.path)) {
 					result.Append("\t");
 					if(statsTo.ContainsKey(stat)) {
 						result.Append(statsTo[stat].Trim());
@@ -128,7 +113,7 @@ namespace SoD_DiffExplorer.fireballcompare
 
 				result.Append("\nfrom\t");
 				Dictionary<string, string> statsFrom = from[dragon];
-				foreach(string stat in statOrder) {
+				foreach(string stat in resultFilter.Select(filter => filter.path)) {
 					result.Append("\t");
 					if(statsFrom.ContainsKey(stat)) {
 						if(statsTo.ContainsKey(stat)) {

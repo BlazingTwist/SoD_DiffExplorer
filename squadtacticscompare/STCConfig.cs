@@ -14,12 +14,12 @@ namespace SoD_DiffExplorer.squadtacticscompare
 	{
 		public SourceConfig sourceFrom = null;
 		public SourceConfig sourceTo = null;
-		public STCOnlineSourceConfig onlineSourcesConfig = null;
+		public SimpleOnlineSourcesConfig onlineSourcesConfig = null;
 		public LocalSourcesConfig localSourcesConfig = null;
 		public ResultConfig resultConfig = null;
 		public List<string> targetStatPath = null;
-		public string mapStatsBy = null;
-		public BetterDict<string, bool> statList = null;
+		public MappingValue mapStatsBy = null;
+		public List<ResultFilter> displayFilter = null;
 
 		public void SaveConfig() {
 			BetterDict<string, string> simpleChangeDict = new BetterDict<string, string> {
@@ -50,15 +50,8 @@ namespace SoD_DiffExplorer.squadtacticscompare
 				{"squadTacticsCompareConfig.resultConfig.appendDate", resultConfig.appendDate.ToString()}
 			};
 
-			BetterDict<string, string> statFilterChangeDict = new BetterDict<string, string>(statList.ToDictionary(
-				kvp => {
-					return "squadTacticsCompareConfig.statList." + kvp.Key;
-				}, kvp => {
-					return kvp.Value.ToString();
-				}));
-
 			List<string> lines = YamlUtils.GetAllConfigLines();
-			if(YamlUtils.ChangeSimpleValues(ref lines, simpleChangeDict) && YamlUtils.ChangeSimpleValues(ref lines, statFilterChangeDict)) {
+			if(YamlUtils.ChangeSimpleValues(ref lines, simpleChangeDict) && YamlUtils.ChangeSimpleObjectListContent(ref lines, "squadTacticsCompareConfig.displayFilter", displayFilter.ToList<YamlObject>())) {
 				Console.WriteLine("config saving was successful");
 				using(StreamWriter writer = new StreamWriter("config.yaml", false)) {
 					lines.ForEach(line => writer.WriteLine(line));
@@ -144,7 +137,7 @@ namespace SoD_DiffExplorer.squadtacticscompare
 					List<Tuple<string, string>> statEntrys = ResolveStatListField(characterParam);
 					if(statEntrys != null && statEntrys.Count > 0) {
 						statEntrys.ForEach(statEntry => {
-							if(statEntry.Item1 == mapStatsBy) {
+							if(statEntry.Item1 == mapStatsBy.path) {
 								mapValue = statEntry.Item2;
 							} else {
 								tempStats[statEntry.Item1] = statEntry.Item2;
@@ -154,7 +147,7 @@ namespace SoD_DiffExplorer.squadtacticscompare
 				}
 
 				if(mapValue == null) {
-					Console.WriteLine("Could not find mapValue! Discarding statmap...");
+					Console.WriteLine("Could not find mapValue (" + mapStatsBy.path + ")! Discarding statmap...");
 					Console.WriteLine("\t" + string.Join("\n\t", tempStats.Select(x => x.Key + "=" + x.Value).ToArray()));
 				} else {
 					result[mapValue] = tempStats;
@@ -173,13 +166,16 @@ namespace SoD_DiffExplorer.squadtacticscompare
 		}
 
 		private List<Tuple<string, string>> ResolveStatListField(AssetTypeValueField field) {
-			if(statList.ContainsKey(field.GetName())) {
+			if(displayFilter.Any(filter => filter.path == field.GetName()) || mapStatsBy.path == field.GetName()) {
 				return new List<Tuple<string, string>> { new Tuple<string, string>(field.GetName(), field.GetValue().AsString()) };
 			} else {
-				List<string[]> specialStats = statList
-					.Where(pair => pair.Key.Contains(':'))
-					.Select(pair => pair.Key.Split(':'))
+				List<string[]> specialStats = displayFilter
+					.Where(filter => filter.path.Contains(':'))
+					.Select(filter => filter.path.Split(':'))
 					.ToList();
+				if(mapStatsBy.path.Contains(':')) {
+					specialStats.Add(mapStatsBy.path.Split(':'));
+				}
 				return ResolveSpecialStats(specialStats, new List<AssetTypeValueField>{field});
 			}
 		}

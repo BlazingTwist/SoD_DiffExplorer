@@ -27,9 +27,9 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			config.ManageMakeFile(characterTo, config.sourceTo);
 
 			//do comparison
-			CompareResultImpl compareResult = new CompareResultImpl(characterFrom, characterTo, config.statList);
+			CompareResultImpl compareResult = new CompareResultImpl(characterFrom, characterTo, config.displayFilter);
 			StringBuilder resultText = new StringBuilder();
-			resultText.Append("\t").Append(config.mapStatsBy).Append("\t").Append(string.Join("\t", compareResult.statOrder));
+			resultText.Append("\t").Append(config.mapStatsBy.outputName).Append("\t").Append(string.Join("\t", compareResult.resultFilter.Select(filter => filter.outputName)));
 			resultText.Append("\nnew").Append(compareResult.FormatComparison(compareResult.addedValues));
 			resultText.Append("\nchanged").Append(compareResult.FormatComparisonChange(compareResult.changedValuesFrom, compareResult.changedValuesTo));
 			resultText.Append("\nremoved").Append(compareResult.FormatComparison(compareResult.removedValues));
@@ -101,7 +101,7 @@ namespace SoD_DiffExplorer.squadtacticscompare
 						OpenResultConfigMenu();
 						break;
 					case 4:
-						OpenStatListConfigMenu();
+						OpenDisplayFilterConfigMenu();
 						break;
 					case 5:
 						Console.Clear();
@@ -119,7 +119,7 @@ namespace SoD_DiffExplorer.squadtacticscompare
 				"adjust sourceTo \t\t(" + GetSourceInfoString(config.sourceTo) + ")",
 				"adjust localSourcesConfig \t(" + GetLocalSourcesConfigInfoString() + ")",
 				"adjust resultConfig \t\t(" + GetResultConfigInfoString() + ")",
-				"adjust statFilters \t\t(" + GetStatListInfoString() + ")\n",
+				"adjust displayFilters \t(" + GetDisplayFilterInfoString() + ")\n",
 				"save config\n"
 			};
 		}
@@ -161,8 +161,8 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			return "makeFile = " + rConfig.makeFile + " | appendDate = " + rConfig.appendDate;
 		}
 
-		private string GetStatListInfoString() {
-			return config.statList.Where(kvp => kvp.Value).ToArray().Length + " selected";
+		private string GetDisplayFilterInfoString() {
+			return config.displayFilter.Where(filter => filter.isAllowed).ToArray().Length + " selected";
 		}
 
 		private void OpenSourceConfigMenu(SourceConfig sourceConfig, string sourceName) {
@@ -281,15 +281,14 @@ namespace SoD_DiffExplorer.squadtacticscompare
 			}
 		}
 
-		private void OpenStatListConfigMenu() {
-			List<KeyValuePair<string, bool>> orderedStatList = config.statList.Select(kvp => kvp).ToList();
+		private void OpenDisplayFilterConfigMenu() {
 			string header = "Currently editing statList (filtered stats)";
 			string backText = "Back to SquadTactics Config Menu";
 			int spacing = 3;
 
 			int selection = 0;
 			while(true) {
-				string[] options = orderedStatList.Select(kvp => "toggle " + kvp.Key + " (" + kvp.Value + ")").ToArray();
+				string[] options = config.displayFilter.Select(filter => "toggle " + filter.outputName + " (" + filter.isAllowed + ")").ToArray();
 				options[options.Length - 1] += "\n";
 
 				selection = menuUtils.OpenSelectionMenu(options, backText, header, selection, spacing);
@@ -298,10 +297,8 @@ namespace SoD_DiffExplorer.squadtacticscompare
 					break;
 				}
 
-				orderedStatList[selection] = new KeyValuePair<string, bool>(orderedStatList[selection].Key, !orderedStatList[selection].Value);
+				config.displayFilter[selection].ToggleIsAllowed();
 			}
-
-			config.statList = new BetterDict<string, bool>(orderedStatList.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
 		}
 	}
 }
