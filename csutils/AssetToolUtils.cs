@@ -8,46 +8,26 @@ using AssetsTools.NET.Extra;
 
 namespace SoD_DiffExplorer.csutils
 {
+	public class AssetFile
+	{
+		public AssetsFileInstance fileInstance;
+		public ClassDatabaseFile classDBFile;
+
+		public AssetFile(AssetsFileInstance file, ClassDatabaseFile classDBFile) {
+			this.fileInstance = file;
+			this.classDBFile = classDBFile;
+		}
+	}
+
 	class AssetToolUtils
 	{
 		public ClassDatabasePackage classPackage;
-		public ClassDatabaseFile classDBFile;
-		public MemoryStream mainStream;
+		public List<MemoryStream> activeStreams = new List<MemoryStream>();
+		public AssetBundleFile activeBunldeFile = null;
 
-		public List<AssetTypeValueField> GetMonobehaviourData(Stream stream, List<string> targetPath) {
-			List<KeyValuePair<string, string>> convertedPath = targetPath.Select(value => {
-				string[] split = value.Split(':');
-				return new KeyValuePair<string, string>(split[0], split[1]);
-			}).ToList();
-			List<AssetTypeValueField> result = new List<AssetTypeValueField>();
+		public List<AssetFile> BuildAssetsFileInstance(Stream stream) {
+			List<AssetFile> result = new List<AssetFile>();
 
-			AssetsFileInstance fileInstance = BuildAssetsFileInstance(stream);
-
-			Console.WriteLine("Searching for targetPath in bundlefile...");
-			foreach(AssetFileInfoEx info in fileInstance.table.assetFileInfo) {
-				ClassDatabaseType type = AssetHelper.FindAssetClassByID(classDBFile, info.curFileType);
-				if(type == null) {
-					continue;
-				}
-				string typeName = type.name.GetString(classDBFile);
-				if(typeName != "MonoBehaviour") {
-					//not what we're looking for.
-					continue;
-				}
-				AssetTypeValueField baseField = GetATI(fileInstance.file, info).GetBaseField();
-				AssetTypeValueField targetField = GetFieldAtPath(baseField, convertedPath);
-				if(targetField != null) {
-					result.Add(targetField);
-					Console.WriteLine("found target field.");
-				}
-			}
-			stream.Close();
-			CloseMainStream();
-			Console.WriteLine("found all targetFiles in bundleFile. (" + result.Count + ")");
-			return result;
-		}
-
-		public AssetsFileInstance BuildAssetsFileInstance(Stream stream) {
 			classPackage = new ClassDatabasePackage();
 			Console.WriteLine("Reading classdata...");
 			using(AssetsFileReader reader = new AssetsFileReader(new FileStream("classdata.tpk", FileMode.Open, FileAccess.Read, FileShare.Read))) {
@@ -55,6 +35,7 @@ namespace SoD_DiffExplorer.csutils
 			}
 
 			AssetBundleFile file = new AssetBundleFile();
+			activeBunldeFile = file;
 			Console.WriteLine("Reading bundleFileStream...");
 			file.Read(new AssetsFileReader(stream), true);
 			file.reader.Position = 0;
@@ -66,113 +47,91 @@ namespace SoD_DiffExplorer.csutils
 			file = new AssetBundleFile();
 			file.Read(new AssetsFileReader(memoryStream), false);
 
-			byte[] assetData = BundleHelper.LoadAssetDataFromBundle(file, 0);
-			CloseMainStream();
-			mainStream = new MemoryStream(assetData);
-			string mainName = file.bundleInf6.dirInf[0].name;
-			AssetsFileInstance fileInstance = new AssetsFileInstance(mainStream, mainName, "");
-			file.Close();
+			for(int i = 0; i < file.bundleInf6.dirInf.Length; i++) {
+				try {
+					if(file.IsAssetsFile(file.reader, file.bundleInf6.dirInf[i])) {
+						byte[] assetData = BundleHelper.LoadAssetDataFromBundle(file, i);
+						MemoryStream mainStream = new MemoryStream(assetData);
+						activeStreams.Add(mainStream);
 
-			fileInstance.table.GenerateQuickLookupTree();
-			classDBFile = LoadClassDatabaseFromPackage(fileInstance.file.typeTree.unityVersion);
-
-			if(classDBFile == null) {
-				Console.WriteLine("classDatabaseFile was null? Okay, that's probably bad. Continuing anyway...");
-			}
-
-			return fileInstance;
-		}
-
-		public void CloseMainStream() {
-			if(mainStream != null) {
-				mainStream.Dispose();
-				mainStream = null;
-			}
-		}
-
-		public AssetTypeValueField GetFieldAtPathNaive(AssetTypeValueField baseField, string assetPath) {
-			return GetFieldAtPathNaive(baseField.GetChildrenList(), assetPath.Split('/'));
-		}
-
-		public AssetTypeValueField GetFieldAtPathNaive(AssetTypeValueField[] fields, string assetPath) {
-			return GetFieldAtPathNaive(fields, assetPath.Split('/'));
-		}
-
-		public AssetTypeValueField GetFieldAtPathNaive(AssetTypeValueField[] fields, string[] path) {
-			for(int i = 0; i < (path.Length - 1); i++) {
-				string name = path[i];
-				AssetTypeValueField field = GetFieldNamed(name, fields);
-				if(field == null || field.GetChildrenCount() == 0) {
-					return null;
-				}
-				fields = field.GetChildrenList();
-			}
-			return GetFieldNamed(path[path.Length - 1], fields);
-		}
-
-		public AssetTypeValueField GetAssetMatching(string matchPath, string matchValue, AssetTypeValueField[] fields) {
-			return GetAssetMatching(matchPath.Split("/"), matchValue, fields);
-		}
-
-		public AssetTypeValueField GetAssetMatching(string[] path, string matchValue, AssetTypeValueField[] fields) {
-			foreach(AssetTypeValueField field in fields) {
-				if(field.GetName() != path[0]) {
-					continue;
-				}
-				if(field.GetChildrenCount() != 0) {
-					if(GetAssetMatching(SubArray(path, 1, path.Length - 1), matchValue, field.GetChildrenList()) != null) {
-						return field;
+						string mainName = file.bundleInf6.dirInf[i].name;
+						AssetsFileInstance fileInstance = new AssetsFileInstance(mainStream, mainName, "");
+						ClassDatabaseFile classDBFile = LoadClassDatabaseFromPackage(fileInstance.file.typeTree.unityVersion);
+						if(classDBFile == null) {
+							Console.WriteLine("classDatabaseFile was null? Okay, that's probably bad. Continuing anyway...");
+						}
+						result.Add(new AssetFile(fileInstance, classDBFile));
 					}
-				} else if(field.GetValue().AsString() == matchValue) {
-					return field;
+				}catch(Exception) {
+					//guess it's not an assetsFile then?
 				}
 			}
-			return null;
-		}
 
-		private T[] SubArray<T>(T[] data, int index, int length) {
-			T[] result = new T[length];
-			Array.Copy(data, index, result, 0, length);
 			return result;
 		}
 
-		public AssetTypeValueField GetFieldNamed(string name, AssetTypeValueField[] fields) {
-			foreach(AssetTypeValueField field in fields) {
-				if(field.GetName() == name) {
-					return field;
-				}
+		public void CloseActiveStreams() {
+			for(int i = 0; i < activeStreams.Count; i++) {
+				activeStreams[i].Dispose();
+				activeStreams[i] = null;
 			}
-			return null;
+			activeStreams = new List<MemoryStream>();
+
+			if(activeBunldeFile != null) {
+				activeBunldeFile.Close();
+				activeBunldeFile = null;
+			}
 		}
 
-		public AssetTypeValueField GetFieldAtPath(AssetTypeValueField baseField, List<KeyValuePair<string, string>> targetPath) {
-			if(baseField == null) {
-				return null;
-			}
-			int pathProgression = 0;
-			while(baseField.GetChildrenCount() > 0) {
-				KeyValuePair<string, string> pathSection = targetPath[pathProgression];
-				List<AssetTypeValueField> found = baseField.GetChildrenList().Where(field => {
-					return field.GetName() == pathSection.Key && field.GetFieldType() == pathSection.Value;
-				}).ToList();
-				if(found.Count > 1) {
-					Console.WriteLine("Error: targetPath did not yield a uniquely identifyable result!");
-					Console.WriteLine("\tReached pathstep " + pathProgression + " = " + pathSection.Key + " : " + pathSection.Value);
-					Console.WriteLine("found:");
-					found.ForEach(item => PrintFieldRecursively(item));
-					return null;
-				} else if(found.Count == 1) {
-					pathProgression++;
-					if(pathProgression == targetPath.Count) {
-						return found[0];
+		public List<AssetTypeValueField> GetFieldAtPath(AssetFile file, AssetTypeValueField baseField, string[] customPaths) {
+			List<AssetTypeValueField> currentScope = new List<AssetTypeValueField>{baseField};
+			foreach(string customPath in customPaths) {
+				if(customPath.Contains('/')) {
+					string[] referencePaths = customPath.Split('/');
+					for(int i = 0; i < referencePaths.Length; i++) {
+						List<AssetTypeValueField> found = new List<AssetTypeValueField>();
+						if(i == 0) {
+							foreach(AssetTypeValueField field in currentScope.Where(field => field.GetChildrenCount() > 0)) {
+								found.AddRange(field.GetChildrenList().Where(child => child.GetName() == referencePaths[i]));
+							}
+						} else {
+							foreach(AssetTypeValueField field in currentScope.Where(field => field.GetValue() != null)) {
+								AssetFileInfoEx referenceInfo = file.fileInstance.table.GetAssetInfo(field.GetValue().AsInt64());
+								if(referenceInfo == null) {
+									Console.WriteLine("could not find referenceInfo for pathID = (" + field.GetValue().AsInt64() + "), that's probably bad, skipping");
+									continue;
+								}
+								/*Console.WriteLine("loading fileReference at pathID = " + field.GetValue().AsInt64());
+								List<AssetTypeValueField> fields = GetATI(file, referenceInfo).baseFields.ToList();
+								foreach(AssetTypeValueField foundField in fields) {
+									Console.WriteLine("======== found field ========");
+									PrintFieldRecursively(foundField);
+									Console.ReadKey(true);
+
+									Console.WriteLine("fieldName = " + foundField.GetName() + " | looking for: " + referencePaths[i]);
+
+									if(foundField.GetName() == referencePaths[i]) {
+										found.Add(foundField);
+									}
+								}*/
+								found.AddRange(GetATI(file, referenceInfo).baseFields.Where(field => field.GetName() == referencePaths[i]));
+							}
+						}
+						currentScope = found;
 					}
-					baseField = found[0];
 				} else {
-					//unable to find path
-					return null;
+					List<AssetTypeValueField> found = new List<AssetTypeValueField>();
+					foreach(AssetTypeValueField field in currentScope.Where(field => field.GetChildrenCount() > 0)) {
+						found.AddRange(field.GetChildrenList().Where(child => child.GetName() == customPath));
+					}
+					currentScope = found;
 				}
 			}
-			return null;
+			return currentScope;
+		}
+
+		public bool IsMatchingPathConstraints(AssetFile file, AssetTypeValueField baseField, List<string> pathConstraints) {
+			return pathConstraints.All(path => GetFieldAtPath(file, baseField, path.Split(':')).Count > 0);
 		}
 
 		public void PrintFieldRecursively(AssetTypeValueField field, int depth = 0) {
@@ -185,6 +144,20 @@ namespace SoD_DiffExplorer.csutils
 			if(field.GetChildrenCount() > 0) {
 				foreach(AssetTypeValueField child in field.GetChildrenList()) {
 					PrintFieldRecursively(child, depth + 1);
+				}
+			}
+		}
+
+		public void PrintFieldRecursively(StreamWriter writer, AssetTypeValueField field, int depth = 0) {
+			if(field == null) {
+				writer.WriteLine("\tnull");
+				return;
+			}
+			writer.WriteLine(new string('\t', depth) + FieldToString(field));
+
+			if(field.GetChildrenCount() > 0) {
+				foreach(AssetTypeValueField child in field.GetChildrenList()) {
+					PrintFieldRecursively(writer, child, depth + 1);
 				}
 			}
 		}
@@ -217,8 +190,8 @@ namespace SoD_DiffExplorer.csutils
 			return Regex.IsMatch(test, "^" + Regex.Escape(pattern).Replace("\\*", ".*") + "$");
 		}
 
-		public AssetTypeInstance GetATI(AssetsFile file, AssetFileInfoEx info) {
-			ushort scriptIndex = file.typeTree.unity5Types[info.curFileTypeOrIndex].scriptIndex;
+		public AssetTypeInstance GetATI(AssetFile file, AssetFileInfoEx info) {
+			ushort scriptIndex = file.fileInstance.file.typeTree.unity5Types[info.curFileTypeOrIndex].scriptIndex;
 			uint fixedId = info.curFileType;
 			if(fixedId == 0xf1) {   //AudioMixerController
 				fixedId = 0xf0;     //AudioMixer
@@ -228,14 +201,14 @@ namespace SoD_DiffExplorer.csutils
 				fixedId = 0x110;        //AudioMixerSnapshot
 			}
 
-			bool hasTypeTree = file.typeTree.hasTypeTree;
+			bool hasTypeTree = file.fileInstance.file.typeTree.hasTypeTree;
 			AssetTypeTemplateField baseField = new AssetTypeTemplateField();
 			if(hasTypeTree) {
-				baseField.From0D(file.typeTree.unity5Types.First(t => (t.classId == fixedId || t.classId == info.curFileType) && t.scriptIndex == scriptIndex), 0);
+				baseField.From0D(file.fileInstance.file.typeTree.unity5Types.First(t => (t.classId == fixedId || t.classId == info.curFileType) && t.scriptIndex == scriptIndex), 0);
 			} else {
-				baseField.FromClassDatabase(classDBFile, AssetHelper.FindAssetClassByID(classDBFile, fixedId), 0);
+				baseField.FromClassDatabase(file.classDBFile, AssetHelper.FindAssetClassByID(file.classDBFile, fixedId), 0);
 			}
-			return new AssetTypeInstance(baseField, file.reader, info.absoluteFilePos);
+			return new AssetTypeInstance(baseField, file.fileInstance.file.reader, info.absoluteFilePos);
 		}
 	}
 }

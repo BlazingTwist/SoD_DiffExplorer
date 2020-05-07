@@ -1,0 +1,158 @@
+sourceConfigHolder:
+  lastCreated: fireballHistory\sources\fireball_2020.04.09.txt
+
+  sourceFrom:
+    sourceType: lastCreated
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseUrl: http://media.schoolofdragons.com/DWADragonsUnity
+    baseUrlSuffix: High
+    dataType: bundleFile
+
+    onlineSourceConfig: !!directOnlineSourceConfig
+      dataContainer: data/dragonsres
+
+  localSourcesConfig:
+    baseDirectory: fireballHistory\sources
+    targetFileName: fireball
+    targetFileExtension: txt
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+resultConfig:
+  baseDirectory: fireballHistory\results
+  makeFile: true
+  appendDate: true
+  resultFilter: 
+    displayAdditions: true
+    displayDifferences: true
+    displayRemovals: true
+    displayCommons: true
+
+onlineSourceInterpreterConfig:
+  configPath: _Weapons:Array:data
+  
+  pathConstraints: []
+
+  mapConfigBy: !!storedMappingValue
+    path: _Name
+    outputName: Name
+
+  regexTranslator: {}
+
+  typeTranslationDict:
+    AmmoType:
+      0: Fire
+      1: Ice
+      2: Electric
+
+  outputNameToTypeDict:
+    AmmoType: AmmoType
+
+  configFilter:
+  - path: _MinSpeed
+    pathType: relative
+    doDisplay: true
+    outputName: MinSpeed
+
+  - path: _MaxTimeToTarget
+    pathType: relative
+    doDisplay: true
+    outputName: MaxTimeToTarget
+
+  - path: _Damage
+    pathType: relative
+    doDisplay: true
+    outputName: Damage
+
+  - path: _CriticalDamageMultiplier
+    pathType: relative
+    doDisplay: true
+    outputName: CritMultiplier
+
+  - path: _CriticalDamageChance
+    pathType: relative
+    doDisplay: true
+    outputName: CritChance
+
+  - path: _Energy
+    pathType: relative
+    doDisplay: true
+    outputName: Energy
+
+  - path: _TouchRadius
+    pathType: relative
+    doDisplay: true
+    outputName: TouchRadius
+
+  - path: _Lifetime
+    pathType: relative
+    doDisplay: true
+    outputName: Lifetime
+
+  - path: _TotalShots
+    pathType: relative
+    doDisplay: true
+    outputName: TotalShots
+
+  - path: _Cooldown
+    pathType: relative
+    doDisplay: true
+    outputName: Cooldown
+
+  - path: _Range
+    pathType: relative
+    doDisplay: true
+    outputName: Range
+
+  - path: _Homing
+    pathType: relative
+    doDisplay: true
+    outputName: Homing
+
+  - path: _SlowEffect
+    pathType: relative
+    doDisplay: true
+    outputName: SlowEffect
+
+  - path: _AmmoType
+    pathType: relative
+    doDisplay: true
+    outputName: AmmoType
+
+  - path: _RechargeRange:Min
+    pathType: relative
+    doDisplay: true
+    outputName: Recharge:Min
+
+  - path: _RechargeRange:Max
+    pathType: relative
+    doDisplay: true
+    outputName: Recharge:Max
+
+  - path: _AvailableShots
+    pathType: relative
+    doDisplay: true
+    outputName: AvailableShots

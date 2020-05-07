@@ -1,0 +1,284 @@
+sourceConfigHolder:
+  lastCreated: chestLocationHistory\sources\chestLocations_2020.04.18.txt
+
+  sourceFrom:
+    sourceType: lastCreated
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseUrl: http://media.schoolofdragons.com/DWADragonsUnity
+    baseUrlSuffix: High
+    dataType: bundleFile
+
+    onlineSourceConfig: !!queriedOnlineSourceConfig
+      assetInfo: data/AssetVersionsDO.xml
+      assetFileNamePath: A:@N
+
+      #as of 3.8.0 none of these contain any ChestData, so they're blocked from being downloaded here.
+      dataContainerRegexFilters:
+      - "^RS_SCENE/(.*)$"
+      - "!RS_SCENE/arenafrenzydo"
+      - "!RS_SCENE/auctionshipintdo"
+      - "!RS_SCENE/berkcavesdo"
+      - "!RS_SCENE/berkcloudsdo"
+      - "!RS_SCENE/berkfarmdo"
+      - "!RS_SCENE/clansdm"
+      - "!RS_SCENE/creditsdo"
+      - "!RS_SCENE/customizehuddm"
+      - "!RS_SCENE/dragonracingdo"
+      - "!RS_SCENE/dragonstableamberintdo"
+      - "!RS_SCENE/dragonstableboulderintdo"
+      - "!RS_SCENE/dragonstabledreadfallintdo"
+      - "!RS_SCENE/dragonstablefuhuintdo"
+      - "!RS_SCENE/dragonstableintdo"
+      - "!RS_SCENE/dragonstablelavaintdo"
+      - "!RS_SCENE/dragonstablewaterintdo"
+      - "!RS_SCENE/elementmatchdo"
+      - "!RS_SCENE/farmingdo"
+      - "!RS_SCENE/farmingoceando"
+      - "!RS_SCENE/flightschooldo"
+      - "!RS_SCENE/flightschooldotheme1"
+      - "!RS_SCENE/fsdeadlynadderdo"
+      - "!RS_SCENE/fsflightsuitdo"
+      - "!RS_SCENE/fsgronckledo"
+      - "!RS_SCENE/fsnightfurydo"
+      - "!RS_SCENE/fsnightmaredo"
+      - "!RS_SCENE/fsthunderdrumdo"
+      - "!RS_SCENE/fstimberjackdo"
+      - "!RS_SCENE/fswhisperingdeathdo"
+      - "!RS_SCENE/fszipplebackdo"
+      - "!RS_SCENE/greathallschoolintdamageddo"
+      - "!RS_SCENE/greathallschoolintdo"
+      - "!RS_SCENE/hatcheryint02do"
+      - "!RS_SCENE/hatcheryintdm"
+      - "!RS_SCENE/hatcheryintdo"
+      - "!RS_SCENE/helheimsgatedo"
+      - "!RS_SCENE/hubhiddenworlddo"
+      - "!RS_SCENE/hubhiddenworldnbdo"
+      - "!RS_SCENE/hubhiddenworldnbintdo"
+      - "!RS_SCENE/journaldm"
+      - "!RS_SCENE/labintdo"
+      - "!RS_SCENE/logindm"
+      - "!RS_SCENE/mazetestscene"
+      - "!RS_SCENE/messageboarddm"
+      - "!RS_SCENE/myroomintdo"
+      - "!RS_SCENE/openoceando"
+      - "!RS_SCENE/openoceannightdo"
+      - "!RS_SCENE/openoceannorthernlightsdo"
+      - "!RS_SCENE/openoceanvanaheimdo"
+      - "!RS_SCENE/petplaydm"
+      - "!RS_SCENE/petplayeelblastdm"
+      - "!RS_SCENE/profiledm"
+      - "!RS_SCENE/profileselectiondo"
+      - "!RS_SCENE/reaperintdo"
+      - "!RS_SCENE/sinkingboatintdo"
+      - "!RS_SCENE/starctict01mapdo"
+      - "!RS_SCENE/starctict02mapdo"
+      - "!RS_SCENE/starctict03mapdo"
+      - "!RS_SCENE/starctict04mapdo"
+      - "!RS_SCENE/starctict05mapdo"
+      - "!RS_SCENE/starctict06mapdo"
+      - "!RS_SCENE/starctict07mapdo"
+      - "!RS_SCENE/starctict08mapdo"
+      - "!RS_SCENE/starena05mapdo"
+      - "!RS_SCENE/starena06mapdo"
+      - "!RS_SCENE/starena07mapdo"
+      - "!RS_SCENE/starena08mapdo"
+      - "!RS_SCENE/stcurseofhgmap01do"
+      - "!RS_SCENE/stcurseofhgmap02do"
+      - "!RS_SCENE/stdreadfall01mapdo"
+      - "!RS_SCENE/stdreadfall02mapdo"
+      - "!RS_SCENE/stdreadfall03mapdo"
+      - "!RS_SCENE/stdreadfall04mapdo"
+      - "!RS_SCENE/stdreadfall05mapdo"
+      - "!RS_SCENE/stdreadfall06mapdo"
+      - "!RS_SCENE/stdreadfall07mapdo"
+      - "!RS_SCENE/stdreadfall08mapdo"
+      - "!RS_SCENE/sthiddenworld01mapdo"
+      - "!RS_SCENE/sthiddenworld02mapdo"
+      - "!RS_SCENE/sthiddenworld03mapdo"
+      - "!RS_SCENE/sthiddenworld04mapdo"
+      - "!RS_SCENE/stlevelselectiondo"
+      - "!RS_SCENE/storesdm"
+      - "!RS_SCENE/stpiratearenamapdo"
+      - "!RS_SCENE/stpiratebossmapdo"
+      - "!RS_SCENE/stpiratedemapdo"
+      - "!RS_SCENE/stpiratetradermapdo"
+      - "!RS_SCENE/stsnoggletog1mapdo"
+      - "!RS_SCENE/stsnoggletog2mapdo"
+      - "!RS_SCENE/stsnoggletog3mapdo"
+      - "!RS_SCENE/stsnoggletog4mapdo"
+      - "!RS_SCENE/stsnoggletog5mapdo"
+      - "!RS_SCENE/stsnoggletog6mapdo"
+      - "!RS_SCENE/stsnoggletog7mapdo"
+      - "!RS_SCENE/stsnoggletog8mapdo"
+      - "!RS_SCENE/sttrainer01mapdo"
+      - "!RS_SCENE/sttrainer02mapdo"
+      - "!RS_SCENE/sttrainer03mapdo"
+      - "!RS_SCENE/sttrainer04mapdo"
+      - "!RS_SCENE/sttutorialmapdo"
+      - "!RS_SCENE/stvanaheim02mapdo"
+      - "!RS_SCENE/stvanaheim04mapdo"
+      - "!RS_SCENE/stvanaheim06mapdo"
+      - "!RS_SCENE/stvanaheim09_1mapdo"
+      - "!RS_SCENE/stvanaheim09_2mapdo"
+      - "!RS_SCENE/stvanaheim09_3mapdo"
+      - "!RS_SCENE/stvanaheim09_4mapdo"
+      - "!RS_SCENE/targetpracticedo"
+      - "!RS_SCENE/trackdo01"
+      - "!RS_SCENE/trackdo02"
+      - "!RS_SCENE/trackdo03"
+      - "!RS_SCENE/trackdo04"
+      - "!RS_SCENE/trackdo05"
+      - "!RS_SCENE/trackdo06"
+      - "!RS_SCENE/trackdo07"
+      - "!RS_SCENE/trackdo08"
+      - "!RS_SCENE/trackdo09"
+      - "!RS_SCENE/trackdo10"
+      - "!RS_SCENE/trackdo11"
+      - "!RS_SCENE/trackdo12"
+      - "!RS_SCENE/trackdo13"
+      - "!RS_SCENE/trackdo14"
+      - "!RS_SCENE/trackdo15"
+      - "!RS_SCENE/trackdo16"
+
+  localSourcesConfig:
+    baseDirectory: chestLocationHistory\sources
+    targetFileName: chestLocations
+    targetFileExtension: txt
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+resultConfig:
+  baseDirectory: chestLocationHistory\results
+  makeFile: true
+  appendDate: true
+  resultFilter: 
+    displayAdditions: true
+    displayDifferences: true
+    displayRemovals: true
+    displayCommons: true
+
+onlineSourceInterpreterConfig:
+  configPath: _ListOfChests:Array:data
+
+  pathConstraints: []
+
+  #this works on the assumption that each scene only has one MysteryChestManager
+  # - if it didn't we would get multiple values with the same key
+  # - that won't break the result, but it will definitely make it illegible
+  mapConfigBy: !!fileUrlBasedMappingValue
+    fileUrlRegex: "^(.*)/(.*)$"
+    fileUrlReplacement: "$2"
+    outputName: Scene_Name
+
+  regexTranslator:
+    AssetPath:
+      regex: "^(.*)/(.*)$"
+      replacement: "$2"
+
+  typeTranslationDict:
+    ChestType:
+      0: MysteryChest
+      1: AdRewardMysteryChest
+
+  outputNameToTypeDict:
+    ChestType: ChestType
+    AssetPath: AssetPath
+
+  configFilter:
+  - path: _AssetPath
+    pathType: relative
+    doDisplay: true
+    outputName: AssetPath
+
+  - path: _ChestTypeInfo
+    pathType: relative
+    doDisplay: true
+    outputName: ChestType
+
+  - path: _SpawnChance
+    pathType: relative
+    doDisplay: true
+    outputName: SpawnChance
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalRotation:x
+    pathType: relative
+    doDisplay: true
+    outputName: rotation.x
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalRotation:y
+    pathType: relative
+    doDisplay: true
+    outputName: rotation.y
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalRotation:z
+    pathType: relative
+    doDisplay: true
+    outputName: rotation.z
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalRotation:w
+    pathType: relative
+    doDisplay: true
+    outputName: rotation.w
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalPosition:x
+    pathType: relative
+    doDisplay: true
+    outputName: position.x
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalPosition:y
+    pathType: relative
+    doDisplay: true
+    outputName: position.y
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalPosition:z
+    pathType: relative
+    doDisplay: true
+    outputName: position.z
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalScale:x
+    pathType: relative
+    doDisplay: true
+    outputName: scale.x
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalScale:y
+    pathType: relative
+    doDisplay: true
+    outputName: scale.y
+
+  - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalScale:z
+    pathType: relative
+    doDisplay: true
+    outputName: scale.z
+
+  - path: _StoreInfoList:Array:data:_ItemID
+    pathType: relative
+    doDisplay: true
+    outputName: StoreInfo:ItemID
+
+  - path: _StoreInfoList:Array:data:_StoreID
+    pathType: relative
+    doDisplay: true
+    outputName: StoreInfo:StoreID

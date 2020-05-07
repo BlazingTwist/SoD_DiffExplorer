@@ -1,0 +1,298 @@
+sourceConfigHolder:
+  lastCreated: timedMissionHistory\sources\timedMission_2020.04.18.txt
+
+  sourceFrom:
+    sourceType: lastCreated
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseUrl: http://media.schoolofdragons.com/DWADragonsUnity
+    baseUrlSuffix: High
+    dataType: xmlFile
+
+    onlineSourceConfig: !!directOnlineSourceConfig
+      dataContainer: data/TimedMissionDO.xml
+
+  localSourcesConfig:
+    baseDirectory: timedMissionHistory\sources
+    targetFileName: timedMission
+    targetFileExtension: txt
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+resultConfig:
+  baseDirectory: timedMissionHistory\results
+  makeFile: true
+  appendDate: true
+  resultFilter: 
+    displayAdditions: true
+    displayDifferences: true
+    displayRemovals: true
+    displayCommons: true
+
+onlineSourceInterpreterConfig:
+  configPath: Missions
+
+  pathConstraints: []
+
+  mapConfigBy: !!storedMappingValue
+    path: MissionID
+    outputName: MissionID
+
+  regexTranslator: {}
+
+  typeTranslationDict: {}
+
+  outputNameToTypeDict: {}
+
+  configFilter:
+  - path: Title:Text
+    pathType: relative
+    doDisplay: true
+    outputName: TitleText
+
+  - path: Title:ID
+    pathType: relative
+    doDisplay: true
+    outputName: TitleID
+
+  - path: Description:Text
+    pathType: relative
+    doDisplay: true
+    outputName: DescriptionText
+
+  - path: Description:ID
+    pathType: relative
+    doDisplay: true
+    outputName: DescriptionID
+
+  - path: Icon
+    pathType: relative
+    doDisplay: true
+    outputName: Icon
+
+  - path: Probability
+    pathType: relative
+    doDisplay: true
+    outputName: Probability
+
+  - path: Difficulty
+    pathType: relative
+    doDisplay: true
+    outputName: Difficulty
+
+  - path: Hint:Text
+    pathType: relative
+    doDisplay: true
+    outputName: HintText
+
+  - path: Hint:ID
+    pathType: relative
+    doDisplay: true
+    outputName: HintID
+
+  - path: HintIcon
+    pathType: relative
+    doDisplay: true
+    outputName: HintIcon
+
+  - path: CostList:CostItems:ItemID
+    pathType: relative
+    doDisplay: true
+    outputName: CostItemID
+
+  - path: CostList:CostItems:Duration
+    pathType: relative
+    doDisplay: true
+    outputName: CostItemDuration
+
+  - path: Duration
+    pathType: relative
+    doDisplay: true
+    outputName: Duration
+
+  - path: PetCount:Min
+    pathType: relative
+    doDisplay: true
+    outputName: PetCount:Min
+
+  - path: PetCount:Max
+    pathType: relative
+    doDisplay: true
+    outputName: PetCount:Max
+
+  - path: Logs
+    pathType: relative
+    doDisplay: true
+    outputName: Logs
+
+  - path: MaxNoOfTimes
+    pathType: relative
+    doDisplay: true
+    outputName: MaxNoOfTimes
+
+  - path: Type
+    pathType: relative
+    doDisplay: true
+    outputName: Slot
+
+  - path: Prerequisites:Type
+    pathType: relative
+    doDisplay: true
+    outputName: Prerequisite:Type
+
+  - path: Prerequisites:Value
+    pathType: relative
+    doDisplay: true
+    outputName: Prerequisite:Value
+
+  - path: Prerequisites:Quantity
+    pathType: relative
+    doDisplay: true
+    outputName: Prerequisite:Quantity
+
+  - path: Qualify:IsIncludeList
+    pathType: relative
+    doDisplay: true
+    outputName: Qualify:IsIncludeList
+
+  - path: Qualify:QualifyList:Type
+    pathType: relative
+    doDisplay: true
+    outputName: Qualify:Type
+
+  - path: Qualify:QualifyList:Value
+    pathType: relative
+    doDisplay: true
+    outputName: Qualify:Value
+
+  - path: WinFactor
+    pathType: relative
+    doDisplay: true
+    outputName: WinFactor
+
+  - path: WinFactorPerDragon
+    pathType: relative
+    doDisplay: true
+    outputName: WinFactorPerDragon
+
+  - path: DragonFactors:Type
+    pathType: relative
+    doDisplay: true
+    outputName: DragonFactor:Type
+
+  - path: DragonFactors:Value
+    pathType: relative
+    doDisplay: true
+    outputName: DragonFactor:Value
+
+  - path: DragonFactors:Factor
+    pathType: relative
+    doDisplay: true
+    outputName: DragonFactor:Factor
+
+  - path: DragonEnergyCost
+    pathType: relative
+    doDisplay: true
+    outputName: DragonEnergyCost
+
+  - path: WinAchID
+    pathType: relative
+    doDisplay: true
+    outputName: WinAchID
+
+  - path: WinAchievements:PetCount
+    pathType: relative
+    doDisplay: true
+    outputName: WinAchs:PetCount
+
+  - path: WinAchievements:AchID
+    pathType: relative
+    doDisplay: true
+    outputName: WinAchs:AchID
+
+  - path: WinRewards:a
+    pathType: relative
+    doDisplay: true
+    outputName: WR:Amount
+
+  - path: WinRewards:p
+    pathType: relative
+    doDisplay: true
+    outputName: WR:PointTypeID
+
+  - path: WinRewards:ii
+    pathType: relative
+    doDisplay: true
+    outputName: WR:ItemID
+
+  - path: WinRewards:t
+    pathType: relative
+    doDisplay: true
+    outputName: WR:EntityTypeID
+
+  - path: WinRewards:r
+    pathType: relative
+    doDisplay: true
+    outputName: WR:RewardID
+
+  - path: LoseAchID
+    pathType: relative
+    doDisplay: true
+    outputName: LoseAchID
+
+  - path: LoseAchievements:PetCount
+    pathType: relative
+    doDisplay: true
+    outputName: LoseAchs:PetCount
+
+  - path: LoseAchievements:AchID
+    pathType: relative
+    doDisplay: true
+    outputName: LoseAchs:AchID
+
+  - path: LoseRewards:a
+    pathType: relative
+    doDisplay: true
+    outputName: LR:Amount
+
+  - path: LoseRewards:p
+    pathType: relative
+    doDisplay: true
+    outputName: LR:PointTypeID
+
+  - path: LoseRewards:ii
+    pathType: relative
+    doDisplay: true
+    outputName: LR:ItemID
+
+  - path: LoseRewards:t
+    pathType: relative
+    doDisplay: true
+    outputName: LR:EntityTypeID
+
+  - path: LoseRewards:r
+    pathType: relative
+    doDisplay: true
+    outputName: LR:RewardID

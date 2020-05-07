@@ -1,0 +1,308 @@
+sourceConfigHolder:
+  lastCreated: sanctuaryPetTypesHistory\sources\petTypes_2020.04.19.txt
+
+  sourceFrom:
+    sourceType: lastCreated
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseUrl: http://media.schoolofdragons.com/DWADragonsUnity
+    baseUrlSuffix: High
+    dataType: bundleFile
+
+    onlineSourceConfig: !!directOnlineSourceConfig
+      dataContainer: data/pfsanctuarydatado
+
+  localSourcesConfig:
+    baseDirectory: sanctuaryPetTypesHistory\sources
+    targetFileName: petTypes
+    targetFileExtension: txt
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+resultConfig:
+  baseDirectory: sanctuaryPetTypesHistory\results
+  makeFile: true
+  appendDate: true
+  resultFilter: 
+    displayAdditions: true
+    displayDifferences: true
+    displayRemovals: true
+    displayCommons: true
+
+onlineSourceInterpreterConfig:
+  configPath: _PetTypes:Array:data
+
+  pathConstraints: []
+
+  mapConfigBy: !!storedMappingValue
+    path: _Name
+    outputName: Name
+
+  regexTranslator: {}
+
+  typeTranslationDict:
+    DragonClass:
+      0: Strike
+      1: Tidal
+      2: Stoker
+      3: Boulder
+      4: Fear
+      5: Sharp
+      6: Mystery
+      7: Tracker
+
+  outputNameToTypeDict:
+    DragonClass: DragonClass
+
+  configFilter:
+  - path: _NameText:_Text
+    pathType: relative
+    doDisplay: true
+    outputName: NameText
+
+  - path: _NameText:_ID
+    pathType: relative
+    doDisplay: true
+    outputName: NameID
+
+  - path: _DescriptionText:_Text
+    pathType: relative
+    doDisplay: true
+    outputName: DescriptionText
+
+  - path: _DescriptionText:_ID
+    pathType: relative
+    doDisplay: true
+    outputName: DescriptionID
+
+  - path: _Settings
+    pathType: relative
+    doDisplay: true
+    outputName: Settings
+
+  - path: _TypeID
+    pathType: relative
+    doDisplay: true
+    outputName: TypeID
+
+  - path: _HatchDuration
+    pathType: relative
+    doDisplay: true
+    outputName: HatchDuration
+
+  - path: _InstantHatchTicketItemStoreID
+    pathType: relative
+    doDisplay: true
+    outputName: InstantHatchTicketItemStoreID
+
+  - path: _InstantHatchTicketItemID
+    pathType: relative
+    doDisplay: true
+    outputName: InstantHatchTicketItemID
+
+  - path: _BirthScale
+    pathType: relative
+    doDisplay: true
+    outputName: BirthScale
+
+  - path: _EggIconPath
+    pathType: relative
+    doDisplay: true
+    outputName: EggIconPath
+
+  - path: _DragonEggAssetpath
+    pathType: relative
+    doDisplay: true
+    outputName: EggAssetPath
+
+  - path: _SpecialSkill
+    pathType: relative
+    doDisplay: true
+    outputName: SpecialSkill
+
+  - path: _AllowAccessToMemberOnlyFeatures
+    pathType: relative
+    doDisplay: true
+    outputName: AllowAccessToMemberOnlyFeatures
+
+  - path: _Weight
+    pathType: relative
+    doDisplay: true
+    outputName: Weight
+
+  - path: _Stats:_MaxValue
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:MaxValue
+
+  - path: _Stats:_Attack
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:Attack
+
+  - path: _Stats:_Range
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:Range
+
+  - path: _Stats:_Armor
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:Armor
+
+  - path: _Stats:_FirePower
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:FirePower
+
+  - path: _Stats:_ShotLimit
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:ShotLimit
+
+  - path: _Stats:_Crit
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:Crits
+
+  - path: _Stats:_Regen
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:Regen
+
+  - path: _Stats:_Health
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:Health
+
+  - path: _Stats:_MaxSpeed
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:MaxSpeed
+
+  - path: _Stats:_PitchRate
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:PitchRate
+
+  - path: _Stats:_TurnRate
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:TurnRate
+
+  - path: _Stats:_Acceleration
+    pathType: relative
+    doDisplay: true
+    outputName: Stats:Acceleration
+
+  - path: _DragonClass
+    pathType: relative
+    doDisplay: true
+    outputName: DragonClass
+
+  - path: _MinAgeToMount
+    pathType: relative
+    doDisplay: true
+    outputName: MinAgeToMound
+
+  - path: _IsUniquePet
+    pathType: relative
+    doDisplay: true
+    outputName: IsUniquePet
+
+  - path: _Flightless
+    pathType: relative
+    doDisplay: true
+    outputName: Flightless
+
+  - path: _Health
+    pathType: relative
+    doDisplay: true
+    outputName: Health
+
+  - path: _GrowthStates:Array:data:GrowthStateID
+    pathType: relative
+    doDisplay: true
+    outputName: GrowthStates:ID
+
+  - path: _GrowthStates:Array:data:Name
+    pathType: relative
+    doDisplay: true
+    outputName: GrowthStates:Name
+
+  - path: _GrowthStates:Array:data:PetTypeID
+    pathType: relative
+    doDisplay: true
+    outputName: GrowthStates:PetTypeID
+
+  - path: _GrowthStates:Array:data:Order
+    pathType: relative
+    doDisplay: true
+    outputName: GrowthStates:Order
+
+  - path: _AgeData:Array:data:_Name
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:Name
+
+  - path: _AgeData:Array:data:_WalkSpeed
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:WalkSpeed
+
+  - path: _AgeData:Array:data:_RunSpeed
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:RunSpeed
+
+  - path: _AgeData:Array:data:_BathScale
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:BathScale
+
+  - path: _AgeData:Array:data:_PlayScale
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:PlayScale
+
+  - path: _AgeData:Array:data:_TPScale
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:TPScale
+
+  - path: _AgeData:Array:data:_LabScale
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:LabScale
+
+  - path: _AgeData:Array:data:_EelBlastScale
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:EelBlastScale
+
+  - path: _AgeData:Array:data:_UiScale
+    pathType: relative
+    doDisplay: true
+    outputName: AgeData:UiScale

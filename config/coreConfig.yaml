@@ -1,0 +1,31 @@
+#rebind the menu navigation keys, structure is: 'Key: Binding'
+#available keys: https://docs.microsoft.com/en-us/dotnet/api/system.consolekey?view=netframework-4.8
+#available bindings: up, down, left, right, enter, back
+#does not affect text editor!
+menuControlMapping:
+  W: Up
+  UpArrow: Up
+  S: Down
+  DownArrow: Down
+  A: Left
+  LeftArrow: Left
+  D: Right
+  RightArrow: Right
+  Enter: Enter
+  Backspace: Back
+  Escape: Back
+
+menuStyle:
+  normalBackgroundColor: Black
+  normalTextColor: White
+  selectedBackgroundColor: DarkGray
+  selectedTextColor: White
+  textStyle: split
+
+#you shouldn't have to change this, but just in case you do, you can
+onlineAddressDict:
+  RS_DATA: data
+  RS_SCENE: scene
+  RS_SHARED: shareddata
+  RS_SOUND: sound
+  RS_MOVIES: movies

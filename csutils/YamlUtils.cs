@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Text;
 
 namespace SoD_DiffExplorer.csutils
 {
@@ -18,180 +19,384 @@ namespace SoD_DiffExplorer.csutils
 			return lines;
 		}
 
-		public static bool ChangeSimpleValues(ref List<string> lines, BetterDict<string, string> changeDict) {
-			foreach(KeyValuePair<string, string> pair in changeDict) {
-				if(!ChangeSimpleValue(ref lines, pair.Key, pair.Value)) {
-					Console.WriteLine("unable to find config key: " + pair.Key);
-					return false;
+		public static List<string> GetAllConfigLines(string configPath) {
+			List<string> lines = new List<string>();
+			using(StreamReader reader = new StreamReader(configPath)) {
+				string line;
+				while((line = reader.ReadLine()) != null) {
+					lines.Add(line);
 				}
 			}
-			return true;
+			return lines;
 		}
 
-		/// <summary>
-		/// Updates a simple yaml field (e.g. "someField: false")
-		/// </summary>
-		/// <param name="lines">
-		/// list of lines representing the yaml file
-		/// </param>
-		/// <param name="yamlPath">
-		/// string representing the location of the value that is to be replaced (e.g. fileDownloaderConfig.downloadURL.baseURL)
-		/// </param>
-		/// <param name="targetValue">
-		///	value to be written to the target path
-		/// </param>
-		/// <returns>
-		/// whether a field at the given path was found or not
-		/// </returns>
-		public static bool ChangeSimpleValue(ref List<string> lines, string yamlPath, string targetValue) {
-			int fieldIndex = FindFieldIndex(lines, yamlPath);
-			if(fieldIndex < 0) {
-				return false;
-			} else {
-				string[] lineSplit = lines[fieldIndex].Split(": ", 2);
-				if(lineSplit.Length == 1) {
-					lineSplit[0] = lineSplit[0].Replace(":", "");
-				}
-				lines[fieldIndex] = lineSplit[0] + ": " + targetValue;
-				return true;
-			}
-		}
-
-		public static bool ChangeSimpleListContents(ref List<string> lines, BetterDict<string, List<string>> changeDict) {
-			foreach(KeyValuePair<string, List<string>> pair in changeDict) {
-				if(!ChangeSimpleListContent(ref lines, pair.Key, pair.Value)) {
-					Console.WriteLine("unable to find config key: " + pair.Key);
-					return false;
-				}
-			}
-			return true;
-		}
-
-		public static bool ChangeSimpleListContent(ref List<string> lines, string yamlPath, List<string> targetValues) {
-			int fieldIndex = FindFieldIndex(lines, yamlPath);
-			if(fieldIndex < 0) {
-				Console.WriteLine("returning false because key not found, key was: " + yamlPath);
-				return false;
-			}
-
-			bool allValuesInserted = false;
-			int targetSpaces = CountStartingSpaces(lines[fieldIndex]);
-			for(int i = fieldIndex + 1; i < lines.Count; i++) {
+		public static int GetSegmentEndLineIndex(ref List<string> lines, int currentLine, int tabDepth) {
+			int targetStartingSpaces = tabDepth * 2;
+			for(int i = currentLine; i < lines.Count; i++) {
 				string line = lines[i];
-				if(string.IsNullOrWhiteSpace(line)) {
+				if(!IsKeyValLine(line)) {
 					continue;
 				}
-				int startingSpaces = CountStartingSpaces(line);
-				string subLine = line.Substring(startingSpaces);
-				if(subLine.StartsWith("#")) {
+				int lineStartingSpaces = CountStartingSpaces(line);
+				if(lineStartingSpaces < targetStartingSpaces) {
+					return i - 1;
+				}
+			}
+			return lines.Count - 1;
+		}
+
+		public static int GetListEntryEndLineIndex(ref List<string> lines, int currentLine, int tabDepth) {
+			if(tabDepth < 1) {
+				throw new InvalidDataException("tabDepth of ListEntry cannot be less than 1!");
+			}
+			int targetStartingSpaces = tabDepth * 2;
+			for(int i = currentLine; i < lines.Count; i++) {
+				string line = lines[i];
+				if(!IsKeyValLine(line)) {
 					continue;
 				}
-				if(startingSpaces != targetSpaces) {
-					break;
+				int lineStartingSpaces = CountStartingSpaces(line);
+				if(lineStartingSpaces < targetStartingSpaces) {
+					//end of list
+					return i - 1;
 				}
-				if(!subLine.StartsWith("- ")) {
-					break;
+				if(lineStartingSpaces == targetStartingSpaces && line[lineStartingSpaces - 2] == '-') {
+					//start of next listEntry
+					return i - 1;
+				}
+			}
+			return lines.Count - 1;
+		}
+
+		public static bool ChangeYamlLists(ref List<string> lines, int startLine, ref int endLine, int currentTabDepth, BetterDict<string, List<string>> changeDict) {
+			int targetStartingSpaces = currentTabDepth * 2;
+			for(int i = startLine; i <= endLine; i++) {
+				string line = lines[i];
+				if(!IsKeyValLine(line)) {
+					continue;
+				}
+				int lineStartingSpaces = CountStartingSpaces(line);
+				if(lineStartingSpaces != targetStartingSpaces) {
+					//shouldn't ever leave the targetSection!
+					if(lineStartingSpaces < targetStartingSpaces) {
+						Console.WriteLine("ChangeYamlObjectLists somehow left the target section!");
+					} else {
+						Console.WriteLine("ChangeYamlObjectLists somehow entered a subsection!");
+					}
+					return false;
+				}
+				int segmentEndLine = GetSegmentEndLineIndex(ref lines, i + 1, currentTabDepth + 1);
+				string lineKey = GetKeyValKey(line);
+				if(!changeDict.ContainsKey(lineKey)) {
+					//go to next segment
+					i = segmentEndLine;
+					continue;
+				}
+				List<string> targetList = changeDict[lineKey];
+				int initialSegmentEndLine = segmentEndLine;
+				if(targetList.Count == 0) {
+					lines[i] = UpdateLine(lines[i], lineKey, "[]");
+				}
+				if(!ChangeYamlList(ref lines, i + 1, ref segmentEndLine, currentTabDepth + 1, targetList)) {
+					Console.WriteLine("failed to save List: " + lineKey);
+					return false;
 				}
 
-				if(!allValuesInserted) {
-					lines.InsertRange(i, targetValues.Select(item => new string(' ', targetSpaces) + "- " + item));
-					allValuesInserted = true;
-					i += targetValues.Count;
+				if(segmentEndLine != initialSegmentEndLine) {
+					i = segmentEndLine;
+					int delta = segmentEndLine - initialSegmentEndLine;
+					endLine += delta;
+				} else {
+					i = initialSegmentEndLine;
+				}
+			}
+
+			return true;
+		}
+
+		public static bool ChangeYamlList(ref List<string> lines, int startLine, ref int endLine, int currentTabDepth, List<string> yamlList) {
+			foreach(string value in yamlList) {
+				lines.Insert(startLine, new string(' ', (currentTabDepth - 1) * 2) + "- " + value);
+				endLine++;
+			}
+			int targetStartingSpaces = currentTabDepth * 2;
+			for(int i = startLine + yamlList.Count; i <= endLine;) {
+				string line = lines[i];
+				if(!IsKeyValLine(line)) {
+					i++;
+					continue;
+				}
+				int lineStartingSpaces = CountStartingSpaces(line);
+				if(lineStartingSpaces != targetStartingSpaces) {
+					//shouldn't ever leave the target section
+					if(lineStartingSpaces < targetStartingSpaces) {
+						Console.WriteLine("ChangeYamlList somehow left the target section!");
+					} else {
+						Console.WriteLine("ChangeYamlList somehow entered a subsection!");
+					}
+					return false;
 				}
 				lines.RemoveAt(i);
-				//hack to preserve forward order as I'm too lazy for iterators right now
-				i--;
+				endLine--;
 			}
-
-			//figure out how to do lists...
-			//search until less depth
-			//replace at every -
-
-			return allValuesInserted;
+			return true;
 		}
 
-		//yamlpath being the path to the list containing the object
-		public static bool ChangeSimpleObjectListContent(ref List<string> lines, string yamlPath, List<YamlObject> yamlObjects) {
-			if(yamlObjects.Count == 0) {
+		public static bool ChangeYamlObjectLists(ref List<string> lines, int startLine, ref int endLine, int currentTabDepth, BetterDict<string, List<YamlObject>> changeDict) {
+			int targetStartingSpaces = currentTabDepth * 2;
+			for(int i = startLine; i <= endLine; i++) {
+				string line = lines[i];
+				if(!IsKeyValLine(line)) {
+					continue;
+				}
+				int lineStartingSpaces = CountStartingSpaces(line);
+				if(lineStartingSpaces != targetStartingSpaces) {
+					//shouldn't ever leave the targetSection!
+					if(lineStartingSpaces < targetStartingSpaces) {
+						Console.WriteLine("ChangeYamlObjectLists somehow left the target section!");
+					} else {
+						Console.WriteLine("ChangeYamlObjectLists somehow entered a subsection!");
+					}
+					return false;
+				}
+				int segmentEndLine = GetSegmentEndLineIndex(ref lines, i + 1, currentTabDepth + 1);
+				string lineKey = GetKeyValKey(line);
+				if(!changeDict.ContainsKey(lineKey)) {
+					//go to next segment
+					i = segmentEndLine;
+					continue;
+				}
+				List<YamlObject> targetList = changeDict[lineKey];
+				int initialSegmentEndLine = segmentEndLine;
+				if(!ChangeYamlObjectList(ref lines, i + 1, ref segmentEndLine, currentTabDepth + 1, targetList)) {
+					Console.WriteLine("failed to save YamlList: " + lineKey);
+					return false;
+				}
+
+				if(segmentEndLine != initialSegmentEndLine) {
+					i = segmentEndLine;
+					int delta = segmentEndLine - initialSegmentEndLine;
+					endLine += delta;
+				} else {
+					i = initialSegmentEndLine;
+				}
+			}
+
+			return true;
+		}
+
+		private static bool ChangeYamlObjectList(ref List<string> lines, int startLine, ref int endLine, int currentTabDepth, List<YamlObject> objectList) {
+			int currentObjectIndex = 0;
+			int targetStartingSpaces = currentTabDepth * 2;
+			for(int i = startLine; i <= endLine; i++) {
+				string line = lines[i];
+				if(!IsKeyValLine(line)) {
+					continue;
+				}
+				int lineStartingSpaces = CountStartingSpaces(line);
+				if(lineStartingSpaces != targetStartingSpaces) {
+					//shouldn't ever leave the targetSection!
+					if(lineStartingSpaces < targetStartingSpaces) {
+						Console.WriteLine("ChangeYamlObjectList somehow left the target section!");
+					} else {
+						Console.WriteLine("ChangeYamlObjectList somehow entered a subsection!");
+					}
+					return false;
+				}
+				int entryEndLine = GetListEntryEndLineIndex(ref lines, i + 1, currentTabDepth);
+				int initialEntryEndLine = entryEndLine;
+				if(!objectList[currentObjectIndex].Save(ref lines, i, ref entryEndLine, currentTabDepth)){
+					Console.WriteLine("failed to save YamlListEntry #" + currentObjectIndex);
+					return false;
+				}
+				currentObjectIndex++;
+
+				if(entryEndLine != initialEntryEndLine) {
+					i = entryEndLine;
+					int delta = entryEndLine - initialEntryEndLine;
+					endLine += delta;
+				} else {
+					i = initialEntryEndLine;
+				}
+			}
+
+			return true;
+		}
+
+		public static bool ChangeYamlObjects(ref List<string> lines, int startLine, ref int endLine, int currentTabDepth, BetterDict<string, YamlObject> changeDict) {
+			int targetStartingSpaces = currentTabDepth * 2;
+			for(int i = startLine; i <= endLine; i++) {
+				string line = lines[i];
+				if(!IsKeyValLine(line)) {
+					continue;
+				}
+				int lineStartingSpaces = CountStartingSpaces(line);
+				if(lineStartingSpaces != targetStartingSpaces) {
+					//shouldn't ever leave the targetSection!
+					if(lineStartingSpaces < targetStartingSpaces) {
+						Console.WriteLine("ChangeYamlObjects somehow left the target section!");
+					} else {
+						Console.WriteLine("ChangeYamlObjects somehow entered a subsection!");
+					}
+					return false;
+				}
+				int segmentEndLine = GetSegmentEndLineIndex(ref lines, i + 1, currentTabDepth + 1);
+				string lineKey = GetKeyValKey(line);
+				if(!changeDict.ContainsKey(lineKey)) {
+					//go to next segment
+					i = segmentEndLine;
+					continue;
+				}
+				YamlObject targetObject = changeDict[lineKey];
+				int initialSegmentEndLine = segmentEndLine;
+				if(!targetObject.Save(ref lines, i + 1, ref segmentEndLine, currentTabDepth + 1)) {
+					Console.WriteLine("Failed to save YamlObject: " + lineKey);
+					return false;
+				}
+
+				if(segmentEndLine != initialSegmentEndLine) {
+					i = segmentEndLine;
+					int delta = segmentEndLine - initialSegmentEndLine;
+					endLine += delta;
+				} else {
+					i = initialSegmentEndLine;
+				}
+			}
+
+			return true;
+		}
+
+		public static bool ChangeSimpleValues(ref List<string> lines, int startLine, ref int endLine, int currentTabDepth, BetterDict<string, string> changeDict) {
+			foreach(KeyValuePair<string, string> kvp in changeDict) {
+				if(!ChangeSimpleValue(ref lines, startLine, ref endLine, currentTabDepth, kvp.Key, kvp.Value)) {
+					Console.WriteLine("unable to find config key: " + kvp.Key);
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public static bool ChangeSimpleValue(ref List<string> lines, int startLine, ref int endLine, int currentTabDepth, string key, string value) {
+			int targetStartingSpaces = currentTabDepth * 2;
+			for(int i = startLine; i <= endLine; i++) {
+				string line = lines[i];
+				if(!IsKeyValLine(line)) {
+					continue;
+				}
+				int lineStartingSpaces = CountStartingSpaces(line);
+				if(lineStartingSpaces < targetStartingSpaces) {
+					return false;
+				}
+				if(lineStartingSpaces > targetStartingSpaces) {
+					continue;
+				}
+				string subLine = line.Substring(lineStartingSpaces);
+				if(!subLine.StartsWith(key)) {
+					continue;
+				}
+				lines[i] = UpdateLine(line, key, value);
 				return true;
 			}
 
-			int fieldIndex = FindFieldIndex(lines, yamlPath);
-			if(fieldIndex < 0) {
-				Console.WriteLine("returning false, because key not found, key was: " + yamlPath);
-				return false;
-			}
-
-			int printedObject = 0;
-			int currentPropertyIndex = 0;
-			string[] currentObjectKeys = yamlObjects[0].GetFieldNames();
-			string[] currentObjectValues = yamlObjects[0].GetFieldValues();
-			int targetSpaces = CountStartingSpaces(lines[fieldIndex]);
-			for(int i = fieldIndex + 1; i < lines.Count; i++) {
-				string line = lines[i];
-				if(string.IsNullOrWhiteSpace(line)) {
-					continue;
-				}
-				int startingSpaces = CountStartingSpaces(line);
-				string subLine = line.Substring(startingSpaces);
-				if(subLine.StartsWith("#")) {
-					continue;
-				}
-				if(startingSpaces != targetSpaces && startingSpaces != (targetSpaces + 2)) {
-					break;
-				}
-				if(startingSpaces == targetSpaces) {
-					if(!subLine.StartsWith("- ")) {
-						break;
-					}
-					if(currentPropertyIndex != 0) {
-						//out of sync
-						break;
-					}
-					string keySection = subLine.Substring(2);
-					if(!keySection.StartsWith(currentObjectKeys[0])) {
-						break;
-					}
-					string valueSection = keySection.Substring(currentObjectKeys[0].Length);
-					if(valueSection.StartsWith(": ") || (valueSection.Length == 1 && valueSection.StartsWith(":"))) {
-						lines[i] = new string(' ', targetSpaces) + "- " + currentObjectKeys[0] + ": " + currentObjectValues[0];
-						currentPropertyIndex++;
-					} else {
-						break;
-					}
-				} else {
-					if(currentPropertyIndex == 0) {
-						//out of sync
-						break;
-					}
-					if(!subLine.StartsWith(currentObjectKeys[currentPropertyIndex])) {
-						break;
-					}
-					string valueSection = subLine.Substring(currentObjectKeys[currentPropertyIndex].Length);
-					if(valueSection.StartsWith(": ") || (valueSection.Length == 1 && valueSection.StartsWith(":"))) {
-						lines[i] = new string(' ', startingSpaces) + currentObjectKeys[currentPropertyIndex] + ": " + currentObjectValues[currentPropertyIndex];
-						currentPropertyIndex++;
-					} else {
-						break;
-					}
-				}
-
-				if(currentPropertyIndex == currentObjectKeys.Length) {
-					currentPropertyIndex = 0;
-					printedObject++;
-					if(printedObject == yamlObjects.Count) {
-						//done
-						break;
-					}
-					currentObjectKeys = yamlObjects[printedObject].GetFieldNames();
-					currentObjectValues = yamlObjects[printedObject].GetFieldValues();
-				}
-			}
-
-			return printedObject == yamlObjects.Count;
+			return false;
 		}
 
-		private static int FindFieldIndex(List<string> lines, string yamlPath) {
+		private static bool IsKeyValLine(string line) {
+			if(string.IsNullOrWhiteSpace(line)) {
+				return false;
+			}
+			if(line.Trim().StartsWith('#')) {
+				return false;
+			}
+			return true;
+		}
+
+		public static string UpdateLine(string line, string key, string value) {
+			string spacing = GetKeyValIndent(line);
+			string comment = GetKeyValComment(line);
+			return spacing + key + ": " + value + comment;
+		}
+
+		private static string GetKeyValKey(string line) {
+			int splitterOccurences = line.Count(c => c == ':');
+			if(splitterOccurences <= 0) {
+				throw new InvalidDataException("line is not a KeyVal line!");
+			}
+			if(splitterOccurences == 1) {
+				return line.Split(':')[0].Trim();
+			}
+
+			StringBuilder result = new StringBuilder();
+			line = line.Trim();
+			bool currentlyInString = false;
+			for(int i = 0; i < line.Length; i++) {
+				if(line[i] == '"' && (i == 0 || line[i - 1] != '\\')) {
+					currentlyInString = !currentlyInString;
+					result.Append(line[i]);
+					continue;
+				}
+				if(currentlyInString) {
+					result.Append(line[i]);
+					continue;
+				}
+				if(line[i] == ':' && (i + 1 == line.Length || line[i + 1] == ' ')) {
+					return result.ToString();
+				}
+				result.Append(line[i]);
+			}
+			throw new InvalidDataException("line is not a KeyVal line!");
+		}
+
+		private static string GetKeyValIndent(string line) {
+			int spaces = CountStartingSpaces(line);
+			return line.Substring(0, spaces);
+		}
+
+		private static string GetKeyValComment(string line) {
+			if(!line.Contains('#')) {
+				return "";
+			}
+
+			StringBuilder preCommentWhitespaces = new StringBuilder();
+			StringBuilder comment = null;
+
+			bool currenlyInString = false;
+			bool reachedValueSection = false;
+			bool foundComment = false;
+			for(int i = 0; i < line.Length; i++) {
+				if(line[i] == '"' && (i == 0 || line[i - 1] != '\\')) {
+					currenlyInString = !currenlyInString;
+					continue;
+				}
+				if(currenlyInString) {
+					continue;
+				}
+				if(line[i] == ':' && (i + 1 == line.Length || line[i + 1] == ' ')) {
+					reachedValueSection = true;
+					continue;
+				}
+				if(!reachedValueSection) {
+					continue;
+				}
+				if(!foundComment && char.IsWhiteSpace(line[i])) {
+					preCommentWhitespaces.Append(line[i]);
+					continue;
+				}
+				if(!foundComment && line[i] == '#') {
+					foundComment = true;
+					comment = new StringBuilder('#');
+					continue;
+				}
+				if(!foundComment) {
+					continue;
+				}
+				comment.Append(line[i]);
+			}
+
+			return foundComment ? comment.ToString() : "";
+		}
+
+		public static int FindFieldIndex(List<string> lines, string yamlPath) {
 			string[] pathSplit = yamlPath.Split(".");
 
 			int pathDepth = 0;
@@ -231,6 +436,9 @@ namespace SoD_DiffExplorer.csutils
 		private static int CountStartingSpaces(string target) {
 			for(int i = 0; i < target.Length; i++) {
 				if(target[i] != ' ') {
+					if(target[i] == '-' && (i + 1) < target.Length && target[i + 1] == ' ') {
+						return i + 2;
+					}
 					return i;
 				}
 			}

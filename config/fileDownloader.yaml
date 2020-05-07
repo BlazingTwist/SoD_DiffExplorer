@@ -1,0 +1,208 @@
+onlineSourcesConfig:
+  baseUrl: http://media.schoolofdragons.com/DWADragonsUnity
+  platform: Steam
+  version: 3.8.0
+  baseUrlSuffix: High
+  dataType: xmlFile
+  onlineSourceConfig: !!directOnlineSourceConfig
+    dataContainer: data/AssetVersionsDO.xml
+
+
+downloadSettings:
+  #if set to true it will wait for user input when a file throws an exception during downloading
+  #if set to false it will ignore all failed downloads apart from logging them
+  pauseDownloadOnError: True
+
+  #if set to false it won't download the files and instead only log which files it would download
+  doDownload: False
+
+  targetDirectory: fileDownloads
+
+  #if set to false it will download directly to the baseDirectory
+  #if set to true it will append the platform/version/date as subdirectories
+  # example:
+  #  platform = true, version = false, date = true
+  #  will result in
+  #  fileDownloads\Steam\2020.04.07
+  appendPlatform: False
+  appendVersion: False
+  appendDate: False
+
+
+interpreterConfig:
+  configPath: A
+
+  #path to the value that will be used as a fileName to download
+  #value will be rewritten as url for download using pattern: baseUrl/platform/version/baseUrlSuffix/value
+  fileNamePath: "@N"
+
+  #additional pathConstraints to limit amount of matches
+  pathConstraints: []
+
+  #use this to filter filenames
+  #filterexamples:
+  #  allow all files of any directory with a name starting with "dw" and ending with "do" (e.g. 'RS_SHARED/dwthunderdrumdo')
+  #    ^(.*?)/dw(.*?)do$
+  #
+  #  use multiple regex filters (only allows files that match ALL filters)
+  #    regexFilters:
+  #    - filter1
+  #    - !filter2
+  #    - \!filter3
+  #
+  #  to negate a regex (allowing only files that don't match it) start the filter with an '!' character (see above)
+  #  if your regex starts with an '!' for other reasons you can escape the negation by putting a '\' in front of it
+  fileNameRegexFilters:
+  - "^RS_SCENE/(.*)$"
+  - "!RS_SCENE/arenafrenzydo"
+  - "!RS_SCENE/auctionshipintdo"
+  - "!RS_SCENE/berkcavesdo"
+  - "!RS_SCENE/berkcloudsdo"
+  - "!RS_SCENE/berkfarmdo"
+  - "!RS_SCENE/clansdm"
+  - "!RS_SCENE/creditsdo"
+  - "!RS_SCENE/customizehuddm"
+  - "!RS_SCENE/dragonracingdo"
+  - "!RS_SCENE/dragonstableamberintdo"
+  - "!RS_SCENE/dragonstableboulderintdo"
+  - "!RS_SCENE/dragonstabledreadfallintdo"
+  - "!RS_SCENE/dragonstablefuhuintdo"
+  - "!RS_SCENE/dragonstableintdo"
+  - "!RS_SCENE/dragonstablelavaintdo"
+  - "!RS_SCENE/dragonstablewaterintdo"
+  - "!RS_SCENE/elementmatchdo"
+  - "!RS_SCENE/farmingdo"
+  - "!RS_SCENE/farmingoceando"
+  - "!RS_SCENE/flightschooldo"
+  - "!RS_SCENE/flightschooldotheme1"
+  - "!RS_SCENE/fsdeadlynadderdo"
+  - "!RS_SCENE/fsflightsuitdo"
+  - "!RS_SCENE/fsgronckledo"
+  - "!RS_SCENE/fsnightfurydo"
+  - "!RS_SCENE/fsnightmaredo"
+  - "!RS_SCENE/fsthunderdrumdo"
+  - "!RS_SCENE/fstimberjackdo"
+  - "!RS_SCENE/fswhisperingdeathdo"
+  - "!RS_SCENE/fszipplebackdo"
+  - "!RS_SCENE/greathallschoolintdamageddo"
+  - "!RS_SCENE/greathallschoolintdo"
+  - "!RS_SCENE/hatcheryint02do"
+  - "!RS_SCENE/hatcheryintdm"
+  - "!RS_SCENE/hatcheryintdo"
+  - "!RS_SCENE/helheimsgatedo"
+  - "!RS_SCENE/hubhiddenworlddo"
+  - "!RS_SCENE/hubhiddenworldnbdo"
+  - "!RS_SCENE/hubhiddenworldnbintdo"
+  - "!RS_SCENE/journaldm"
+  - "!RS_SCENE/labintdo"
+  - "!RS_SCENE/logindm"
+  - "!RS_SCENE/mazetestscene"
+  - "!RS_SCENE/messageboarddm"
+  - "!RS_SCENE/myroomintdo"
+  - "!RS_SCENE/openoceando"
+  - "!RS_SCENE/openoceannightdo"
+  - "!RS_SCENE/openoceannorthernlightsdo"
+  - "!RS_SCENE/openoceanvanaheimdo"
+  - "!RS_SCENE/petplaydm"
+  - "!RS_SCENE/petplayeelblastdm"
+  - "!RS_SCENE/profiledm"
+  - "!RS_SCENE/profileselectiondo"
+  - "!RS_SCENE/reaperintdo"
+  - "!RS_SCENE/sinkingboatintdo"
+  - "!RS_SCENE/starctict01mapdo"
+  - "!RS_SCENE/starctict02mapdo"
+  - "!RS_SCENE/starctict03mapdo"
+  - "!RS_SCENE/starctict04mapdo"
+  - "!RS_SCENE/starctict05mapdo"
+  - "!RS_SCENE/starctict06mapdo"
+  - "!RS_SCENE/starctict07mapdo"
+  - "!RS_SCENE/starctict08mapdo"
+  - "!RS_SCENE/starena05mapdo"
+  - "!RS_SCENE/starena06mapdo"
+  - "!RS_SCENE/starena07mapdo"
+  - "!RS_SCENE/starena08mapdo"
+  - "!RS_SCENE/stcurseofhgmap01do"
+  - "!RS_SCENE/stcurseofhgmap02do"
+  - "!RS_SCENE/stdreadfall01mapdo"
+  - "!RS_SCENE/stdreadfall02mapdo"
+  - "!RS_SCENE/stdreadfall03mapdo"
+  - "!RS_SCENE/stdreadfall04mapdo"
+  - "!RS_SCENE/stdreadfall05mapdo"
+  - "!RS_SCENE/stdreadfall06mapdo"
+  - "!RS_SCENE/stdreadfall07mapdo"
+  - "!RS_SCENE/stdreadfall08mapdo"
+  - "!RS_SCENE/sthiddenworld01mapdo"
+  - "!RS_SCENE/sthiddenworld02mapdo"
+  - "!RS_SCENE/sthiddenworld03mapdo"
+  - "!RS_SCENE/sthiddenworld04mapdo"
+  - "!RS_SCENE/stlevelselectiondo"
+  - "!RS_SCENE/storesdm"
+  - "!RS_SCENE/stpiratearenamapdo"
+  - "!RS_SCENE/stpiratebossmapdo"
+  - "!RS_SCENE/stpiratedemapdo"
+  - "!RS_SCENE/stpiratetradermapdo"
+  - "!RS_SCENE/stsnoggletog1mapdo"
+  - "!RS_SCENE/stsnoggletog2mapdo"
+  - "!RS_SCENE/stsnoggletog3mapdo"
+  - "!RS_SCENE/stsnoggletog4mapdo"
+  - "!RS_SCENE/stsnoggletog5mapdo"
+  - "!RS_SCENE/stsnoggletog6mapdo"
+  - "!RS_SCENE/stsnoggletog7mapdo"
+  - "!RS_SCENE/stsnoggletog8mapdo"
+  - "!RS_SCENE/sttrainer01mapdo"
+  - "!RS_SCENE/sttrainer02mapdo"
+  - "!RS_SCENE/sttrainer03mapdo"
+  - "!RS_SCENE/sttrainer04mapdo"
+  - "!RS_SCENE/sttutorialmapdo"
+  - "!RS_SCENE/stvanaheim02mapdo"
+  - "!RS_SCENE/stvanaheim04mapdo"
+  - "!RS_SCENE/stvanaheim06mapdo"
+  - "!RS_SCENE/stvanaheim09_1mapdo"
+  - "!RS_SCENE/stvanaheim09_2mapdo"
+  - "!RS_SCENE/stvanaheim09_3mapdo"
+  - "!RS_SCENE/stvanaheim09_4mapdo"
+  - "!RS_SCENE/targetpracticedo"
+  - "!RS_SCENE/trackdo01"
+  - "!RS_SCENE/trackdo02"
+  - "!RS_SCENE/trackdo03"
+  - "!RS_SCENE/trackdo04"
+  - "!RS_SCENE/trackdo05"
+  - "!RS_SCENE/trackdo06"
+  - "!RS_SCENE/trackdo07"
+  - "!RS_SCENE/trackdo08"
+  - "!RS_SCENE/trackdo09"
+  - "!RS_SCENE/trackdo10"
+  - "!RS_SCENE/trackdo11"
+  - "!RS_SCENE/trackdo12"
+  - "!RS_SCENE/trackdo13"
+  - "!RS_SCENE/trackdo14"
+  - "!RS_SCENE/trackdo15"
+  - "!RS_SCENE/trackdo16"
+
+  subFilter:
+    basePath: V
+    valuePath: "@L"
+    pathType: relative
+
+    #Okay, wtf does this do?
+    # it's taking the value at fileNamePath and replaces the Regex with the Replacement
+    # in this case it's looking either for a value `fileName` or `fileName.extension`
+    # which then gets replaces with `fileName.filterValue` or `fileName.filterValue.extension`
+    #  the replacement is mostly valid regex except for the ${value}, which is a camel-inspired expression
+    #  it will be replaced with whatever the value for this filters path is
+    fileNameModifierRegex: "^((.*)(\\..*)|(.*))$"
+    fileNameModifierReplacement: "$2$4.${value}$3"
+
+    #if set to optional only values that have the filterPath and are not matching the regexFilters are discarded
+    #if set to required both values not containing the filterPath and values not matching the regexFilters are discarded
+    optional: true
+
+    #use this to only download some localizations
+    #otherwise downloads ALL localizations available
+    #filterexamples:
+    # allow only en-us and de-de localized files (and files that are not localized, if set to optional)
+    #   localeFilters:
+    #   - en-us
+    #   - de-de
+    valueRegexFilters:
+    - (en-us)|(de-de)

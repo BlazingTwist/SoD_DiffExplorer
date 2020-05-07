@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Configurations>Debug;Release;WindowsPublish</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,16 +12,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="classdata.tpk">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="config.yaml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.23" />
     <PackageReference Include="YamlDotNet" Version="8.1.0" />
   </ItemGroup>
 
@@ -29,5 +35,9 @@
       <HintPath>..\..\..\Tools\UNITY MODDING\AssetsTools\AssetsTools.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="XCOPY &quot;$(SolutionDir)\config&quot; &quot;$(TargetDir)\config&quot; /E /Y" />
+  </Target>
 
 </Project>
