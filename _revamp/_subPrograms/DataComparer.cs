@@ -53,7 +53,7 @@ namespace SoD_DiffExplorer._revamp._subPrograms
 
 				dataComparer.Init(programConfig);
 				return true;
-			}catch(Exception e) {
+			} catch(Exception e) {
 				Console.WriteLine("Encountered an exception during parsing of the config!");
 				Console.WriteLine("Exception: " + e.ToString());
 				Console.ReadKey(true);
@@ -131,7 +131,7 @@ namespace SoD_DiffExplorer._revamp._subPrograms
 				}
 			} else if(sourceConfig.sourceType.GetValue() == ESourceType.local) {
 				return BuildLocalFileContent(dataComparer.sourceConfigHolder.GetValue().GetLocalSourceFile(sourceConfig));
-			}else if(sourceConfig.sourceType.GetValue() == ESourceType.lastCreated) {
+			} else if(sourceConfig.sourceType.GetValue() == ESourceType.lastCreated) {
 				return BuildLocalFileContent(dataComparer.sourceConfigHolder.GetValue().lastCreated.GetValue());
 			} else {
 				throw new InvalidOperationException("SourceType " + sourceConfig.sourceType.ToString() + " not supported!");
@@ -150,6 +150,9 @@ namespace SoD_DiffExplorer._revamp._subPrograms
 			string fileName = dataComparer.sourceConfigHolder.GetValue().localSourcesConfig.GetValue().targetFileName;
 			if(dataComparer.resultConfig.GetValue().appendDate.GetValue()) {
 				fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
+			}
+			if(dataComparer.resultConfig.GetValue().appendTime.GetValue()) {
+				fileName += ("_" + DateTime.Now.ToString("HH.mm.ss"));
 			}
 			fileName += ("." + dataComparer.sourceConfigHolder.GetValue().localSourcesConfig.GetValue().targetFileExtension);
 			return Path.Combine(dataComparer.resultConfig.GetValue().baseDirectory.GetValue(), fileName);

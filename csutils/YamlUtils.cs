@@ -269,8 +269,10 @@ namespace SoD_DiffExplorer.csutils
 		public static bool ChangeSimpleValues(ref List<string> lines, int startLine, ref int endLine, int currentTabDepth, BetterDict<string, string> changeDict) {
 			foreach(KeyValuePair<string, string> kvp in changeDict) {
 				if(!ChangeSimpleValue(ref lines, startLine, ref endLine, currentTabDepth, kvp.Key, kvp.Value)) {
-					Console.WriteLine("unable to find config key: " + kvp.Key);
-					return false;
+					Console.WriteLine("unable to find config key: " + kvp.Key + " | inserting automatically, formatting might look dumb");
+					string spacing = new string(' ', currentTabDepth * 2);
+					lines.Insert(startLine, (spacing + kvp.Key + ": " + kvp.Value));
+					endLine++;
 				}
 			}
 			return true;
