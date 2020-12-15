@@ -32,12 +32,8 @@
 
   <ItemGroup>
     <Reference Include="AssetsTools.NET">
-      <HintPath>..\..\..\Tools\UNITY MODDING\AssetsTools\AssetsTools.NET.dll</HintPath>
+      <HintPath>..\..\..\Tools\UNITY MODDING\AssetTools 2.0.6\AssetsTools.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug'">
-    <Exec Command="XCOPY &quot;$(SolutionDir)\config&quot; &quot;$(TargetDir)\config&quot; /E /Y" />
-  </Target>
 
 </Project>

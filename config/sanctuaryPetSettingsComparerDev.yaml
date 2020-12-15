@@ -1,0 +1,238 @@
+sourceConfigHolder:
+  lastCreated: sanctuaryPetSettingsHistory\Dev\sources\petSettings_2020.07.01.txt
+
+  sourceFrom:
+    sourceType: lastCreated
+    online:
+      platform: Steam
+      version: 3.10.0
+      makeFile: true
+      makeLastCreated: false
+    local:
+      platform: Steam
+      version: 3.10.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.10.0
+      makeFile: true
+      makeLastCreated: true
+    local:
+      platform: Steam
+      version: 3.10.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseUrl: http://media.dev.schoolofdragons.com/DWADragonsUnity
+    baseUrlSuffix: High
+    dataType: bundleFile
+
+    onlineSourceConfig: !!directOnlineSourceConfig
+      dataContainer: data/pfsanctuarydatado
+
+  localSourcesConfig:
+    baseDirectory: sanctuaryPetSettingsHistory\Dev\sources
+    targetFileName: petSettings
+    targetFileExtension: txt
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+resultConfig:
+  baseDirectory: sanctuaryPetSettingsHistory\Dev\results
+  makeFile: true
+  appendDate: true
+  resultFilter: 
+    displayAdditions: true
+    displayDifferences: true
+    displayRemovals: true
+    displayCommons: true
+
+onlineSourceInterpreterConfig:
+  configPath: _Settings:Array:data
+
+  pathConstraints: []
+
+  mapConfigBy: !!storedMappingValue
+    path: _Name
+    outputName: Name
+
+  regexTranslator: {}
+
+  typeTranslationDict:
+    RaisedPetStage:
+      0: None
+      1: Powerup
+      2: Find
+      3: EggInHand
+      4: Hatching
+      5: Baby
+      6: Child
+      7: Teen
+      8: Adult
+      9: Titan
+    PetActions:
+      0: Unknown
+      1: Chewtoy
+      2: Fetchball
+      3: Brush
+      4: Tow
+      5: Bath
+      6: Sleep
+      7: Followlaser
+      8: Shootfire
+      9: Eat
+      10: Flightschool
+      11: Targetpractice
+      12: Racing
+      13: Lab
+      14: Eelblast
+      15: Arenafrenzy
+      16: Squadtactics
+    SanctuaryPetMeterType:
+      0: Happiness
+      1: Energy
+      2: RacingEnergy
+      3: RacingFire
+      4: Health
+    CharacterMood:
+      0: nothing
+      1: firedUp
+      2: happy
+      4: angry
+      8: hungry
+      16: full
+      32: tired
+      64: sick
+
+  outputNameToTypeDict:
+    ActionMeterData:ID: PetActions
+    ActionMeterData:MeterType: SanctuaryPetMeterType
+    Meters:Type: SanctuaryPetMeterType
+    HealthModifier:AtAge:PetStage: RaisedPetStage
+    EnergyModifier:AtAge:PetStage: RaisedPetStage
+    SpeedModifier:Mood: CharacterMood
+
+  configFilter:
+  - path: _UpdateFrequency
+    pathType: relative
+    doDisplay: true
+    outputName: UpdateFrequency
+
+  - path: _HealthModifier:_LevelMultiplier
+    pathType: relative
+    doDisplay: true
+    outputName: HealthModifier:LevelMultiplier
+
+  - path: _HealthModifier:_MeterMultiplierAtAge:Array:data:_PetStage
+    pathType: relative
+    doDisplay: true
+    outputName: HealthModifier:AtAge:PetStage
+
+  - path: _HealthModifier:_MeterMultiplierAtAge:Array:data:_Value
+    pathType: relative
+    doDisplay: true
+    outputName: HealthModifier:AtAge:Value
+
+  - path: _EnergyModifier:_LevelMultiplier
+    pathType: relative
+    doDisplay: true
+    outputName: EnergyModifier:LevelMultiplier
+
+  - path: _EnergyModifier:_MeterMultiplierAtAge:Array:data:_PetStage
+    pathType: relative
+    doDisplay: true
+    outputName: EnergyModifier:AtAge:PetStage
+
+  - path: _EnergyModifier:_MeterMultiplierAtAge:Array:data:_Value
+    pathType: relative
+    doDisplay: true
+    outputName: EnergyModifier:AtAge:Value
+
+  - path: _FiredUpThreshold
+    pathType: relative
+    doDisplay: true
+    outputName: FiredUpThreshold
+
+  - path: _HappyThreshold
+    pathType: relative
+    doDisplay: true
+    outputName: HappyUpThreshold
+
+  - path: _TiredThreshold
+    pathType: relative
+    doDisplay: true
+    outputName: TiredThreshold
+
+  - path: _MinPetMeterValue
+    pathType: relative
+    doDisplay: true
+    outputName: MinPetMeterValue
+
+  - path: _ActionMeterData:Array:data:_ID
+    pathType: relative
+    doDisplay: true
+    outputName: ActionMeterData:ID
+
+  - path: _ActionMeterData:Array:data:_MeterType
+    pathType: relative
+    doDisplay: true
+    outputName: ActionMeterData:MeterType
+
+  - path: _ActionMeterData:Array:data:_Delta
+    pathType: relative
+    doDisplay: true
+    outputName: ActionMeterData:Delta
+
+  - path: _Meters:Array:data:_Type
+    pathType: relative
+    doDisplay: true
+    outputName: Meters:Type
+
+  - path: _Meters:Array:data:_DecreaseRate
+    pathType: relative
+    doDisplay: true
+    outputName: Meters:DecreaseRate
+
+  - path: _Meters:Array:data:_DecreaseRateInPercent
+    pathType: relative
+    doDisplay: true
+    outputName: Meters:DecreaseRateInPercent
+
+  - path: _Meters:Array:data:_WarningVal
+    pathType: relative
+    doDisplay: true
+    outputName: Meters:WarningVal
+
+  - path: _Meters:Array:data:_WarningMessage
+    pathType: relative
+    doDisplay: true
+    outputName: Meters:WarningMessage
+
+  - path: _Meters:Array:data:_MeterIdx
+    pathType: relative
+    doDisplay: true
+    outputName: Meters:MeterIndex
+
+  - path: _Meters:Array:data:_LocalOnly
+    pathType: relative
+    doDisplay: true
+    outputName: Meters:LocalOnly
+
+  - path: _SpeedModifers:Array:data:_Mood
+    pathType: relative
+    doDisplay: true
+    outputName: SpeedModifier:Mood
+
+  - path: _SpeedModifers:Array:data:_Mounted
+    pathType: relative
+    doDisplay: true
+    outputName: SpeedModifier:Mounted
+
+  - path: _SpeedModifers:Array:data:_Flight
+    pathType: relative
+    doDisplay: true
+    outputName: SpeedModifier:Flight

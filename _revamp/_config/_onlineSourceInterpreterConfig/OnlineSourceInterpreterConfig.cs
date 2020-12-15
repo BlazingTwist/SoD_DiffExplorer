@@ -87,6 +87,7 @@ namespace SoD_DiffExplorer._revamp._config._onlineSourceInterpreterConfig
 		}
 
 		private void BuildBundleContent(ref Dictionary<string, Dictionary<string, List<string>>> result, string fileUrl, AssetFile file, AssetToolUtils assetToolUtils) {
+			Console.WriteLine("building bundle content!");
 			foreach(AssetFileInfoEx info in file.fileInstance.table.assetFileInfo) {
 				ClassDatabaseType type = AssetHelper.FindAssetClassByID(file.classDBFile, info.curFileType);
 				if(type == null) {

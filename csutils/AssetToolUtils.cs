@@ -47,6 +47,8 @@ namespace SoD_DiffExplorer.csutils
 			file = new AssetBundleFile();
 			file.Read(new AssetsFileReader(memoryStream), false);
 
+			Console.WriteLine("file.bundleInf6.dirInf.Length: " + file.bundleInf6.dirInf.Length);
+
 			for(int i = 0; i < file.bundleInf6.dirInf.Length; i++) {
 				try {
 					if(file.IsAssetsFile(file.reader, file.bundleInf6.dirInf[i])) {
@@ -62,10 +64,13 @@ namespace SoD_DiffExplorer.csutils
 						}
 						result.Add(new AssetFile(fileInstance, classDBFile));
 					}
-				}catch(Exception) {
+				}catch(Exception e) {
+					Console.WriteLine("caught exception while reading AssetsFile: " + e.ToString());
 					//guess it's not an assetsFile then?
 				}
 			}
+
+			Console.WriteLine("found " + result.Count + " AssetFiles");
 
 			return result;
 		}

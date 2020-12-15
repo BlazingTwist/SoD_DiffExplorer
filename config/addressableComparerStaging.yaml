@@ -1,0 +1,83 @@
+sourceConfigHolder:
+  lastCreated: addressablesHistoryStaging\sources\assetInfo_2020.07.01.txt
+
+  #defines the config values depending on sourceType
+  sourceFrom:
+    #can be "online", "local" or "lastcreated"
+    sourceType: lastCreated
+    online:
+      platform: Steam
+      version: 3.10.0
+      makeFile: True
+      #won't do anything if makeFile is set to false (because then there won't be any file in the first place)
+      #if makeFile and this are set to true it will register the created file as 'lastcreated' for faster comparisons in the future
+      makeLastCreated: False
+    local:
+      #if you created the files using automatic platform/version/date appending you can specify them here
+      #these won't be used if they're set to false in 'sourcesConfig'
+      platform: Steam
+      version: 3.10.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.10.0
+      makeFile: True
+      makeLastCreated: True
+    local:
+      platform: Steam
+      version: 3.10.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseUrl: http://media.staging.schoolofdragons.com/DWADragonsUnity
+    baseUrlSuffix: High
+    dataType: xmlFile
+
+    onlineSourceConfig: !!directOnlineSourceConfig
+      dataContainer: data/AssetVersionsDO.xml
+
+  #used when you set 'makeFile' to true or your 'sourceType' is 'local'
+  localSourcesConfig:
+    #basedirectory for local files created by setting 'makeFile' to true in online sources
+    baseDirectory: addressablesHistoryStaging\sources
+    targetFileName: assetInfo
+    targetFileExtension: txt
+    #as opposed to fileDownloaderConfig.downloadURL this doesn't create subfolders, but appends it to the filename
+    #for example: assetInfo_Steam_3.6.0_2020.04.07.txt
+    appendPlatform: false
+    appendVersion: false
+    appendDate: true
+
+resultConfig:
+  baseDirectory: addressablesHistoryStaging\results
+  makeFile: True
+  appendDate: True
+  resultFilter: 
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: False
+
+onlineSourceInterpreterConfig:
+  configPath: A
+  
+  pathConstraints: []
+
+  mapConfigBy: !!storedMappingValue
+    path: "@N"
+    outputName: fileName
+
+  regexTranslator: {}
+
+  typeTranslationDict: {}
+
+  outputNameToTypeDict: {}
+
+  configFilter:
+  - path: V:@L
+    pathType: relative
+    doDisplay: True
+    outputName: locales
