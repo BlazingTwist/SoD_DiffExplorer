@@ -4,7 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using JetBrains.Annotations;
 using SoD_DiffExplorer.config.programConfig;
-using SoD_DiffExplorer.csutils;
+using SoD_DiffExplorer.utils;
 using YamlDotNet.Serialization;
 
 namespace SoD_DiffExplorer.config.sourceConfig {

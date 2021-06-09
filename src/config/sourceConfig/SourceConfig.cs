@@ -2,8 +2,8 @@
 using System.IO;
 using System.Text;
 using JetBrains.Annotations;
-using SoD_DiffExplorer.csutils;
 using SoD_DiffExplorer.menu;
+using SoD_DiffExplorer.utils;
 using YamlDotNet.Serialization;
 
 namespace SoD_DiffExplorer.config.sourceConfig {

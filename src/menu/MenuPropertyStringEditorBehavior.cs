@@ -11,7 +11,7 @@ namespace SoD_DiffExplorer.menu {
 		}
 
 		void IMenuPropertyOnClickBehavior<string>.OnClick(MenuUtils menuUtils, IMenuPropertyAccessor<string> property, string header, int spacing) {
-			property.SetValue(menuUtils.OpenSimpleConfigEditor(header, property.GetFieldName(), property.GetValue()));
+			property.SetValue(MenuUtils.OpenSimpleConfigEditor(header, property.GetFieldName(), property.GetValue()));
 		}
 	}
 }

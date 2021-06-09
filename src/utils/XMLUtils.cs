@@ -6,7 +6,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace SoD_DiffExplorer.csutils {
+namespace SoD_DiffExplorer.utils {
 	public static class XMLUtils {
 		public static XDocument LoadDocumentFromURL(string url) {
 			using var client = new WebClient();
@@ -16,7 +16,7 @@ namespace SoD_DiffExplorer.csutils {
 			return XDocument.Load(xReader);
 		}
 
-		public static List<XElement> FindNodesAtPath(XElement node, string[] path) {
+		public static List<XElement> FindNodesAtPath(XElement node, IEnumerable<string> path) {
 			List<XElement> currentScope = new List<XElement> { node };
 			foreach (string pathName in path) {
 				List<XElement> found = currentScope
@@ -43,7 +43,7 @@ namespace SoD_DiffExplorer.csutils {
 					return result;
 				}
 
-				if (i == (path.Length - 1)) {
+				if (i == path.Length - 1) {
 					List<string> result = new List<string>();
 					foreach (IEnumerable<XElement> list in currentScope.Select(node2 => node2.Elements())) {
 						result.AddRange(list.Where(elem => elem.Name.LocalName == pathName).Select(elem => elem.Value));

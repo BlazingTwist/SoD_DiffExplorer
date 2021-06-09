@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 
-namespace SoD_DiffExplorer.csutils {
+namespace SoD_DiffExplorer.utils {
 	public static class CustomRegex {
-		public static bool AllMatching(string value, [NotNull] List<string> regexes) {
+		public static bool AllMatching(string value, List<string> regexes) {
 			return regexes == null || regexes.All(regex => IsMatching(value, regex, Regex.IsMatch));
 		}
 

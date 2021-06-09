@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
 
-namespace SoD_DiffExplorer.csutils {
+namespace SoD_DiffExplorer.utils {
 	public class AssetFile {
 		public readonly AssetsFileInstance fileInstance;
 		public readonly ClassDatabaseFile classDBFile;
@@ -87,7 +87,7 @@ namespace SoD_DiffExplorer.csutils {
 			}
 		}
 
-		public List<AssetTypeValueField> GetFieldAtPath(AssetFile file, AssetTypeValueField baseField, string[] customPaths) {
+		public static List<AssetTypeValueField> GetFieldAtPath(AssetFile file, AssetTypeValueField baseField, IEnumerable<string> customPaths) {
 			List<AssetTypeValueField> currentScope = new List<AssetTypeValueField> { baseField };
 			foreach (string customPath in customPaths) {
 				if (customPath.Contains('/')) {
@@ -126,7 +126,7 @@ namespace SoD_DiffExplorer.csutils {
 			return currentScope;
 		}
 
-		public bool IsMatchingPathConstraints(AssetFile file, AssetTypeValueField baseField, List<string> pathConstraints) {
+		public static bool IsMatchingPathConstraints(AssetFile file, AssetTypeValueField baseField, IEnumerable<string> pathConstraints) {
 			return pathConstraints.All(path => GetFieldAtPath(file, baseField, path.Split(':')).Count > 0);
 		}
 

@@ -6,8 +6,8 @@ using SoD_DiffExplorer.config.downloadSettings;
 using SoD_DiffExplorer.config.onlineSourceInterpreterConfig;
 using SoD_DiffExplorer.config.programConfig;
 using SoD_DiffExplorer.config.sourceConfig;
-using SoD_DiffExplorer.csutils;
 using SoD_DiffExplorer.menu;
+using SoD_DiffExplorer.utils;
 using YamlDotNet.Serialization;
 
 namespace SoD_DiffExplorer.subPrograms {

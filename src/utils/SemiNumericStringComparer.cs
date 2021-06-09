@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace SoD_DiffExplorer.csutils {
+namespace SoD_DiffExplorer.utils {
 	internal class SemiNumericStringComparer : IComparer<string> {
 		private static bool IsNumeric(string value) {
 			return int.TryParse(value, out _);

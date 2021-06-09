@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Linq;
 using AssetsTools.NET;
-using SoD_DiffExplorer.csutils;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 	public interface IMappingValue {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using SoD_DiffExplorer.config.programConfig;
-using SoD_DiffExplorer.csutils;
 using SoD_DiffExplorer.menu;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.sourceConfig {
 	[PublicAPI]
@@ -56,7 +56,7 @@ namespace SoD_DiffExplorer.config.sourceConfig {
 		private BetterDict<string, string> GetValueChangeDict() {
 			return new BetterDict<string, string> {
 					{ nameof(platform), platform.ToString() },
-					{ nameof(version), version.ToString() },
+					{ nameof(version), version.ToString() }
 			};
 		}
 

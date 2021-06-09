@@ -3,7 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using AssetsTools.NET;
 using JetBrains.Annotations;
-using SoD_DiffExplorer.csutils;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 	[PublicAPI]
@@ -17,7 +17,7 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 
 		List<string> IMappingValue.GetMapValues(string fileUrl, AssetFile assetFile, AssetTypeValueField baseField, AssetTypeValueField targetField,
 				AssetToolUtils assetToolUtils) {
-			return assetToolUtils.GetFieldAtPath(assetFile, targetField, path.Split(':')).Select(field => field.GetValue().AsString()).ToList();
+			return AssetToolUtils.GetFieldAtPath(assetFile, targetField, path.Split(':')).Select(field => field.GetValue().AsString()).ToList();
 		}
 
 		string IMappingValue.GetOutputName() {

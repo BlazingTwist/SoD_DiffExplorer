@@ -7,7 +7,7 @@ namespace SoD_DiffExplorer {
 	public static class Program {
 		private static ConfigHolder config;
 
-		private static void Main(string[] args) {
+		private static void Main() {
 			try {
 				IDeserializer deserializer = new DeserializerBuilder()
 						.WithTagMapping("tag:yaml.org,2002:fileDownloader", typeof(FileDownloader))

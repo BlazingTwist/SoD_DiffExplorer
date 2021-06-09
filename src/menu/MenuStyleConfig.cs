@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using SoD_DiffExplorer.csutils;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.menu {
 	public enum MenuTextStyle {

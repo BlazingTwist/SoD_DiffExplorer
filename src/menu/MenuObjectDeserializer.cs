@@ -43,8 +43,8 @@ namespace SoD_DiffExplorer.menu {
 
 					if (typeof(IMenuProperty).IsAssignableFrom(targetField.FieldType)) {
 						Console.WriteLine("\treading menuProperty");
-						var targetProperty = (targetField.GetValue(value) as IMenuProperty);
-						targetProperty.ParseValue(nestedObjectDeserializer(reader, targetProperty.GetInnerType()));
+						var targetProperty = targetField.GetValue(value) as IMenuProperty;
+						targetProperty?.ParseValue(nestedObjectDeserializer(reader, targetProperty.GetInnerType()));
 					} else {
 						targetField.SetValue(value, nestedObjectDeserializer(reader, targetField.FieldType));
 					}

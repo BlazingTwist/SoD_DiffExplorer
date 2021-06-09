@@ -7,8 +7,8 @@ using SoD_DiffExplorer.config.onlineSourceInterpreterConfig;
 using SoD_DiffExplorer.config.programConfig;
 using SoD_DiffExplorer.config.resultConfig;
 using SoD_DiffExplorer.config.sourceConfig;
-using SoD_DiffExplorer.csutils;
 using SoD_DiffExplorer.menu;
+using SoD_DiffExplorer.utils;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NodeDeserializers;
 using YamlDotNet.Serialization.ObjectFactories;
@@ -154,14 +154,14 @@ namespace SoD_DiffExplorer.subPrograms {
 		private string GetResultFile() {
 			string fileName = dataComparer.sourceConfigHolder.GetValue().localSourcesConfig.GetValue().targetFileName;
 			if (dataComparer.resultConfig.GetValue().appendDate.GetValue()) {
-				fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
+				fileName += "_" + DateTime.Now.ToString("yyyy.MM.dd");
 			}
 
 			if (dataComparer.resultConfig.GetValue().appendTime.GetValue()) {
-				fileName += ("_" + DateTime.Now.ToString("HH.mm.ss"));
+				fileName += "_" + DateTime.Now.ToString("HH.mm.ss");
 			}
 
-			fileName += ("." + dataComparer.sourceConfigHolder.GetValue().localSourcesConfig.GetValue().targetFileExtension);
+			fileName += "." + dataComparer.sourceConfigHolder.GetValue().localSourcesConfig.GetValue().targetFileExtension;
 			return Path.Combine(dataComparer.resultConfig.GetValue().baseDirectory.GetValue(), fileName);
 		}
 

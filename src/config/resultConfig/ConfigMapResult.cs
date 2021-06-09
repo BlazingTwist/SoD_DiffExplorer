@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SoD_DiffExplorer.csutils;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.resultConfig {
 	public class ConfigMapResult {
@@ -109,14 +109,14 @@ namespace SoD_DiffExplorer.config.resultConfig {
 			return result;
 		}
 
-		private bool AllValuesSame(IReadOnlyDictionary<string, List<string>> x, IReadOnlyDictionary<string, List<string>> y) {
+		private static bool AllValuesSame(IReadOnlyDictionary<string, List<string>> x, IReadOnlyDictionary<string, List<string>> y) {
 			return !x.Any(kvp =>
 					!y.ContainsKey(kvp.Key)
 					|| !AllValuesSame(kvp.Value, y[kvp.Key])
 			) && y.All(kvp => x.ContainsKey(kvp.Key));
 		}
 
-		private static bool AllValuesSame(IReadOnlyList<string> x, IReadOnlyList<string> y) {
+		private static bool AllValuesSame(IReadOnlyCollection<string> x, IReadOnlyList<string> y) {
 			if (x.Count != y.Count) {
 				return false;
 			}
@@ -124,7 +124,7 @@ namespace SoD_DiffExplorer.config.resultConfig {
 			return !x.Where((t, i) => t != y[i]).Any();
 		}
 
-		private string BuildCompareText(Dictionary<string, Dictionary<string, List<string>>> data) {
+		private string BuildCompareText(IReadOnlyDictionary<string, Dictionary<string, List<string>>> data) {
 			var result = new StringBuilder();
 
 			foreach (string primaryKey in primaryKeyOrder) {

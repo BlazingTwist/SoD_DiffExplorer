@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using AssetsTools.NET;
 using JetBrains.Annotations;
-using SoD_DiffExplorer.csutils;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 	[PublicAPI]

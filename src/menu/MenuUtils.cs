@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using SoD_DiffExplorer.csutils;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.menu {
 	public class MenuUtils {
@@ -36,13 +36,13 @@ namespace SoD_DiffExplorer.menu {
 		private string AddTabsUntilTargetWidth(string spacing, string baseString, int targetWidth) {
 			switch (styleConfig.textStyle.GetValue()) {
 				case MenuTextStyle.split:
-					int strLen = (spacing.Length + baseString.Length);
+					int strLen = spacing.Length + baseString.Length;
 					if (strLen >= targetWidth) {
 						return baseString;
 					}
 
-					int targetTabs = (targetWidth + (targetWidth % 8)) / 8;
-					int textTabEquivalent = (strLen - (strLen % 8)) / 8;
+					int targetTabs = (targetWidth + targetWidth % 8) / 8;
+					int textTabEquivalent = (strLen - strLen % 8) / 8;
 					return baseString + new string('\t', targetTabs - textTabEquivalent);
 				case MenuTextStyle.connected:
 				case MenuTextStyle.full_line:
@@ -88,12 +88,16 @@ namespace SoD_DiffExplorer.menu {
 
 						options[selection].OnClick(this, displayHeader, spacing + spacerWidth);
 						break;
+					case MenuControl.Undefined:
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
 			}
 		}
 
-		private string[] BuildOptions(string spacing, IMenuProperty[] options) {
-			if (options.Length == 0) {
+		private IEnumerable<string> BuildOptions(string spacing, IReadOnlyCollection<IMenuProperty> options) {
+			if (options.Count == 0) {
 				return new string[0];
 			}
 
@@ -162,7 +166,7 @@ namespace SoD_DiffExplorer.menu {
 			return result.ToString();
 		}
 
-		public string OpenSimpleConfigEditor(string header, string valueName, string previousValue) {
+		public static string OpenSimpleConfigEditor(string header, string valueName, string previousValue) {
 			Console.Clear();
 			Console.WriteLine(GetTextEditorControlsText(header + "." + valueName + " (" + previousValue) + ")");
 			Console.Write("\tnew value = " + previousValue);
@@ -183,7 +187,7 @@ namespace SoD_DiffExplorer.menu {
 							if (currentWriteIndex < input.Length) {
 								string remains = input.Substring(currentWriteIndex);
 								input = input.Remove(currentWriteIndex - 1) + remains;
-								Console.Write("\b \b" + remains + ' ' + new String('\b', remains.Length + 1));
+								Console.Write("\b \b" + remains + ' ' + new string('\b', remains.Length + 1));
 							} else {
 								input = input.Remove(input.Length - 1);
 								Console.Write("\b \b");
@@ -252,7 +256,7 @@ namespace SoD_DiffExplorer.menu {
 		public int OpenSelectionMenu(string[] options, string goBackText, string header, int selection, int spaceDepth) {
 			string spacing = new string(' ', spaceDepth);
 
-			int maxSelection = goBackText == null ? (options.Length - 1) : options.Length;
+			int maxSelection = goBackText == null ? options.Length - 1 : options.Length;
 			while (true) {
 				Console.Clear();
 				if (header != null) {
@@ -290,7 +294,7 @@ namespace SoD_DiffExplorer.menu {
 			}
 		}
 
-		private void PrintOptions(string[] options, string goBackText, string spacing, int highlightLine) {
+		private void PrintOptions(IEnumerable<string> options, string goBackText, string spacing, int highlightLine) {
 			List<string> realOptions = new List<string>();
 			realOptions.AddRange(options);
 			if (goBackText != null) {
@@ -319,7 +323,7 @@ namespace SoD_DiffExplorer.menu {
 				PrintHighlightedText(highlightLine, realOptions.ToArray(), spacing);
 
 				optionsString = new StringBuilder();
-				for (int i = (highlightLine + 1); i < realOptions.Count; i++) {
+				for (int i = highlightLine + 1; i < realOptions.Count; i++) {
 					optionsString.Append(spacing).Append(realOptions[i]).Append("\n");
 				}
 
@@ -327,7 +331,7 @@ namespace SoD_DiffExplorer.menu {
 			}
 		}
 
-		private void PrintHighlightedText(int selection, string[] options, string spacing) {
+		private void PrintHighlightedText(int selection, IReadOnlyList<string> options, string spacing) {
 			switch (styleConfig.textStyle.GetValue()) {
 				case MenuTextStyle.split:
 				case MenuTextStyle.connected:
@@ -370,7 +374,7 @@ namespace SoD_DiffExplorer.menu {
 			Console.ForegroundColor = styleConfig.normalTextColor.GetValue();
 		}
 
-		private string RepeatString(string repeat, int count) {
+		private static string RepeatString(string repeat, int count) {
 			var builder = new StringBuilder();
 			for (int i = 0; i < count; i++) {
 				builder.Append(repeat);

@@ -15,9 +15,7 @@ namespace SoD_DiffExplorer.menu {
 		}
 
 		string IMenuPropertyOnClickBehavior<T>.GetInfoText(IMenuPropertyAccessor<T> property) {
-			return typeof(T) is IMenuObject
-					? (property.GetValue() as IMenuObject).GetInfoString()
-					: property.GetValue().ToString();
+			return property.GetValue().ToString();
 		}
 
 		void IMenuPropertyOnClickBehavior<T>.OnClick(MenuUtils menuUtils, IMenuPropertyAccessor<T> property, string header, int spacing) {

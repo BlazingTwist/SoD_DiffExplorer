@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 
-namespace SoD_DiffExplorer.csutils {
+namespace SoD_DiffExplorer.utils {
 	[PublicAPI]
 	public class BetterDict<TKey, TValue> : Dictionary<TKey, TValue> {
 		public BetterDict() { }

@@ -7,8 +7,8 @@ using System.Xml.Linq;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
 using JetBrains.Annotations;
-using SoD_DiffExplorer.csutils;
 using SoD_DiffExplorer.menu;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 	[PublicAPI]
@@ -45,14 +45,17 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 					Dictionary<string, List<string>> secondaryValues = new Dictionary<string, List<string>>();
 					foreach (OnlineInterpreterFilter filter in configFilter) {
 						List<string> filterValues = new List<string>();
-						if (filter.pathType == EOnlineInterpreterPathType.relative) {
-							filterValues.AddRange(XMLUtils.FindNodeValuesAtPath(primaryElement, filter.path.Split(':'))
-									.Select(value => ResolveTranslationValue(value.Trim(), filter.outputName)));
-						} else if (filter.pathType == EOnlineInterpreterPathType.absolute) {
-							filterValues.AddRange(XMLUtils.FindNodeValuesAtPath(document.Root, filter.path.Split(':'))
-									.Select(value => ResolveTranslationValue(value.Trim(), filter.outputName)));
-						} else {
-							throw new InvalidOperationException("pathType " + filter.pathType + " is not supported by OnlineSourceInterpreterConfig.cs");
+						switch (filter.pathType) {
+							case EOnlineInterpreterPathType.relative:
+								filterValues.AddRange(XMLUtils.FindNodeValuesAtPath(primaryElement, filter.path.Split(':'))
+										.Select(value => ResolveTranslationValue(value.Trim(), filter.outputName)));
+								break;
+							case EOnlineInterpreterPathType.absolute:
+								filterValues.AddRange(XMLUtils.FindNodeValuesAtPath(document.Root, filter.path.Split(':'))
+										.Select(value => ResolveTranslationValue(value.Trim(), filter.outputName)));
+								break;
+							default:
+								throw new InvalidOperationException("pathType " + filter.pathType + " is not supported by OnlineSourceInterpreterConfig.cs");
 						}
 
 						secondaryValues[filter.outputName] = filterValues;
@@ -105,12 +108,12 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 
 				AssetTypeValueField baseField = AssetToolUtils.GetATI(file, info).GetBaseField();
 
-				List<AssetTypeValueField> targetFields = assetToolUtils.GetFieldAtPath(file, baseField, configPath.Split(':'));
+				List<AssetTypeValueField> targetFields = AssetToolUtils.GetFieldAtPath(file, baseField, configPath.Split(':'));
 				if (targetFields.Count == 0) {
 					continue;
 				}
 
-				if (!assetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
+				if (!AssetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
 					continue;
 				}
 
@@ -125,15 +128,13 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 
 						foreach (OnlineInterpreterFilter filter in configFilter) {
 							List<string> filterValues = new List<string>();
-							List<AssetTypeValueField> filterFields;
 
-							if (filter.pathType == EOnlineInterpreterPathType.relative) {
-								filterFields = assetToolUtils.GetFieldAtPath(file, targetField, filter.path.Split(':'));
-							} else if (filter.pathType == EOnlineInterpreterPathType.absolute) {
-								filterFields = assetToolUtils.GetFieldAtPath(file, baseField, filter.path.Split(':'));
-							} else {
-								throw new InvalidOperationException("pathType " + filter.pathType + " is not supported by OnlineSourceInterpreterConfig.cs");
-							}
+							List<AssetTypeValueField> filterFields = filter.pathType switch {
+									EOnlineInterpreterPathType.relative => AssetToolUtils.GetFieldAtPath(file, targetField, filter.path.Split(':')),
+									EOnlineInterpreterPathType.absolute => AssetToolUtils.GetFieldAtPath(file, baseField, filter.path.Split(':')),
+									_ => throw new InvalidOperationException("pathType " + filter.pathType +
+											" is not supported by OnlineSourceInterpreterConfig.cs")
+							};
 
 							Console.WriteLine("found " + filterFields.Count + " fields at path: " + filter.path);
 							filterValues.AddRange(filterFields
@@ -165,11 +166,9 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 			Dictionary<string, List<string>> mappingResult = result[mapValue];
 
 			int maxHeight = mappingResult.Max(kvp => kvp.Value.Count);
-			foreach (KeyValuePair<string, List<string>> kvp in mappingResult) {
-				if (kvp.Value.Count < maxHeight) {
-					for (int i = (maxHeight - kvp.Value.Count); i > 0; i--) {
-						kvp.Value.Add("");
-					}
+			foreach (List<string> value in mappingResult.Values.Where(value => value.Count < maxHeight)) {
+				for (int i = maxHeight - value.Count; i > 0; i--) {
+					value.Add("");
 				}
 			}
 

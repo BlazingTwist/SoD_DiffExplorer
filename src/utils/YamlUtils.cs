@@ -4,19 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace SoD_DiffExplorer.csutils {
+namespace SoD_DiffExplorer.utils {
 	public static class YamlUtils {
-		public static List<string> GetAllConfigLines() {
-			List<string> lines = new List<string>();
-			using var reader = new StreamReader("config.yaml");
-			string line;
-			while ((line = reader.ReadLine()) != null) {
-				lines.Add(line);
-			}
-
-			return lines;
-		}
-
 		public static List<string> GetAllConfigLines(string configPath) {
 			List<string> lines = new List<string>();
 			using var reader = new StreamReader(configPath);
@@ -211,7 +200,7 @@ namespace SoD_DiffExplorer.csutils {
 				if (!ChangeSimpleValue(ref lines, startLine, ref endLine, currentTabDepth, key, value)) {
 					Console.WriteLine("unable to find config key: " + key + " | inserting automatically, formatting might look dumb");
 					string spacing = new string(' ', currentTabDepth * 2);
-					lines.Insert(startLine, (spacing + key + ": " + value));
+					lines.Insert(startLine, spacing + key + ": " + value);
 					endLine++;
 				}
 			}
@@ -380,7 +369,7 @@ namespace SoD_DiffExplorer.csutils {
 					continue;
 				}
 
-				if (pathDepth < (pathSplit.Length - 1)) {
+				if (pathDepth < pathSplit.Length - 1) {
 					//not reached end of path yet
 					pathDepth++;
 					targetSectionName = pathSplit[pathDepth];
@@ -397,7 +386,7 @@ namespace SoD_DiffExplorer.csutils {
 		private static int CountStartingSpaces(string target) {
 			for (int i = 0; i < target.Length; i++) {
 				if (target[i] != ' ') {
-					if (target[i] == '-' && (i + 1) < target.Length && target[i + 1] == ' ') {
+					if (target[i] == '-' && i + 1 < target.Length && target[i + 1] == ' ') {
 						return i + 2;
 					}
 

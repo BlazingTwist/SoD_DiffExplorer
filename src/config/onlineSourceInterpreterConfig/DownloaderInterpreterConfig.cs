@@ -8,8 +8,8 @@ using System.Xml.Linq;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
 using JetBrains.Annotations;
-using SoD_DiffExplorer.csutils;
 using SoD_DiffExplorer.menu;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 	[PublicAPI]
@@ -128,32 +128,27 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 				}
 
 				AssetTypeValueField baseField = AssetToolUtils.GetATI(file, info).GetBaseField();
-				List<AssetTypeValueField> targetFields = assetToolUtils.GetFieldAtPath(file, baseField, configPath.Split(':'));
+				List<AssetTypeValueField> targetFields = AssetToolUtils.GetFieldAtPath(file, baseField, configPath.Split(':'));
 				if (targetFields.Count == 0) {
 					continue;
 				}
 
-				if (!assetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
+				if (!AssetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
 					continue;
 				}
 
 				Console.WriteLine("found " + targetFields.Count + " matches in mono-behaviour at path: " + configPath);
 
 				foreach (AssetTypeValueField targetField in targetFields) {
-					List<AssetTypeValueField> fileNameFields = assetToolUtils.GetFieldAtPath(file, targetField, fileNamePath.Split(':'));
+					List<AssetTypeValueField> fileNameFields = AssetToolUtils.GetFieldAtPath(file, targetField, fileNamePath.Split(':'));
 					Console.WriteLine("found " + fileNameFields.Count + " fileNameFields in targetField at path: " + fileNamePath);
 
-					foreach (AssetTypeValueField fileNameField in fileNameFields) {
-						string fileName = fileNameField.GetValue().AsString().Trim();
-
-						if (!CustomRegex.AllMatching(fileName, fileNameRegexFilters)) {
-							continue;
-						}
-
-						foreach (string value in ApplySubFilters(fileName, baseField, targetField, file, assetToolUtils)) {
-							if (!result.Contains(value)) {
-								result.Add(value);
-							}
+					foreach (string value in fileNameFields
+							.Select(fileNameField => fileNameField.GetValue().AsString().Trim())
+							.Where(fileName => CustomRegex.AllMatching(fileName, fileNameRegexFilters))
+							.SelectMany(fileName => ApplySubFilters(fileName, baseField, targetField, file, assetToolUtils))) {
+						if (!result.Contains(value)) {
+							result.Add(value);
 						}
 					}
 				}
@@ -164,20 +159,17 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 				AssetToolUtils assetUtils) {
 			List<string> result = new List<string>();
 
-			AssetTypeValueField targetRoot;
-			if (subFilter.pathType == EOnlineInterpreterPathType.relative) {
-				targetRoot = relativeRoot;
-			} else if (subFilter.pathType == EOnlineInterpreterPathType.absolute) {
-				targetRoot = absoluteRoot;
-			} else {
-				throw new InvalidOperationException("pathType " + subFilter.pathType + " is not supported by DownloaderInterpreterConfig.cs");
-			}
+			AssetTypeValueField targetRoot = subFilter.pathType switch {
+					EOnlineInterpreterPathType.relative => relativeRoot,
+					EOnlineInterpreterPathType.absolute => absoluteRoot,
+					_ => throw new InvalidOperationException("pathType " + subFilter.pathType + " is not supported by DownloaderInterpreterConfig.cs")
+			};
 
-			List<AssetTypeValueField> basePathFields = assetUtils.GetFieldAtPath(file, targetRoot, subFilter.basePath.Split(':'));
+			List<AssetTypeValueField> basePathFields = AssetToolUtils.GetFieldAtPath(file, targetRoot, subFilter.basePath.Split(':'));
 			List<string> filterValues = new List<string>();
 
-			foreach (AssetTypeValueField field in basePathFields) {
-				List<AssetTypeValueField> pathFields = assetUtils.GetFieldAtPath(file, field, subFilter.valuePath.Split(':'));
+			foreach (List<AssetTypeValueField> pathFields in basePathFields
+					.Select(field => AssetToolUtils.GetFieldAtPath(file, field, subFilter.valuePath.Split(':')))) {
 				filterValues.AddRange(pathFields.Where(pathField => pathField.GetValue() != null).Select(pathField => pathField.GetValue().AsString().Trim()));
 			}
 

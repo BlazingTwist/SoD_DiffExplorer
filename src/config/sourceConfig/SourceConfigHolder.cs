@@ -4,8 +4,8 @@ using System.IO;
 using System.Text;
 using JetBrains.Annotations;
 using SoD_DiffExplorer.config.programConfig;
-using SoD_DiffExplorer.csutils;
 using SoD_DiffExplorer.menu;
+using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.sourceConfig {
 	[PublicAPI]
@@ -46,34 +46,34 @@ namespace SoD_DiffExplorer.config.sourceConfig {
 			string fileName = localSourcesConfig.GetValue().targetFileName;
 			if (sourceConfig.sourceType.GetValue() == ESourceType.online) {
 				if (localSourcesConfig.GetValue().appendPlatform.GetValue()) {
-					fileName += ("_" + sourceConfig.online.GetValue().platform);
+					fileName += "_" + sourceConfig.online.GetValue().platform;
 				}
 
 				if (localSourcesConfig.GetValue().appendVersion.GetValue()) {
-					fileName += ("_" + sourceConfig.online.GetValue().version);
+					fileName += "_" + sourceConfig.online.GetValue().version;
 				}
 
 				if (localSourcesConfig.GetValue().appendDate.GetValue()) {
-					fileName += ("_" + DateTime.Now.ToString("yyyy.MM.dd"));
+					fileName += "_" + DateTime.Now.ToString("yyyy.MM.dd");
 				}
 			} else if (sourceConfig.sourceType.GetValue() == ESourceType.local) {
 				if (localSourcesConfig.GetValue().appendPlatform.GetValue()) {
-					fileName += ("_" + sourceConfig.local.GetValue().platform);
+					fileName += "_" + sourceConfig.local.GetValue().platform;
 				}
 
 				if (localSourcesConfig.GetValue().appendVersion.GetValue()) {
-					fileName += ("_" + sourceConfig.local.GetValue().version);
+					fileName += "_" + sourceConfig.local.GetValue().version;
 				}
 
 				if (localSourcesConfig.GetValue().appendDate.GetValue()) {
-					fileName += ("_" + sourceConfig.local.GetValue().date);
+					fileName += "_" + sourceConfig.local.GetValue().date;
 				}
 			} else {
 				//undefined behaviour
 				throw new InvalidOperationException("SourceType " + sourceConfig.sourceType.GetValue() + " not supported!");
 			}
 
-			fileName += ("." + localSourcesConfig.GetValue().targetFileExtension);
+			fileName += "." + localSourcesConfig.GetValue().targetFileExtension;
 
 			return Path.Combine(localSourcesConfig.GetValue().baseDirectory, fileName);
 		}
@@ -101,7 +101,7 @@ namespace SoD_DiffExplorer.config.sourceConfig {
 		}
 
 		string IMenuObject.GetInfoString() {
-			StringBuilder result = new StringBuilder();
+			var result = new StringBuilder();
 			result.Append(nameof(sourceFrom));
 			result.Append(" | ").Append(nameof(sourceTo));
 			result.Append(" | ").Append(nameof(onlineSourcesConfig));
