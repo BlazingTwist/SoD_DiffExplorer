@@ -1,0 +1,207 @@
+sourceConfigHolder:
+  lastCreated: fishSpawnHistory\sources\fishSpawns_3.15.0_2021.05.10.txt
+
+  sourceFrom:
+    sourceType: lastCreated
+    online:
+      platform: Steam
+      version: 3.15.0
+      makeFile: True
+      makeLastCreated: False
+    local:
+      platform: Steam
+      version: 3.15.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.15.0
+      makeFile: True
+      makeLastCreated: True
+    local:
+      platform: Steam
+      version: 3.15.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseUrl: http://media.schoolofdragons.com/DWADragonsUnity
+    baseUrlSuffix: High
+    dataType: bundleFile
+
+    onlineSourceConfig: !!queriedOnlineSourceConfig
+      assetInfo: data/AssetVersionsDO.xml
+      assetFileNamePath: A:@N
+
+      #as of 3.15.0 none of these contain any ChestData, so they're blocked from being downloaded here.
+      dataContainerRegexFilters:
+      - "^RS_SCENE/(.*)$"
+      - "!RS_SCENE/flightschooldo"
+      - "!RS_SCENE/flightschooldotheme1"
+      - "!RS_SCENE/fsdeadlynadderdo"
+      - "!RS_SCENE/fsflightsuitdo"
+      - "!RS_SCENE/fsgronckledo"
+      - "!RS_SCENE/fsnightfurydo"
+      - "!RS_SCENE/fsnightmaredo"
+      - "!RS_SCENE/fsthunderdrumdo"
+      - "!RS_SCENE/fstimberjackdo"
+      - "!RS_SCENE/fswhisperingdeathdo"
+      - "!RS_SCENE/fszipplebackdo"
+      - "!RS_SCENE/starctict01mapdo"
+      - "!RS_SCENE/starctict02mapdo"
+      - "!RS_SCENE/starctict03mapdo"
+      - "!RS_SCENE/starctict04mapdo"
+      - "!RS_SCENE/starctict05mapdo"
+      - "!RS_SCENE/starctict06mapdo"
+      - "!RS_SCENE/starctict07mapdo"
+      - "!RS_SCENE/starctict08mapdo"
+      - "!RS_SCENE/starena05mapdo"
+      - "!RS_SCENE/starena06mapdo"
+      - "!RS_SCENE/starena07mapdo"
+      - "!RS_SCENE/starena08mapdo"
+      - "!RS_SCENE/stcurseofhgmap01do"
+      - "!RS_SCENE/stcurseofhgmap02do"
+      - "!RS_SCENE/stdreadfall01mapdo"
+      - "!RS_SCENE/stdreadfall02mapdo"
+      - "!RS_SCENE/stdreadfall03mapdo"
+      - "!RS_SCENE/stdreadfall04mapdo"
+      - "!RS_SCENE/stdreadfall05mapdo"
+      - "!RS_SCENE/stdreadfall06mapdo"
+      - "!RS_SCENE/stdreadfall07mapdo"
+      - "!RS_SCENE/stdreadfall08mapdo"
+      - "!RS_SCENE/sthiddenworld01mapdo"
+      - "!RS_SCENE/sthiddenworld02mapdo"
+      - "!RS_SCENE/sthiddenworld03mapdo"
+      - "!RS_SCENE/sthiddenworld04mapdo"
+      - "!RS_SCENE/stlevelselectiondo"
+      - "!RS_SCENE/storesdm"
+      - "!RS_SCENE/stpiratearenamapdo"
+      - "!RS_SCENE/stpiratebossmapdo"
+      - "!RS_SCENE/stpiratedemapdo"
+      - "!RS_SCENE/stpiratetradermapdo"
+      - "!RS_SCENE/stsnoggletog1mapdo"
+      - "!RS_SCENE/stsnoggletog2mapdo"
+      - "!RS_SCENE/stsnoggletog3mapdo"
+      - "!RS_SCENE/stsnoggletog4mapdo"
+      - "!RS_SCENE/stsnoggletog5mapdo"
+      - "!RS_SCENE/stsnoggletog6mapdo"
+      - "!RS_SCENE/stsnoggletog7mapdo"
+      - "!RS_SCENE/stsnoggletog8mapdo"
+      - "!RS_SCENE/sttrainer01mapdo"
+      - "!RS_SCENE/sttrainer02mapdo"
+      - "!RS_SCENE/sttrainer03mapdo"
+      - "!RS_SCENE/sttrainer04mapdo"
+      - "!RS_SCENE/sttutorialmapdo"
+      - "!RS_SCENE/stvanaheim02mapdo"
+      - "!RS_SCENE/stvanaheim04mapdo"
+      - "!RS_SCENE/stvanaheim06mapdo"
+      - "!RS_SCENE/stvanaheim09_1mapdo"
+      - "!RS_SCENE/stvanaheim09_2mapdo"
+      - "!RS_SCENE/stvanaheim09_3mapdo"
+      - "!RS_SCENE/stvanaheim09_4mapdo"
+      - "!RS_SCENE/trackdo01"
+      - "!RS_SCENE/trackdo02"
+      - "!RS_SCENE/trackdo03"
+      - "!RS_SCENE/trackdo04"
+      - "!RS_SCENE/trackdo05"
+      - "!RS_SCENE/trackdo06"
+      - "!RS_SCENE/trackdo07"
+      - "!RS_SCENE/trackdo08"
+      - "!RS_SCENE/trackdo09"
+      - "!RS_SCENE/trackdo10"
+      - "!RS_SCENE/trackdo11"
+      - "!RS_SCENE/trackdo12"
+      - "!RS_SCENE/trackdo13"
+      - "!RS_SCENE/trackdo14"
+      - "!RS_SCENE/trackdo15"
+      - "!RS_SCENE/trackdo16"
+      - "!RS_SCENE/trackdo17"
+      - "!RS_SCENE/trackdo18"
+      - "!RS_SCENE/trackdo19"
+
+  localSourcesConfig:
+    baseDirectory: fishSpawnHistory\sources
+    targetFileName: fishSpawns
+    targetFileExtension: txt
+    appendPlatform: false
+    appendVersion: true
+    appendDate: true
+
+resultConfig:
+  appendTime: False
+  baseDirectory: fishSpawnHistory\results
+  makeFile: True
+  appendDate: True
+  resultFilter: 
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: True
+
+onlineSourceInterpreterConfig:
+  configPath: m_GameObject:m_PathID/Base
+
+  pathConstraints:
+  - _Fish:Array:data
+
+  mapConfigBy: !!storedMappingValue
+    path: m_Name
+    outputName: Name
+
+  regexTranslator: {}
+
+  typeTranslationDict:
+    FishState:
+      0: NormalState
+      1: IdleState
+      2: FastState
+
+  outputNameToTypeDict:
+    FishState: FishState
+
+  configFilter:
+  - path: _Fish:Array:data:_Name
+    pathType: absolute
+    doDisplay: True
+    outputName: FishName
+
+  - path: _Fish:Array:data:_ItemID
+    pathType: absolute
+    doDisplay: True
+    outputName: ItemID
+
+  - path: _Fish:Array:data:_AppearanceProbablility
+    pathType: absolute
+    doDisplay: True
+    outputName: AppearanceProbability
+
+  - path: _Fish:Array:data:_NormalStateChance
+    pathType: absolute
+    doDisplay: True
+    outputName: NormalStateChance
+
+  - path: _Fish:Array:data:_IdleStateChance
+    pathType: absolute
+    doDisplay: True
+    outputName: IdleStateChance
+
+  - path: _Fish:Array:data:_FastStateChance
+    pathType: absolute
+    doDisplay: True
+    outputName: FastStateChance
+
+  - path: _Fish:Array:data:_StateData:Array:data:_State
+    pathType: absolute
+    doDisplay: True
+    outputName: FishState
+
+  - path: _Fish:Array:data:_StateData:Array:data:_Tension
+    pathType: absolute
+    doDisplay: True
+    outputName: Tension
+
+  - path: _Fish:Array:data:_StateData:Array:data:_Duration
+    pathType: absolute
+    doDisplay: True
+    outputName: Duration
