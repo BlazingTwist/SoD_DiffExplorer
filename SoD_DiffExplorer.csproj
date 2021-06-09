@@ -34,6 +34,9 @@
     <Reference Include="AssetsTools.NET">
       <HintPath>..\..\..\Tools\UNITY MODDING\AssetTools 2.0.6\AssetsTools.NET.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\SoR_Modding\SoR_BepInEx_Libraries\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
