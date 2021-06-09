@@ -1,13 +1,13 @@
 sourceConfigHolder:
-  lastCreated: chestLocationHistory\sources\chestLocations_2020.04.18.txt
+  lastCreated: chestLocationHistory\sources\chestLocations_2021.05.10.txt
 
   sourceFrom:
     sourceType: lastCreated
     online:
       platform: Steam
       version: 3.8.0
-      makeFile: true
-      makeLastCreated: false
+      makeFile: True
+      makeLastCreated: False
     local:
       platform: Steam
       version: 3.8.0
@@ -17,9 +17,9 @@ sourceConfigHolder:
     sourceType: online
     online:
       platform: Steam
-      version: 3.8.0
-      makeFile: true
-      makeLastCreated: true
+      version: 3.15.0
+      makeFile: True
+      makeLastCreated: True
     local:
       platform: Steam
       version: 3.8.0
@@ -171,14 +171,15 @@ sourceConfigHolder:
     appendDate: true
 
 resultConfig:
+  appendTime: False
   baseDirectory: chestLocationHistory\results
-  makeFile: true
-  appendDate: true
+  makeFile: True
+  appendDate: True
   resultFilter: 
-    displayAdditions: true
-    displayDifferences: true
-    displayRemovals: true
-    displayCommons: true
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: True
 
 onlineSourceInterpreterConfig:
   configPath: _ListOfChests:Array:data
@@ -210,75 +211,75 @@ onlineSourceInterpreterConfig:
   configFilter:
   - path: _AssetPath
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: AssetPath
 
   - path: _ChestTypeInfo
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: ChestType
 
   - path: _SpawnChance
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: SpawnChance
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalRotation:x
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: rotation.x
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalRotation:y
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: rotation.y
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalRotation:z
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: rotation.z
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalRotation:w
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: rotation.w
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalPosition:x
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: position.x
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalPosition:y
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: position.y
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalPosition:z
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: position.z
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalScale:x
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: scale.x
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalScale:y
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: scale.y
 
   - path: _SpawnNodeList:Array:data:m_PathID/Base:m_LocalScale:z
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: scale.z
 
   - path: _StoreInfoList:Array:data:_ItemID
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: StoreInfo:ItemID
 
   - path: _StoreInfoList:Array:data:_StoreID
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: StoreInfo:StoreID

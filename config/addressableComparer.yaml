@@ -1,5 +1,5 @@
 sourceConfigHolder:
-  lastCreated: addressablesHistory\sources\assetInfo_2020.04.07.txt
+  lastCreated: addressablesHistory\sources\assetInfo_2021.05.25.txt
 
   #defines the config values depending on sourceType
   sourceFrom:
@@ -7,11 +7,11 @@ sourceConfigHolder:
     sourceType: lastCreated
     online:
       platform: Steam
-      version: 3.8.0
-      makeFile: true
+      version: 3.15.0
+      makeFile: True
       #won't do anything if makeFile is set to false (because then there won't be any file in the first place)
       #if makeFile and this are set to true it will register the created file as 'lastcreated' for faster comparisons in the future
-      makeLastCreated: false
+      makeLastCreated: False
     local:
       #if you created the files using automatic platform/version/date appending you can specify them here
       #these won't be used if they're set to false in 'sourcesConfig'
@@ -23,9 +23,9 @@ sourceConfigHolder:
     sourceType: online
     online:
       platform: Steam
-      version: 3.8.0
-      makeFile: true
-      makeLastCreated: true
+      version: 3.17.0
+      makeFile: True
+      makeLastCreated: True
     local:
       platform: Steam
       version: 3.8.0
@@ -52,14 +52,15 @@ sourceConfigHolder:
     appendDate: true
 
 resultConfig:
+  appendTime: True
   baseDirectory: addressablesHistory\results
-  makeFile: true
-  appendDate: true
+  makeFile: True
+  appendDate: True
   resultFilter: 
-    displayAdditions: true
-    displayDifferences: true
-    displayRemovals: true
-    displayCommons: false
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: False
 
 onlineSourceInterpreterConfig:
   configPath: A
@@ -79,5 +80,5 @@ onlineSourceInterpreterConfig:
   configFilter: 
   - path: V:@L
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: locales

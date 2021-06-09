@@ -1,13 +1,13 @@
 sourceConfigHolder:
-  lastCreated: sanctuaryPetSettingsHistory\sources\petSettings_2020.04.19.txt
+  lastCreated: sanctuaryPetSettingsHistory\sources\petSettings_2020.12.15.txt
 
   sourceFrom:
     sourceType: lastCreated
     online:
       platform: Steam
       version: 3.8.0
-      makeFile: true
-      makeLastCreated: false
+      makeFile: True
+      makeLastCreated: False
     local:
       platform: Steam
       version: 3.8.0
@@ -17,9 +17,9 @@ sourceConfigHolder:
     sourceType: online
     online:
       platform: Steam
-      version: 3.8.0
-      makeFile: true
-      makeLastCreated: true
+      version: 3.13.0
+      makeFile: True
+      makeLastCreated: True
     local:
       platform: Steam
       version: 3.8.0
@@ -42,14 +42,15 @@ sourceConfigHolder:
     appendDate: true
 
 resultConfig:
+  appendTime: True
   baseDirectory: sanctuaryPetSettingsHistory\results
-  makeFile: true
-  appendDate: true
+  makeFile: True
+  appendDate: True
   resultFilter: 
-    displayAdditions: true
-    displayDifferences: true
-    displayRemovals: true
-    displayCommons: true
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: True
 
 onlineSourceInterpreterConfig:
   configPath: _Settings:Array:data
@@ -119,120 +120,120 @@ onlineSourceInterpreterConfig:
   configFilter:
   - path: _UpdateFrequency
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: UpdateFrequency
 
   - path: _HealthModifier:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealthModifier:LevelMultiplier
 
   - path: _HealthModifier:_MeterMultiplierAtAge:Array:data:_PetStage
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealthModifier:AtAge:PetStage
 
   - path: _HealthModifier:_MeterMultiplierAtAge:Array:data:_Value
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealthModifier:AtAge:Value
 
   - path: _EnergyModifier:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: EnergyModifier:LevelMultiplier
 
   - path: _EnergyModifier:_MeterMultiplierAtAge:Array:data:_PetStage
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: EnergyModifier:AtAge:PetStage
 
   - path: _EnergyModifier:_MeterMultiplierAtAge:Array:data:_Value
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: EnergyModifier:AtAge:Value
 
   - path: _FiredUpThreshold
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: FiredUpThreshold
 
   - path: _HappyThreshold
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HappyUpThreshold
 
   - path: _TiredThreshold
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: TiredThreshold
 
   - path: _MinPetMeterValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: MinPetMeterValue
 
   - path: _ActionMeterData:Array:data:_ID
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: ActionMeterData:ID
 
   - path: _ActionMeterData:Array:data:_MeterType
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: ActionMeterData:MeterType
 
   - path: _ActionMeterData:Array:data:_Delta
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: ActionMeterData:Delta
 
   - path: _Meters:Array:data:_Type
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Meters:Type
 
   - path: _Meters:Array:data:_DecreaseRate
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Meters:DecreaseRate
 
   - path: _Meters:Array:data:_DecreaseRateInPercent
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Meters:DecreaseRateInPercent
 
   - path: _Meters:Array:data:_WarningVal
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Meters:WarningVal
 
   - path: _Meters:Array:data:_WarningMessage
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Meters:WarningMessage
 
   - path: _Meters:Array:data:_MeterIdx
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Meters:MeterIndex
 
   - path: _Meters:Array:data:_LocalOnly
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Meters:LocalOnly
 
   - path: _SpeedModifers:Array:data:_Mood
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: SpeedModifier:Mood
 
   - path: _SpeedModifers:Array:data:_Mounted
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: SpeedModifier:Mounted
 
   - path: _SpeedModifers:Array:data:_Flight
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: SpeedModifier:Flight

@@ -1,13 +1,13 @@
 sourceConfigHolder:
-  lastCreated: fireballHistory\sources\fireball_2020.04.09.txt
+  lastCreated: fireballHistory\sources\fireball_2021.04.20.txt
 
   sourceFrom:
     sourceType: lastCreated
     online:
       platform: Steam
       version: 3.8.0
-      makeFile: true
-      makeLastCreated: false
+      makeFile: True
+      makeLastCreated: False
     local:
       platform: Steam
       version: 3.8.0
@@ -17,9 +17,9 @@ sourceConfigHolder:
     sourceType: online
     online:
       platform: Steam
-      version: 3.8.0
-      makeFile: true
-      makeLastCreated: true
+      version: 3.15.0
+      makeFile: True
+      makeLastCreated: True
     local:
       platform: Steam
       version: 3.8.0
@@ -42,14 +42,15 @@ sourceConfigHolder:
     appendDate: true
 
 resultConfig:
+  appendTime: True
   baseDirectory: fireballHistory\results
-  makeFile: true
-  appendDate: true
+  makeFile: True
+  appendDate: True
   resultFilter: 
-    displayAdditions: true
-    displayDifferences: true
-    displayRemovals: true
-    displayCommons: true
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: True
 
 onlineSourceInterpreterConfig:
   configPath: _Weapons:Array:data
@@ -74,85 +75,85 @@ onlineSourceInterpreterConfig:
   configFilter:
   - path: _MinSpeed
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: MinSpeed
 
   - path: _MaxTimeToTarget
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: MaxTimeToTarget
 
   - path: _Damage
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Damage
 
   - path: _CriticalDamageMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CritMultiplier
 
   - path: _CriticalDamageChance
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CritChance
 
   - path: _Energy
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Energy
 
   - path: _TouchRadius
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: TouchRadius
 
   - path: _Lifetime
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Lifetime
 
   - path: _TotalShots
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: TotalShots
 
   - path: _Cooldown
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Cooldown
 
   - path: _Range
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Range
 
   - path: _Homing
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Homing
 
   - path: _SlowEffect
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: SlowEffect
 
   - path: _AmmoType
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: AmmoType
 
   - path: _RechargeRange:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Recharge:Min
 
   - path: _RechargeRange:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Recharge:Max
 
   - path: _AvailableShots
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: AvailableShots

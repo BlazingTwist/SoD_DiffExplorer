@@ -1,13 +1,13 @@
 sourceConfigHolder:
-  lastCreated: squadTacticsHistory\sources\squadTactics_2020.04.18.txt
+  lastCreated: squadTacticsHistory\sources\squadTactics_2020.12.15.txt
 
   sourceFrom:
     sourceType: lastCreated
     online:
       platform: Steam
       version: 3.8.0
-      makeFile: true
-      makeLastCreated: false
+      makeFile: True
+      makeLastCreated: False
     local:
       platform: Steam
       version: 3.8.0
@@ -17,9 +17,9 @@ sourceConfigHolder:
     sourceType: online
     online:
       platform: Steam
-      version: 3.8.0
-      makeFile: true
-      makeLastCreated: true
+      version: 3.13.0
+      makeFile: True
+      makeLastCreated: True
     local:
       platform: Steam
       version: 3.8.0
@@ -42,14 +42,15 @@ sourceConfigHolder:
     appendDate: true
 
 resultConfig:
+  appendTime: True
   baseDirectory: squadTacticsHistory\results
-  makeFile: true
-  appendDate: true
+  makeFile: True
+  appendDate: True
   resultFilter: 
-    displayAdditions: true
-    displayDifferences: true
-    displayRemovals: true
-    displayCommons: true
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: True
 
 onlineSourceInterpreterConfig:
   configPath: _Characters:Array:data
@@ -69,273 +70,273 @@ onlineSourceInterpreterConfig:
   configFilter:
   - path: _Available
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Available
 
   - path: _DisplayNameText:_Text
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: DisplayName
 
   - path: _DisplayNameText:_ID
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: DisplayNameID
 
   - path: _SpeciesText:_Text
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: SpeciesText
 
   - path: _SpeciesText:_ID
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: SpeciesTextID
 
   #Stats : CriticalChance
   - path: _Stats:_CriticalChance:_BaseValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalChance:BaseValue
 
   - path: _Stats:_CriticalChance:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalChance:LevelMultiplier
 
   - path: _Stats:_CriticalChance:_LimitMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalChance:LimitMultiplier
 
   - path: _Stats:_CriticalChance:_Limits:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalChance:Min
 
   - path: _Stats:_CriticalChance:_Limits:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalChance:Max
 
   - path: _Stats:_CriticalChance:_UseRoundedValues
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalChance:Round
 
   #Stats : CriticalDamageMultiplier
   - path: _Stats:_CriticalDamageMultiplier:_BaseValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalDamageMultiplier:BaseValue
 
   - path: _Stats:_CriticalDamageMultiplier:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalDamageMultiplier:LevelMultiplier
 
   - path: _Stats:_CriticalDamageMultiplier:_LimitMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalDamageMultiplier:LimitMultiplier
 
   - path: _Stats:_CriticalDamageMultiplier:_Limits:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalDamageMultiplier:Min
 
   - path: _Stats:_CriticalDamageMultiplier:_Limits:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalDamageMultiplier:Max
 
   - path: _Stats:_CriticalDamageMultiplier:_UseRoundedValues
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: CriticalDamageMultiplier:Round
 
   #Stats : DodgeChance
   - path: _Stats:_DodgeChance:_BaseValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: DodgeChance:BaseValue
 
   - path: _Stats:_DodgeChance:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: DodgeChance:LevelMultiplier
 
   - path: _Stats:_DodgeChance:_LimitMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: DodgeChance:LimitMultiplier
 
   - path: _Stats:_DodgeChance:_Limits:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: DodgeChance:Min
 
   - path: _Stats:_DodgeChance:_Limits:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: DodgeChance:Max
 
   - path: _Stats:_DodgeChance:_UseRoundedValues
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: DodgeChance:Round
 
   #Stats : FirePower
   - path: _Stats:_FirePower:_BaseValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: FirePower:BaseValue
 
   - path: _Stats:_FirePower:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: FirePower:LevelMultiplier
 
   - path: _Stats:_FirePower:_LimitMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: FirePower:LimitMultiplier
 
   - path: _Stats:_FirePower:_Limits:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: FirePower:Min
 
   - path: _Stats:_FirePower:_Limits:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: FirePower:Max
 
   - path: _Stats:_FirePower:_UseRoundedValues
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: FirePower:Round
 
   #Stats : HealingPower
   - path: _Stats:_HealingPower:_BaseValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealingPower:BaseValue
 
   - path: _Stats:_HealingPower:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealingPower:LevelMultiplier
 
   - path: _Stats:_HealingPower:_LimitMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealingPower:LimitMultiplier
 
   - path: _Stats:_HealingPower:_Limits:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealingPower:Min
 
   - path: _Stats:_HealingPower:_Limits:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealingPower:Max
 
   - path: _Stats:_HealingPower:_UseRoundedValues
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: HealingPower:Round
 
   #Stats : Health
   - path: _Stats:_Health:_BaseValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Health:BaseValue
 
   - path: _Stats:_Health:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Health:LevelMultiplier
 
   - path: _Stats:_Health:_LimitMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Health:LimitMultiplier
 
   - path: _Stats:_Health:_Limits:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Health:Min
 
   - path: _Stats:_Health:_Limits:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Health:Max
 
   - path: _Stats:_Health:_UseRoundedValues
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Health:Round
 
   #Stats : Movement
   - path: _Stats:_Movement:_BaseValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Movement:BaseValue
 
   - path: _Stats:_Movement:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Movement:LevelMultiplier
 
   - path: _Stats:_Movement:_LimitMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Movement:LimitMultiplier
 
   - path: _Stats:_Movement:_Limits:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Movement:Min
 
   - path: _Stats:_Movement:_Limits:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Movement:Max
 
   - path: _Stats:_Movement:_UseRoundedValues
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Movement:Round
 
   #Stats : Strength
   - path: _Stats:_Strength:_BaseValue
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Strength:BaseValue
 
   - path: _Stats:_Strength:_LevelMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Strength:LevelMultiplier
 
   - path: _Stats:_Strength:_LimitMultiplier
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Strength:LimitMultiplier
 
   - path: _Stats:_Strength:_Limits:Min
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Strength:Min
 
   - path: _Stats:_Strength:_Limits:Max
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Strength:Max
 
   - path: _Stats:_Strength:_UseRoundedValues
     pathType: relative
-    doDisplay: true
+    doDisplay: True
     outputName: Strength:Round

@@ -1,13 +1,13 @@
 sourceConfigHolder:
-  lastCreated: flightStatsHistory\sources\flightStats_2020.04.18.txt
+  lastCreated: flightStatsHistory\sources\flightStats_2020.12.15.txt
 
   sourceFrom:
     sourceType: lastCreated
     online:
       platform: Steam
       version: 3.8.0
-      makeFile: true
-      makeLastCreated: false
+      makeFile: True
+      makeLastCreated: False
     local:
       platform: Steam
       version: 3.8.0
@@ -17,9 +17,9 @@ sourceConfigHolder:
     sourceType: online
     online:
       platform: Steam
-      version: 3.8.0
-      makeFile: true
-      makeLastCreated: true
+      version: 3.13.0
+      makeFile: True
+      makeLastCreated: True
     local:
       platform: Steam
       version: 3.8.0
@@ -49,21 +49,22 @@ sourceConfigHolder:
     appendDate: true
 
 resultConfig:
+  appendTime: True
   baseDirectory: flightStatsHistory\results
-  makeFile: true
-  appendDate: true
+  makeFile: True
+  appendDate: True
   resultFilter: 
-    displayAdditions: true
-    displayDifferences: true
-    displayRemovals: true
-    displayCommons: true
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: True
 
 onlineSourceInterpreterConfig:
   #since the dragonNames are not stored as a property we have to obtain them using the GameObjects fileName
   #we can specify that a value references a different file using `/`
   configPath: m_GameObject:m_PathID/Base
 
-  #since out configPath isn't only finding dragonStats we can add pathConstraints to only find files that have data at all paths specified
+  #since our configPath isn't only finding dragonStats we can add pathConstraints to only find files that have data at all paths specified
   pathConstraints:
   - _FlightInformation:Array:data:_FlightType
 
@@ -85,140 +86,140 @@ onlineSourceInterpreterConfig:
   configFilter:
   - path: _FlightInformation:Array:data:_FlightType
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: FlightType
 
   - path: _FlightInformation:Array:data:_FlightData:_RollTurnRate
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: RollTurnRate
 
   - path: _FlightInformation:Array:data:_FlightData:_RollDampRate
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: RollDampRate
 
   - path: _FlightInformation:Array:data:_FlightData:_YawTurnRate
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: YawTurnRate
 
   - path: _FlightInformation:Array:data:_FlightData:_YawTurnFactor
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: YawTurnFactor
 
   - path: _FlightInformation:Array:data:_FlightData:_PitchTurnRate
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: PitchTurnRate
 
   - path: _FlightInformation:Array:data:_FlightData:_PitchDampRate
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: PitchDampRate
 
   - path: _FlightInformation:Array:data:_FlightData:_Speed:Min
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: Speed:Min
 
   - path: _FlightInformation:Array:data:_FlightData:_Speed:Max
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: Speed:Max
 
   - path: _FlightInformation:Array:data:_FlightData:_Acceleration
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: Acceleration
 
   - path: _FlightInformation:Array:data:_FlightData:_ManualFlapAccel
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: ManualFlapAccel
 
   - path: _FlightInformation:Array:data:_FlightData:_ManualFlapTimer
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: ManualFlapTimer
 
   - path: _FlightInformation:Array:data:_FlightData:_SpeedDampRate
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: SpeedDampRate
 
   - path: _FlightInformation:Array:data:_FlightData:_BrakeDecel
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: BrakeDecel
 
   - path: _FlightInformation:Array:data:_FlightData:_ClimbAccelRate
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: ClimbAccelRate
 
   - path: _FlightInformation:Array:data:_FlightData:_DiveAccelRate
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: DiveAccelRate
 
   - path: _FlightInformation:Array:data:_FlightData:_SpeedModifierOnCollision
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: SpeedModifierOnCollision
 
   - path: _FlightInformation:Array:data:_FlightData:_BounceOnCollision
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: BounceOnCollision
 
   - path: _FlightInformation:Array:data:_FlightData:_GlideDownMultiplier
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: GlideDownMult
 
   - path: _FlightInformation:Array:data:_FlightData:_GravityModifier
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: GravityModifier
 
   - path: _FlightInformation:Array:data:_FlightData:_GravityClimbMultiplier
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: GravityClimbMult
 
   - path: _FlightInformation:Array:data:_FlightData:_GravityDiveMultiplier
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: GravityDiveMult
 
   - path: _FlightInformation:Array:data:_FlightData:_FlyingMaxUpPitch
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: FlyMaxUpPitch
 
   - path: _FlightInformation:Array:data:_FlightData:_FlyingMaxDownPitch
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: FlyMaxDownPitch
 
   - path: _FlightInformation:Array:data:_FlightData:_GlidingMaxUpPitch
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: GlideMaxUpPitch
 
   - path: _FlightInformation:Array:data:_FlightData:_GlidingMaxDownPitch
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: GlideMaxDownPitch
 
   - path: _FlightInformation:Array:data:_FlightData:_MaxRoll
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: MaxRoll
 
   - path: _FlightInformation:Array:data:_FlightData:_FlyingPositionBoostFactor
     pathType: absolute
-    doDisplay: true
+    doDisplay: True
     outputName: PositionBoost
