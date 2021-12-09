@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using SoD_DiffExplorer.menu;
 using SoD_DiffExplorer.utils;

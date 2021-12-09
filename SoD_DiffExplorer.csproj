@@ -1,42 +1,47 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Configurations>Debug;Release;WindowsPublish</Configurations>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <BeautyLibsDir>libraries</BeautyLibsDir>
+        <BeautyLogLevel>Info</BeautyLogLevel>
+        <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+        <Configurations>Debug;Release</Configurations>
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="classdata.tpk" />
-    <None Remove="config.yaml" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="classdata.tpk" />
+        <None Remove="config.yaml" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
-  </ItemGroup>
+    <ItemGroup>
+        <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="classdata.tpk">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="config.yaml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+    <ItemGroup>
+        <Content Include="classdata.tpk">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="config.yaml">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="YamlDotNet" Version="8.1.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="nulastudio.NetCoreBeauty" Version="1.2.9.3" />
+        <PackageReference Include="YamlDotNet" Version="8.1.0" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="AssetsTools.NET">
-      <HintPath>..\..\..\Tools\UNITY MODDING\AssetTools 2.0.6\AssetsTools.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\SoR_Modding\SoR_BepInEx_Libraries\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+    <ItemGroup>
+        <Reference Include="AssetsTools.NET">
+            <HintPath>..\..\..\Tools\UNITY MODDING\AssetTools 2.0.6\AssetsTools.NET.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\SoR_Modding\SoR_BepInEx_Libraries\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+    </ItemGroup>
 
 </Project>
