@@ -14,7 +14,7 @@ downloadSettings:
   pauseDownloadOnError: True
 
   #if set to false it won't download the files and instead only log which files it would download
-  doDownload: True
+  doDownload: False
 
   targetDirectory: fileDownloads
 

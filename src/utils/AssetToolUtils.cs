@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
+using Microsoft.VisualBasic;
 
 namespace SoD_DiffExplorer.utils {
 	public class AssetFile {
@@ -87,6 +88,10 @@ namespace SoD_DiffExplorer.utils {
 			}
 		}
 
+		public static List<AssetTypeValueField> GetFieldAtPath(AssetFile file, AssetTypeValueField baseField, string customPath) {
+			return GetFieldAtPath(file, baseField, new[] { customPath });
+		}
+
 		public static List<AssetTypeValueField> GetFieldAtPath(AssetFile file, AssetTypeValueField baseField, IEnumerable<string> customPaths) {
 			List<AssetTypeValueField> currentScope = new List<AssetTypeValueField> { baseField };
 			foreach (string customPath in customPaths) {
@@ -96,7 +101,7 @@ namespace SoD_DiffExplorer.utils {
 						List<AssetTypeValueField> found = new List<AssetTypeValueField>();
 						if (i == 0) {
 							foreach (AssetTypeValueField field in currentScope.Where(field => field.GetChildrenCount() > 0)) {
-								found.AddRange(field.GetChildrenList().Where(child => child.GetName() == referencePaths[i]));
+								found.AddRange(field.GetChildrenList().Where(child => child.GetName() == referencePaths[i].Split('=')[0]));
 							}
 						} else {
 							foreach (AssetTypeValueField field in currentScope.Where(field => field.GetValue() != null)) {
@@ -107,23 +112,35 @@ namespace SoD_DiffExplorer.utils {
 									continue;
 								}
 
-								found.AddRange(GetATI(file, referenceInfo).baseFields.Where(referenceField => referenceField.GetName() == referencePaths[i]));
+								found.AddRange(GetATI(file, referenceInfo).baseFields.Where(referenceField => referenceField.GetName() == referencePaths[i].Split('=')[0]));
 							}
 						}
 
+						if (customPath.Contains('=')) {
+							string targetValue = customPath.Split('=')[1];
+							found.RemoveAll(field => field.GetValue()?.AsString() != targetValue);
+						}
 						currentScope = found;
 					}
 				} else {
 					List<AssetTypeValueField> found = new List<AssetTypeValueField>();
 					foreach (AssetTypeValueField field in currentScope.Where(field => field.GetChildrenCount() > 0)) {
-						found.AddRange(field.GetChildrenList().Where(child => child.GetName() == customPath));
+						found.AddRange(field.GetChildrenList().Where(child => child.GetName() == customPath.Split('=')[0]));
 					}
 
+					if (customPath.Contains('=')) {
+						string targetValue = customPath.Split('=')[1];
+						found.RemoveAll(field => field.GetValue()?.AsString() != targetValue);
+					}
 					currentScope = found;
 				}
 			}
 
 			return currentScope;
+		}
+
+		public static bool IsMatchingPathConstraints(AssetFile file, AssetTypeValueField baseField, string pathConstraint) {
+			return IsMatchingPathConstraints(file, baseField, new[] { pathConstraint });
 		}
 
 		public static bool IsMatchingPathConstraints(AssetFile file, AssetTypeValueField baseField, IEnumerable<string> pathConstraints) {

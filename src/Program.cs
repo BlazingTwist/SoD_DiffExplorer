@@ -12,6 +12,7 @@ namespace SoD_DiffExplorer {
 				IDeserializer deserializer = new DeserializerBuilder()
 						.WithTagMapping("tag:yaml.org,2002:fileDownloader", typeof(FileDownloader))
 						.WithTagMapping("tag:yaml.org,2002:comparer", typeof(DataComparer))
+						.WithTagMapping("tag:yaml.org,2002:materialExtractor", typeof(MaterialExtractor))
 						.Build();
 				using (StreamReader reader = File.OpenText("config.yaml")) {
 					config = deserializer.Deserialize<ConfigHolder>(reader);
