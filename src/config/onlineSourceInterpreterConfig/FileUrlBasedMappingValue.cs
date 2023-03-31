@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using AssetsTools.NET;
+using AssetsTools.NET.Extra;
 using JetBrains.Annotations;
 using SoD_DiffExplorer.utils;
 
@@ -18,8 +19,13 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 			};
 		}
 
-		List<string> IMappingValue.GetMapValues(string fileUrl, AssetFile assetFile, AssetTypeValueField baseField, AssetTypeValueField targetField,
-				AssetToolUtils assetToolUtils) {
+		List<string> IMappingValue.GetMapValues(
+				string fileUrl,
+				AssetsFileInstance assetFile,
+				AssetTypeValueField baseField,
+				AssetTypeValueField targetField,
+				AssetToolUtils assetToolUtils
+		) {
 			return new List<string> {
 					new Regex(fileUrlRegex).Replace(fileUrl, fileUrlReplacement)
 			};

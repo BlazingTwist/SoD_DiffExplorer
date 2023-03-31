@@ -11,8 +11,10 @@ using SoD_DiffExplorer.menu;
 using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
+
 	[PublicAPI]
 	public class OnlineSourceInterpreterConfig : YamlObject, IMenuObject {
+
 		public string configPath;
 		public List<string> pathConstraints;
 		public IMappingValue mapConfigBy;
@@ -72,11 +74,12 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 			Dictionary<string, Dictionary<string, List<string>>> result = new Dictionary<string, Dictionary<string, List<string>>>();
 			foreach (string fileUrl in fileUrls) {
 				Console.WriteLine("loading bundle data from url: " + fileUrl);
-				using var client = new WebClient();
-				using var stream = new MemoryStream(client.DownloadData(fileUrl));
-				var assetToolUtils = new AssetToolUtils();
+				using WebClient client = new WebClient();
+				using MemoryStream stream = new MemoryStream(client.DownloadData(fileUrl));
+				AssetToolUtils assetToolUtils = new AssetToolUtils();
 				Console.WriteLine("Download done, building AssetsFileInstance...");
-				foreach (AssetFile file in assetToolUtils.BuildAssetsFileInstance(stream)) {
+
+				foreach (AssetsFileInstance file in assetToolUtils.BuildAssetsFileInstance(stream)) {
 					try {
 						BuildBundleContent(ref result, fileUrl, file, assetToolUtils);
 					} catch (Exception e) {
@@ -92,35 +95,26 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 			return result;
 		}
 
-		private void BuildBundleContent(ref Dictionary<string, Dictionary<string, List<string>>> result, string fileUrl, AssetFile file,
-				AssetToolUtils assetToolUtils) {
+		private void BuildBundleContent(
+				ref Dictionary<string, Dictionary<string, List<string>>> result,
+				string fileUrl,
+				AssetsFileInstance file,
+				AssetToolUtils assetToolUtils
+		) {
 			Console.WriteLine("building bundle content!");
-			foreach (AssetFileInfoEx info in file.fileInstance.table.assetFileInfo) {
-				ClassDatabaseType type = AssetHelper.FindAssetClassByID(file.classDBFile, info.curFileType);
-				if (type == null) {
+			foreach (AssetFileInfo asset in file.file.GetAssetsOfType(AssetClassID.MonoBehaviour)) {
+				AssetTypeValueField baseField = assetToolUtils.assetsManager.GetBaseField(file, asset);
+				List<AssetTypeValueField> fields = assetToolUtils.GetFieldAtPath(file, baseField, configPath.Split(':'));
+				if (fields.Count == 0) {
 					continue;
 				}
-
-				string typeName = type.name.GetString(file.classDBFile);
-				if (typeName != "MonoBehaviour") {
+				if (!assetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
 					continue;
 				}
+				Console.WriteLine("found " + fields.Count + " matches in mono-behaviour at path: " + configPath);
 
-				AssetTypeValueField baseField = AssetToolUtils.GetATI(file, info).GetBaseField();
-
-				List<AssetTypeValueField> targetFields = AssetToolUtils.GetFieldAtPath(file, baseField, configPath.Split(':'));
-				if (targetFields.Count == 0) {
-					continue;
-				}
-
-				if (!AssetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
-					continue;
-				}
-
-				Console.WriteLine("found " + targetFields.Count + " matches in mono-behaviour at path " + configPath);
-
-				foreach (AssetTypeValueField targetField in targetFields) {
-					List<string> mapByField = mapConfigBy.GetMapValues(fileUrl, file, baseField, targetField, assetToolUtils);
+				foreach (AssetTypeValueField field in fields) {
+					List<string> mapByField = mapConfigBy.GetMapValues(fileUrl, file, baseField, field, assetToolUtils);
 					Console.WriteLine("found " + mapByField.Count + " mapFields in targetField at mapConfigBy.path");
 
 					foreach (string mapValue in mapByField) {
@@ -130,16 +124,16 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 							List<string> filterValues = new List<string>();
 
 							List<AssetTypeValueField> filterFields = filter.pathType switch {
-									EOnlineInterpreterPathType.relative => AssetToolUtils.GetFieldAtPath(file, targetField, filter.path.Split(':')),
-									EOnlineInterpreterPathType.absolute => AssetToolUtils.GetFieldAtPath(file, baseField, filter.path.Split(':')),
+									EOnlineInterpreterPathType.relative => assetToolUtils.GetFieldAtPath(file, field, filter.path.Split(':')),
+									EOnlineInterpreterPathType.absolute => assetToolUtils.GetFieldAtPath(file, baseField, filter.path.Split(':')),
 									_ => throw new InvalidOperationException("pathType " + filter.pathType +
 											" is not supported by OnlineSourceInterpreterConfig.cs")
 							};
 
 							Console.WriteLine("found " + filterFields.Count + " fields at path: " + filter.path);
 							filterValues.AddRange(filterFields
-									.Where(field => field.GetValue() != null)
-									.Select(field => ResolveTranslationValue(field.GetValue().AsString().Trim(), filter.outputName)));
+									.Where(fld => fld.Value != null)
+									.Select(fld => ResolveTranslationValue(fld.Value.AsString.Trim(), filter.outputName)));
 
 							secondaryValues[filter.outputName] = filterValues;
 						}
@@ -232,5 +226,7 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 					new MenuOption(nameof(configFilter), MenuUtils.GetConfigureString, GetConfigFilterInfoString, OnConfigFilterClicked)
 			};
 		}
+
 	}
+
 }

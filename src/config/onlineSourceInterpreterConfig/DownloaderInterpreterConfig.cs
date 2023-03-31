@@ -12,8 +12,10 @@ using SoD_DiffExplorer.menu;
 using SoD_DiffExplorer.utils;
 
 namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
+
 	[PublicAPI]
 	public class DownloaderInterpreterConfig : YamlObject, IMenuObject {
+
 		public string configPath;
 		public string fileNamePath;
 		public List<string> pathConstraints;
@@ -95,11 +97,12 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 
 			foreach (string fileUrl in fileUrls) {
 				Console.WriteLine("loading bundle data from url: " + fileUrl);
-				using var client = new WebClient();
-				using var stream = new MemoryStream(client.DownloadData(fileUrl));
-				var assetToolUtils = new AssetToolUtils();
+				using WebClient client = new WebClient();
+				using MemoryStream stream = new MemoryStream(client.DownloadData(fileUrl));
+				AssetToolUtils assetToolUtils = new AssetToolUtils();
 				Console.WriteLine("Download done, building AssetsFileInstance...");
-				foreach (AssetFile file in assetToolUtils.BuildAssetsFileInstance(stream)) {
+
+				foreach (AssetsFileInstance file in assetToolUtils.BuildAssetsFileInstance(stream)) {
 					try {
 						BuildBundleContent(ref result, fileUrl, file, assetToolUtils);
 					} catch (Exception e) {
@@ -115,38 +118,26 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 			return result;
 		}
 
-		private void BuildBundleContent(ref List<string> result, string fileUrl, AssetFile file, AssetToolUtils assetToolUtils) {
-			foreach (AssetFileInfoEx info in file.fileInstance.table.assetFileInfo) {
-				ClassDatabaseType type = AssetHelper.FindAssetClassByID(file.classDBFile, info.curFileType);
-				if (type == null) {
+		private void BuildBundleContent(ref List<string> result, string fileUrl, AssetsFileInstance file, AssetToolUtils assetToolUtils) {
+			foreach (AssetFileInfo asset in file.file.GetAssetsOfType(AssetClassID.MonoBehaviour)) {
+				AssetTypeValueField baseField = assetToolUtils.assetsManager.GetBaseField(file, asset);
+				List<AssetTypeValueField> fields = assetToolUtils.GetFieldAtPath(file, baseField, configPath.Split(':'));
+				if (fields.Count == 0) {
 					continue;
 				}
-
-				string typeName = type.name.GetString(file.classDBFile);
-				if (typeName != "MonoBehaviour") {
+				if (!assetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
 					continue;
 				}
+				Console.WriteLine("found " + fields.Count + " matches in mono-behaviour at path: " + configPath);
 
-				AssetTypeValueField baseField = AssetToolUtils.GetATI(file, info).GetBaseField();
-				List<AssetTypeValueField> targetFields = AssetToolUtils.GetFieldAtPath(file, baseField, configPath.Split(':'));
-				if (targetFields.Count == 0) {
-					continue;
-				}
-
-				if (!AssetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
-					continue;
-				}
-
-				Console.WriteLine("found " + targetFields.Count + " matches in mono-behaviour at path: " + configPath);
-
-				foreach (AssetTypeValueField targetField in targetFields) {
-					List<AssetTypeValueField> fileNameFields = AssetToolUtils.GetFieldAtPath(file, targetField, fileNamePath.Split(':'));
+				foreach (AssetTypeValueField field in fields) {
+					List<AssetTypeValueField> fileNameFields = assetToolUtils.GetFieldAtPath(file, field, fileNamePath.Split(':'));
 					Console.WriteLine("found " + fileNameFields.Count + " fileNameFields in targetField at path: " + fileNamePath);
 
 					foreach (string value in fileNameFields
-							.Select(fileNameField => fileNameField.GetValue().AsString().Trim())
+							.Select(fileNameField => fileNameField.Value.AsString.Trim())
 							.Where(fileName => CustomRegex.AllMatching(fileName, fileNameRegexFilters))
-							.SelectMany(fileName => ApplySubFilters(fileName, baseField, targetField, file, assetToolUtils))) {
+							.SelectMany(fileName => ApplySubFilters(fileName, baseField, field, file, assetToolUtils))) {
 						if (!result.Contains(value)) {
 							result.Add(value);
 						}
@@ -155,8 +146,13 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 			}
 		}
 
-		private List<string> ApplySubFilters(string mapValue, AssetTypeValueField absoluteRoot, AssetTypeValueField relativeRoot, AssetFile file,
-				AssetToolUtils assetUtils) {
+		private List<string> ApplySubFilters(
+				string mapValue,
+				AssetTypeValueField absoluteRoot,
+				AssetTypeValueField relativeRoot,
+				AssetsFileInstance file,
+				AssetToolUtils assetUtils
+		) {
 			List<string> result = new List<string>();
 
 			AssetTypeValueField targetRoot = subFilter.pathType switch {
@@ -165,12 +161,12 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 					_ => throw new InvalidOperationException("pathType " + subFilter.pathType + " is not supported by DownloaderInterpreterConfig.cs")
 			};
 
-			List<AssetTypeValueField> basePathFields = AssetToolUtils.GetFieldAtPath(file, targetRoot, subFilter.basePath.Split(':'));
+			List<AssetTypeValueField> basePathFields = assetUtils.GetFieldAtPath(file, targetRoot, subFilter.basePath.Split(':'));
 			List<string> filterValues = new List<string>();
 
 			foreach (List<AssetTypeValueField> pathFields in basePathFields
-					.Select(field => AssetToolUtils.GetFieldAtPath(file, field, subFilter.valuePath.Split(':')))) {
-				filterValues.AddRange(pathFields.Where(pathField => pathField.GetValue() != null).Select(pathField => pathField.GetValue().AsString().Trim()));
+					.Select(field => assetUtils.GetFieldAtPath(file, field, subFilter.valuePath.Split(':')))) {
+				filterValues.AddRange(pathFields.Where(pathField => pathField.Value != null).Select(pathField => pathField.Value.AsString.Trim()));
 			}
 
 			if (subFilter.optional && (basePathFields.Count == 0 || basePathFields.Count > filterValues.Count)) {
@@ -179,7 +175,7 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 				result.Add(mapValue);
 			}
 
-			var fileNameModifierRegex = new Regex(subFilter.fileNameModifierRegex);
+			Regex fileNameModifierRegex = new Regex(subFilter.fileNameModifierRegex);
 			result.AddRange(filterValues
 					.Where(value => CustomRegex.AllMatching(value, subFilter.valueRegexFilters))
 					.Select(value =>
@@ -200,5 +196,7 @@ namespace SoD_DiffExplorer.config.onlineSourceInterpreterConfig {
 		IMenuProperty[] IMenuObject.GetOptions() {
 			return new IMenuProperty[0];
 		}
+
 	}
+
 }

@@ -15,8 +15,10 @@ using YamlDotNet.Serialization.NodeDeserializers;
 using YamlDotNet.Serialization.ObjectFactories;
 
 namespace SoD_DiffExplorer.subPrograms {
+
 	[PublicAPI]
 	public class MaterialExtractor : ISubProgram {
+
 		[YamlIgnore] private MaterialExtractorConfig materialExtractor;
 		[YamlIgnore] private MenuUtils menuUtils;
 
@@ -68,61 +70,57 @@ namespace SoD_DiffExplorer.subPrograms {
 						List<string> pathConstraints = new List<string> {
 								"m_SavedProperties:m_Colors:Array:data:first=_PrimaryColor",
 								"m_SavedProperties:m_Colors:Array:data:first=_SecondaryColor",
-								"m_SavedProperties:m_Colors:Array:data:first=_TertiaryColor"
+								"m_SavedProperties:m_Colors:Array:data:first=_TertiaryColor",
 						};
 
 						try {
 							Console.WriteLine("loading bundle data from url: " + dataFileUrL);
-							using var client = new WebClient();
-							using var stream = new MemoryStream(client.DownloadData(dataFileUrL));
-							var assetToolUtils = new AssetToolUtils();
+							using WebClient client = new WebClient();
+							using MemoryStream stream = new MemoryStream(client.DownloadData(dataFileUrL));
+							AssetToolUtils assetToolUtils = new AssetToolUtils();
 							Console.WriteLine("Download done, building AssetsFileInstance...");
-							foreach (AssetFile file in assetToolUtils.BuildAssetsFileInstance(stream)) {
-								foreach (AssetFileInfoEx info in file.fileInstance.table.assetFileInfo) {
-									ClassDatabaseType type = AssetHelper.FindAssetClassByID(file.classDBFile, info.curFileType);
-									if (type == null) {
+
+							foreach (AssetsFileInstance file in assetToolUtils.BuildAssetsFileInstance(stream)) {
+								foreach (AssetFileInfo asset in file.file.GetAssetsOfType(AssetClassID.Material)) {
+									AssetTypeValueField baseField = assetToolUtils.assetsManager.GetBaseField(file, asset);
+									string matName = assetToolUtils.GetFieldAtPath(file, baseField, "m_Name".Split(":"))
+											.FirstOrDefault()?.Value?.AsString;
+									if (matName == null) {
 										continue;
 									}
 
-									string typeName = type.name.GetString(file.classDBFile);
-									if (typeName != "Material") {
-										continue;
-									}
-
-									AssetTypeValueField baseField = AssetToolUtils.GetATI(file, info).GetBaseField();
-									string materialName = AssetToolUtils.GetFieldAtPath(file, baseField, "m_Name".Split(":")).FirstOrDefault()?.GetValue()?.AsString();
-									if (materialName == null) {
-										continue;
-									}
-									
-									Console.WriteLine($"\tchecking Material '{materialName}'");
-
-									if (!AssetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
+									Console.WriteLine($"\tchecking Material '{matName}'");
+									if (!assetToolUtils.IsMatchingPathConstraints(file, baseField, pathConstraints)) {
 										Console.WriteLine("\t\tMaterial did not match path constraints!");
 										continue;
 									}
 
 									List<string> colors = new List<string> { "", "", "" };
-									foreach (AssetTypeValueField colorDataField in AssetToolUtils.GetFieldAtPath(file, baseField, "m_SavedProperties:m_Colors:Array:data".Split(":"))) {
-										string red = AssetToolUtils.GetFieldAtPath(file, colorDataField, "second:r".Split(":")).FirstOrDefault()?.GetValue()?.AsString();
-										string green = AssetToolUtils.GetFieldAtPath(file, colorDataField, "second:g".Split(":")).FirstOrDefault()?.GetValue()?.AsString();
-										string blue = AssetToolUtils.GetFieldAtPath(file, colorDataField, "second:b".Split(":")).FirstOrDefault()?.GetValue()?.AsString();
-										string alpha = AssetToolUtils.GetFieldAtPath(file, colorDataField, "second:a".Split(":")).FirstOrDefault()?.GetValue()?.AsString();
+									foreach (AssetTypeValueField colorDataField in assetToolUtils.GetFieldAtPath(file, baseField,
+											"m_SavedProperties:m_Colors:Array:data".Split(":"))) {
+										string red = assetToolUtils.GetFieldAtPath(file, colorDataField, "second:r".Split(":"))
+												.FirstOrDefault()?.Value?.AsString;
+										string green = assetToolUtils.GetFieldAtPath(file, colorDataField, "second:g".Split(":"))
+												.FirstOrDefault()?.Value?.AsString;
+										string blue = assetToolUtils.GetFieldAtPath(file, colorDataField, "second:b".Split(":"))
+												.FirstOrDefault()?.Value?.AsString;
+										string alpha = assetToolUtils.GetFieldAtPath(file, colorDataField, "second:a".Split(":"))
+												.FirstOrDefault()?.Value?.AsString;
 										if (red == null || green == null || blue == null || alpha == null) {
 											Console.WriteLine("\t\trgba was null!");
 											continue;
 										}
 										string colorString = $"r={red};g={green};b={blue};a={alpha}";
 
-										if (AssetToolUtils.IsMatchingPathConstraints(file, colorDataField, "first=_PrimaryColor")) {
+										if (assetToolUtils.IsMatchingPathConstraints(file, colorDataField, "first=_PrimaryColor")) {
 											colors[0] = colorString;
-										} else if (AssetToolUtils.IsMatchingPathConstraints(file, colorDataField, "first=_SecondaryColor")) {
+										} else if (assetToolUtils.IsMatchingPathConstraints(file, colorDataField, "first=_SecondaryColor")) {
 											colors[1] = colorString;
-										} else if (AssetToolUtils.IsMatchingPathConstraints(file, colorDataField, "first=_TertiaryColor")) {
+										} else if (assetToolUtils.IsMatchingPathConstraints(file, colorDataField, "first=_TertiaryColor")) {
 											colors[2] = colorString;
 										}
 									}
-									materialToColorList[materialName] = colors;
+									materialToColorList[matName] = colors;
 								}
 							}
 						} catch (Exception e) {
@@ -133,7 +131,7 @@ namespace SoD_DiffExplorer.subPrograms {
 							}
 						}
 					}
-					
+
 					string targetFile = materialExtractor.GetResultFile("extraction");
 					string targetDirectory = Path.GetDirectoryName(targetFile);
 					if (!Directory.Exists(targetDirectory)) {
@@ -150,7 +148,7 @@ namespace SoD_DiffExplorer.subPrograms {
 							writer.WriteLine(materialName + "\t" + string.Join("\t", colorsInOrder));
 						}
 					}
-					
+
 					break;
 				case EOnlineDataType.xmlFile:
 				default:
@@ -162,11 +160,11 @@ namespace SoD_DiffExplorer.subPrograms {
 		}
 
 		private void PrintContent(AssetTypeValueField field, int tabDepth) {
-			Console.WriteLine($"{new string('\t', tabDepth)}{field.GetName()} = {field.GetValue()?.AsString()}");
-			if (field.GetChildrenCount() <= 0) {
+			Console.WriteLine($"{new string('\t', tabDepth)}{field.FieldName} = {field.Value?.AsString}");
+			if (field.Children.Count <= 0) {
 				return;
 			}
-			foreach (AssetTypeValueField child in field.GetChildrenList()) {
+			foreach (AssetTypeValueField child in field.Children) {
 				PrintContent(child, tabDepth + 1);
 			}
 		}
@@ -217,5 +215,7 @@ namespace SoD_DiffExplorer.subPrograms {
 				}
 			}
 		}
+
 	}
+
 }

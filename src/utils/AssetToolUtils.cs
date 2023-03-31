@@ -2,97 +2,34 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
-using Microsoft.VisualBasic;
 
 namespace SoD_DiffExplorer.utils {
-	public class AssetFile {
-		public readonly AssetsFileInstance fileInstance;
-		public readonly ClassDatabaseFile classDBFile;
-
-		public AssetFile(AssetsFileInstance file, ClassDatabaseFile classDBFile) {
-			fileInstance = file;
-			this.classDBFile = classDBFile;
-		}
-	}
 
 	public class AssetToolUtils {
-		private ClassDatabasePackage classPackage;
-		private List<MemoryStream> activeStreams = new List<MemoryStream>();
-		private AssetBundleFile activeBundleFile;
 
-		public IEnumerable<AssetFile> BuildAssetsFileInstance(Stream stream) {
-			List<AssetFile> result = new List<AssetFile>();
+		public readonly AssetsManager assetsManager;
 
-			classPackage = new ClassDatabasePackage();
-			Console.WriteLine("Reading class-data...");
-			using (var reader = new AssetsFileReader(new FileStream("classdata.tpk", FileMode.Open, FileAccess.Read, FileShare.Read))) {
-				classPackage.Read(reader);
-			}
+		public AssetToolUtils() {
+			assetsManager = new AssetsManager();
+			assetsManager.LoadClassPackage("classdata.tpk");
+		}
 
-			var file = new AssetBundleFile();
-			activeBundleFile = file;
-			Console.WriteLine("Reading bundleFileStream...");
-			file.Read(new AssetsFileReader(stream), true);
-			file.reader.Position = 0;
-			Stream memoryStream = new MemoryStream();
-			Console.WriteLine("Unpacking bundleFile...");
-			file.Unpack(file.reader, new AssetsFileWriter(memoryStream));
-			memoryStream.Position = 0;
-			file.Close();
-			file = new AssetBundleFile();
-			file.Read(new AssetsFileReader(memoryStream));
-
-			Console.WriteLine("file.bundleInf6.dirInf.Length: " + file.bundleInf6.dirInf.Length);
-
-			for (int i = 0; i < file.bundleInf6.dirInf.Length; i++) {
-				try {
-					if (file.IsAssetsFile(file.reader, file.bundleInf6.dirInf[i])) {
-						byte[] assetData = BundleHelper.LoadAssetDataFromBundle(file, i);
-						var mainStream = new MemoryStream(assetData);
-						activeStreams.Add(mainStream);
-
-						string mainName = file.bundleInf6.dirInf[i].name;
-						var fileInstance = new AssetsFileInstance(mainStream, mainName, "");
-						ClassDatabaseFile classDBFile = LoadClassDatabaseFromPackage(fileInstance.file.typeTree.unityVersion);
-						if (classDBFile == null) {
-							Console.WriteLine("classDatabaseFile was null? Okay, that's probably bad. Continuing anyway...");
-						}
-
-						result.Add(new AssetFile(fileInstance, classDBFile));
-					}
-				} catch (Exception e) {
-					Console.WriteLine("caught exception while reading AssetsFile: " + e);
-					//guess it's not an assetsFile then?
-				}
-			}
-
-			Console.WriteLine("found " + result.Count + " AssetFiles");
-
-			return result;
+		public List<AssetsFileInstance> BuildAssetsFileInstance(Stream stream) {
+			BundleFileInstance bundleFile = assetsManager.LoadBundleFile(stream, "null");
+			Console.WriteLine($"reading bundle. engineVersion '${bundleFile.file.Header.EngineVersion}' signature '${bundleFile.file.Header.Signature}'");
+			Console.WriteLine($"bundleName '${bundleFile.name}' num loaded files ${bundleFile.loadedAssetsFiles.Count}");
+			return bundleFile.loadedAssetsFiles.Count <= 0
+					? new List<AssetsFileInstance> { assetsManager.LoadAssetsFileFromBundle(bundleFile, 0) }
+					: bundleFile.loadedAssetsFiles;
 		}
 
 		public void CloseActiveStreams() {
-			for (int i = 0; i < activeStreams.Count; i++) {
-				activeStreams[i].Dispose();
-				activeStreams[i] = null;
-			}
-
-			activeStreams = new List<MemoryStream>();
-
-			if (activeBundleFile != null) {
-				activeBundleFile.Close();
-				activeBundleFile = null;
-			}
+			assetsManager.UnloadAll();
 		}
 
-		public static List<AssetTypeValueField> GetFieldAtPath(AssetFile file, AssetTypeValueField baseField, string customPath) {
-			return GetFieldAtPath(file, baseField, new[] { customPath });
-		}
-
-		public static List<AssetTypeValueField> GetFieldAtPath(AssetFile file, AssetTypeValueField baseField, IEnumerable<string> customPaths) {
+		public List<AssetTypeValueField> GetFieldAtPath(AssetsFileInstance file, AssetTypeValueField baseField, IEnumerable<string> customPaths) {
 			List<AssetTypeValueField> currentScope = new List<AssetTypeValueField> { baseField };
 			foreach (string customPath in customPaths) {
 				if (customPath.Contains('/')) {
@@ -100,37 +37,44 @@ namespace SoD_DiffExplorer.utils {
 					for (int i = 0; i < referencePaths.Length; i++) {
 						List<AssetTypeValueField> found = new List<AssetTypeValueField>();
 						if (i == 0) {
-							foreach (AssetTypeValueField field in currentScope.Where(field => field.GetChildrenCount() > 0)) {
-								found.AddRange(field.GetChildrenList().Where(child => child.GetName() == referencePaths[i].Split('=')[0]));
+							foreach (AssetTypeValueField field in currentScope.Where(field => field.Children.Count > 0)) {
+								found.AddRange(field.Children.Where(child => child.FieldName == referencePaths[i].Split('=')[0]));
 							}
 						} else {
-							foreach (AssetTypeValueField field in currentScope.Where(field => field.GetValue() != null)) {
-								AssetFileInfoEx referenceInfo = file.fileInstance.table.GetAssetInfo(field.GetValue().AsInt64());
-								if (referenceInfo == null) {
-									Console.WriteLine("could not find referenceInfo for pathID = (" + field.GetValue().AsInt64() +
-											"), that's probably bad, skipping");
+							foreach (AssetTypeValueField field in currentScope.Where(field => field.Value?.AsObject != null)) {
+								long pathID = field.Value.AsLong;
+								AssetTypeValueField referenceField = assetsManager.GetBaseField(file, pathID);
+								if (referenceField == null) {
+									Console.WriteLine("could not find referenceInfo for pathID = (" + pathID + "), that's probably bad, skipping");
 									continue;
 								}
 
-								found.AddRange(GetATI(file, referenceInfo).baseFields.Where(referenceField => referenceField.GetName() == referencePaths[i].Split('=')[0]));
+								string searchFieldName = referencePaths[i].Split('=')[0];
+								if (referenceField.FieldName != searchFieldName) {
+									Console.WriteLine(
+											$"searching for name: (${searchFieldName}) but found (${referenceField.FieldName}), that's probably bad, skipping");
+									continue;
+								}
+
+								found.Add(referenceField);
 							}
 						}
 
 						if (customPath.Contains('=')) {
 							string targetValue = customPath.Split('=')[1];
-							found.RemoveAll(field => field.GetValue()?.AsString() != targetValue);
+							found.RemoveAll(field => field.Value?.AsString != targetValue);
 						}
 						currentScope = found;
 					}
 				} else {
 					List<AssetTypeValueField> found = new List<AssetTypeValueField>();
-					foreach (AssetTypeValueField field in currentScope.Where(field => field.GetChildrenCount() > 0)) {
-						found.AddRange(field.GetChildrenList().Where(child => child.GetName() == customPath.Split('=')[0]));
+					foreach (AssetTypeValueField field in currentScope.Where(field => field.Children.Count > 0)) {
+						found.AddRange(field.Children.Where(child => child.FieldName == customPath.Split('=')[0]));
 					}
 
 					if (customPath.Contains('=')) {
 						string targetValue = customPath.Split('=')[1];
-						found.RemoveAll(field => field.GetValue()?.AsString() != targetValue);
+						found.RemoveAll(field => field.Value?.AsString != targetValue);
 					}
 					currentScope = found;
 				}
@@ -139,52 +83,14 @@ namespace SoD_DiffExplorer.utils {
 			return currentScope;
 		}
 
-		public static bool IsMatchingPathConstraints(AssetFile file, AssetTypeValueField baseField, string pathConstraint) {
+		public bool IsMatchingPathConstraints(AssetsFileInstance file, AssetTypeValueField baseField, string pathConstraint) {
 			return IsMatchingPathConstraints(file, baseField, new[] { pathConstraint });
 		}
 
-		public static bool IsMatchingPathConstraints(AssetFile file, AssetTypeValueField baseField, IEnumerable<string> pathConstraints) {
+		public bool IsMatchingPathConstraints(AssetsFileInstance file, AssetTypeValueField baseField, IEnumerable<string> pathConstraints) {
 			return pathConstraints.All(path => GetFieldAtPath(file, baseField, path.Split(':')).Count > 0);
 		}
 
-		private ClassDatabaseFile LoadClassDatabaseFromPackage(string version) {
-			if (version.StartsWith("U")) {
-				version = version.Substring(1);
-			}
-
-			return (from file in classPackage.files
-			        from unityVersion in file.header.unityVersions
-			        where WildcardMatches(version, unityVersion)
-			        select file)
-					.FirstOrDefault();
-		}
-
-		private static bool WildcardMatches(string test, string pattern) {
-			return Regex.IsMatch(test, "^" + Regex.Escape(pattern).Replace("\\*", ".*") + "$");
-		}
-
-		public static AssetTypeInstance GetATI(AssetFile file, AssetFileInfoEx info) {
-			ushort scriptIndex = file.fileInstance.file.typeTree.unity5Types[info.curFileTypeOrIndex].scriptIndex;
-			uint fixedId = info.curFileType;
-			if (fixedId == 0xf1) { //AudioMixerController
-				fixedId = 0xf0; //AudioMixer
-			} else if (fixedId == 0xf3) { //AudioMixerGroupController
-				fixedId = 0x111; //AudioMixerGroup
-			} else if (fixedId == 0xf5) { //AudioMixerSnapshotController
-				fixedId = 0x110; //AudioMixerSnapshot
-			}
-
-			bool hasTypeTree = file.fileInstance.file.typeTree.hasTypeTree;
-			var baseField = new AssetTypeTemplateField();
-			if (hasTypeTree) {
-				baseField.From0D(
-						file.fileInstance.file.typeTree.unity5Types.First(t =>
-								(t.classId == fixedId || t.classId == info.curFileType) && t.scriptIndex == scriptIndex), 0);
-			} else {
-				baseField.FromClassDatabase(file.classDBFile, AssetHelper.FindAssetClassByID(file.classDBFile, fixedId), 0);
-			}
-
-			return new AssetTypeInstance(baseField, file.fileInstance.file.reader, info.absoluteFilePos);
-		}
 	}
+
 }

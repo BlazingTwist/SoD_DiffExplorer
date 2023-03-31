@@ -1,0 +1,85 @@
+sourceConfigHolder:
+  lastCreated: weaponNameHistory\sources\weaponNames_3.24.0_2022.06.03.txt
+
+  sourceFrom:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.8.0
+      makeFile: True
+      makeLastCreated: False
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  sourceTo:
+    sourceType: online
+    online:
+      platform: Steam
+      version: 3.24.0
+      makeFile: True
+      makeLastCreated: True
+    local:
+      platform: Steam
+      version: 3.8.0
+      date: 2020.04.07
+
+  onlineSourcesConfig:
+    baseUrl: http://media.schoolofdragons.com/DWADragonsUnity
+    baseUrlSuffix: High
+    dataType: bundleFile
+
+    onlineSourceConfig: !!queriedOnlineSourceConfig
+      assetInfo: data/AssetVersionsDO.xml
+      assetFileNamePath: A:@N
+      dataContainerRegexFilters:
+      - "^RS_SHARED/dw(.*?)do$"
+      - "!^RS_SHARED/dwdragonsskins(.*?)do$"
+      - "!^RS_SHARED/dw(.*?)(common|rare|epic|(legend(ary)?))do$"
+      - "!^RS_SHARED/dwshieldrounddo$"
+      - "!^RS_SHARED/dw(.*?)(saddle)(s?)do$"
+
+  localSourcesConfig:
+    baseDirectory: weaponNameHistory\sources
+    targetFileName: weaponNames
+    targetFileExtension: txt
+    appendPlatform: false
+    appendVersion: true
+    appendDate: true
+
+resultConfig:
+  appendTime: True
+  baseDirectory: weaponNameHistory\results
+  makeFile: True
+  appendDate: True
+  resultFilter: 
+    displayAdditions: True
+    displayDifferences: True
+    displayRemovals: True
+    displayCommons: True
+
+onlineSourceInterpreterConfig:
+  #since the dragonNames are not stored as a property we have to obtain them using the GameObjects fileName
+  #we can specify that a value references a different file using `/`
+  configPath: m_GameObject:m_PathID/Base
+
+  #since our configPath isn't only finding dragonStats we can add pathConstraints to only find files that have data at all paths specified
+  pathConstraints:
+  - _MainWeapon:name
+
+  mapConfigBy: !!storedMappingValue
+    path: m_Name
+    outputName: Name
+
+  regexTranslator: {}
+
+  typeTranslationDict: {}
+
+  outputNameToTypeDict: {}
+
+  configFilter:
+  - path: _MainWeapon:name
+    pathType: absolute
+    doDisplay: True
+    outputName: mainWeapon
